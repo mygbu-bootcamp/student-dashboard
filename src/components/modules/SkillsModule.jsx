@@ -1,12 +1,23 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 import { Input } from "../../components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from "../../components/ui/tabs";
 import { Progress } from "../../components/ui/progress";
 import { useToast } from "../../hooks/use-toast";
-import { 
+import {
   Award,
   Upload,
   Star,
@@ -19,14 +30,16 @@ import {
   Settings,
   BookOpen,
   Zap,
-  Target
+  Target,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 
 const SkillsModule = ({ user }) => {
   const [activeTab, setActiveTab] = useState("skills");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const { toast } = useToast();
 
-  // Mock data for skills and labs
   const userSkills = [
     { id: 1, name: "React Development", level: "Advanced", progress: 85, category: "Technical", verified: true },
     { id: 2, name: "Machine Learning", level: "Intermediate", progress: 65, category: "Technical", verified: false },
@@ -126,25 +139,47 @@ const SkillsModule = ({ user }) => {
     });
   };
 
+  const toggleMobileFilters = () => {
+    setShowMobileFilters(!showMobileFilters);
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-purple-900 to-blue-700 rounded-lg p-6 text-white">
-        <h1 className="text-2xl font-bold mb-2">Skills Development & Innovation Labs</h1>
-        <p className="text-purple-100">Enhance your skills and participate in cutting-edge research</p>
+    <div className="space-y-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-purple-900 to-blue-700 rounded-lg p-4 sm:p-6 text-white">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">
+          Skills Development & Innovation Labs
+        </h1>
+        <p className="text-purple-100 text-sm sm:text-base lg:text-lg">
+          Enhance your skills and participate in cutting-edge research
+        </p>
       </div>
 
+      {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="skills">My Skills</TabsTrigger>
-          <TabsTrigger value="labs">Innovation Labs</TabsTrigger>
-          <TabsTrigger value="rural">Rural Innovation</TabsTrigger>
-          <TabsTrigger value="badges">Badges & Awards</TabsTrigger>
+        <TabsList className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+          <TabsTrigger value="skills" className="text-xs sm:text-sm py-1 sm:py-2">
+            <Award className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+            My Skills
+          </TabsTrigger>
+          <TabsTrigger value="labs" className="text-xs sm:text-sm py-1 sm:py-2">
+            <Zap className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+            Labs
+          </TabsTrigger>
+          <TabsTrigger value="rural" className="text-xs sm:text-sm py-1 sm:py-2">
+            <Target className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+            Rural
+          </TabsTrigger>
+          <TabsTrigger value="badges" className="text-xs sm:text-sm py-1 sm:py-2">
+            <Trophy className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+            Badges
+          </TabsTrigger>
         </TabsList>
 
+        {/* Skills Tab */}
         <TabsContent value="skills" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Award className="mr-2 h-5 w-5 text-blue-500" />
@@ -156,16 +191,16 @@ const SkillsModule = ({ user }) => {
                 {userSkills.map((skill) => (
                   <div key={skill.id} className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-medium">{skill.name}</span>
+                      <span className="font-medium text-sm sm:text-base">{skill.name}</span>
                       <div className="flex items-center space-x-2">
-                        <Badge variant={skill.verified ? "default" : "secondary"}>
+                        <Badge variant={skill.verified ? "default" : "secondary"} className="text-xs sm:text-sm">
                           {skill.level}
                         </Badge>
-                        {skill.verified && <CheckCircle className="h-4 w-4 text-green-500" />}
+                        {skill.verified && <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />}
                       </div>
                     </div>
                     <Progress value={skill.progress} className="h-2" />
-                    <div className="flex justify-between text-sm text-gray-600">
+                    <div className="flex justify-between text-xs sm:text-sm text-gray-600">
                       <span>{skill.category}</span>
                       <span>{skill.progress}%</span>
                     </div>
@@ -174,7 +209,7 @@ const SkillsModule = ({ user }) => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Plus className="mr-2 h-5 w-5 text-green-500" />
@@ -184,12 +219,12 @@ const SkillsModule = ({ user }) => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Skill Name</label>
-                  <Input placeholder="e.g., Python Programming" />
+                  <label className="text-xs sm:text-sm font-medium">Skill Name</label>
+                  <Input placeholder="e.g., Python Programming" className="text-xs sm:text-sm" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Category</label>
-                  <select className="w-full p-2 border rounded-lg">
+                  <label className="text-xs sm:text-sm font-medium">Category</label>
+                  <select className="w-full p-2 sm:p-3 border rounded-lg text-xs sm:text-sm">
                     <option>Technical</option>
                     <option>Soft Skills</option>
                     <option>Leadership</option>
@@ -197,8 +232,8 @@ const SkillsModule = ({ user }) => {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Current Level</label>
-                  <select className="w-full p-2 border rounded-lg">
+                  <label className="text-xs sm:text-sm font-medium">Current Level</label>
+                  <select className="w-full p-2 sm:p-3 border rounded-lg text-xs sm:text-sm">
                     <option>Beginner</option>
                     <option>Intermediate</option>
                     <option>Advanced</option>
@@ -206,11 +241,14 @@ const SkillsModule = ({ user }) => {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Associated Project/Course</label>
-                  <Input placeholder="Link to project or course" />
+                  <label className="text-xs sm:text-sm font-medium">Associated Project/Course</label>
+                  <Input placeholder="Link to project or course" className="text-xs sm:text-sm" />
                 </div>
-                <Button onClick={handleSkillAdd} className="w-full">
-                  <Plus className="mr-2 h-4 w-4" />
+                <Button 
+                  onClick={handleSkillAdd} 
+                  className="w-full py-2 text-xs sm:text-sm"
+                >
+                  <Plus className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                   Add Skill
                 </Button>
               </CardContent>
@@ -218,21 +256,97 @@ const SkillsModule = ({ user }) => {
           </div>
         </TabsContent>
 
+        {/* Labs Tab */}
         <TabsContent value="labs" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Filter Controls - Mobile */}
+          <div className="sm:hidden">
+            <Button 
+              variant="outline" 
+              className="w-full flex items-center justify-between"
+              onClick={toggleMobileFilters}
+            >
+              <span>Filter Labs</span>
+              {showMobileFilters ? (
+                <ChevronUp className="ml-2 h-4 w-4" />
+              ) : (
+                <ChevronDown className="ml-2 h-4 w-4" />
+              )}
+            </Button>
+            
+            {showMobileFilters && (
+              <Card className="mt-2">
+                <CardContent className="p-4 space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium">Lab Type</label>
+                    <select className="w-full p-2 border rounded-lg text-xs">
+                      <option>All Labs</option>
+                      <option>Technical</option>
+                      <option>Research</option>
+                      <option>Interdisciplinary</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium">Availability</label>
+                    <select className="w-full p-2 border rounded-lg text-xs">
+                      <option>All Statuses</option>
+                      <option>Available</option>
+                      <option>Waitlist</option>
+                      <option>Enrolled</option>
+                    </select>
+                  </div>
+                  <Button variant="outline" className="w-full text-xs">
+                    Apply Filters
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Filter Controls - Desktop */}
+          <div className="hidden sm:flex gap-4">
+            <div className="flex-1">
+              <Input placeholder="Search labs..." className="text-sm" />
+            </div>
+            <select className="p-2 border rounded-lg text-sm">
+              <option>All Labs</option>
+              <option>Technical</option>
+              <option>Research</option>
+              <option>Interdisciplinary</option>
+            </select>
+            <select className="p-2 border rounded-lg text-sm">
+              <option>All Statuses</option>
+              <option>Available</option>
+              <option>Waitlist</option>
+              <option>Enrolled</option>
+            </select>
+            <Button variant="outline" className="text-sm">
+              Apply Filters
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {innovationLabs.map((lab) => (
               <Card key={lab.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
-                    <span>{lab.name}</span>
-                    <Badge variant={lab.status === "Enrolled" ? "default" : lab.status === "Available" ? "secondary" : "destructive"}>
+                    <span className="text-sm sm:text-base">{lab.name}</span>
+                    <Badge
+                      variant={
+                        lab.status === "Enrolled"
+                          ? "default"
+                          : lab.status === "Available"
+                          ? "secondary"
+                          : "destructive"
+                      }
+                      className="text-xs sm:text-sm"
+                    >
                       {lab.status}
                     </Badge>
                   </CardTitle>
-                  <CardDescription>{lab.description}</CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">{lab.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
                     <div>
                       <span className="text-gray-600">Mentor:</span>
                       <p className="font-medium">{lab.mentor}</p>
@@ -243,19 +357,25 @@ const SkillsModule = ({ user }) => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
+                    <div className="flex justify-between text-xs sm:text-sm">
                       <span>Enrollment</span>
-                      <span>{lab.enrolled}/{lab.capacity}</span>
+                      <span>
+                        {lab.enrolled}/{lab.capacity}
+                      </span>
                     </div>
                     <Progress value={(lab.enrolled / lab.capacity) * 100} className="h-2" />
                   </div>
-                  <Button 
+                  <Button
                     onClick={() => handleLabRegistration(lab.name)}
                     disabled={lab.status === "Enrolled" || lab.status === "Waitlist"}
-                    className="w-full"
+                    className="w-full py-2 text-xs sm:text-sm"
+                    size="sm"
                   >
-                    {lab.status === "Enrolled" ? "Already Enrolled" : 
-                     lab.status === "Waitlist" ? "Join Waitlist" : "Register Now"}
+                    {lab.status === "Enrolled"
+                      ? "Already Enrolled"
+                      : lab.status === "Waitlist"
+                      ? "Join Waitlist"
+                      : "Register Now"}
                   </Button>
                 </CardContent>
               </Card>
@@ -263,9 +383,10 @@ const SkillsModule = ({ user }) => {
           </div>
         </TabsContent>
 
+        {/* Rural Innovation Tab */}
         <TabsContent value="rural" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Target className="mr-2 h-5 w-5 text-green-500" />
@@ -275,21 +396,24 @@ const SkillsModule = ({ user }) => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {ruralInnovations.map((project) => (
-                  <div key={project.id} className="border rounded-lg p-4">
+                  <div key={project.id} className="border rounded-lg p-3 sm:p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">{project.title}</h4>
-                      <Badge variant={project.status === "Submitted" ? "default" : "secondary"}>
+                      <h4 className="font-medium text-sm sm:text-base">{project.title}</h4>
+                      <Badge 
+                        variant={project.status === "Submitted" ? "default" : "secondary"}
+                        className="text-xs sm:text-sm"
+                      >
                         {project.status}
                       </Badge>
                     </div>
-                    <div className="text-sm text-gray-600 space-y-1">
+                    <div className="text-xs sm:text-sm text-gray-600 space-y-1">
                       <p>Mentor: {project.mentor}</p>
                       <p>Impact Area: {project.impact}</p>
                       <p>Date: {project.date}</p>
                       {project.badge && (
                         <div className="flex items-center mt-2">
-                          <Trophy className="h-4 w-4 text-yellow-500 mr-1" />
-                          <span className="text-yellow-600 font-medium">{project.badge}</span>
+                          <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-500 mr-1" />
+                          <span className="text-yellow-600 font-medium text-xs sm:text-sm">{project.badge}</span>
                         </div>
                       )}
                     </div>
@@ -298,7 +422,7 @@ const SkillsModule = ({ user }) => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Upload className="mr-2 h-5 w-5 text-blue-500" />
@@ -308,12 +432,12 @@ const SkillsModule = ({ user }) => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Project Title</label>
-                  <Input placeholder="e.g., Smart Farming Solution" />
+                  <label className="text-xs sm:text-sm font-medium">Project Title</label>
+                  <Input placeholder="e.g., Smart Farming Solution" className="text-xs sm:text-sm" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Impact Category</label>
-                  <select className="w-full p-2 border rounded-lg">
+                  <label className="text-xs sm:text-sm font-medium">Impact Category</label>
+                  <select className="w-full p-2 sm:p-3 border rounded-lg text-xs sm:text-sm">
                     <option>Agriculture</option>
                     <option>Healthcare</option>
                     <option>Education</option>
@@ -322,24 +446,31 @@ const SkillsModule = ({ user }) => {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Project Description</label>
-                  <textarea className="w-full p-2 border rounded-lg" rows={3} placeholder="Describe your innovation..." />
+                  <label className="text-xs sm:text-sm font-medium">Project Description</label>
+                  <textarea 
+                    className="w-full p-2 sm:p-3 border rounded-lg text-xs sm:text-sm" 
+                    rows={3} 
+                    placeholder="Describe your innovation..." 
+                  />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Upload Demo Video</label>
-                  <Button variant="outline" className="w-full">
-                    <Upload className="mr-2 h-4 w-4" />
+                  <label className="text-xs sm:text-sm font-medium">Upload Demo Video</label>
+                  <Button variant="outline" className="w-full py-2 text-xs sm:text-sm">
+                    <Upload className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Choose Video File
                   </Button>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Upload Logbook</label>
-                  <Button variant="outline" className="w-full">
-                    <Upload className="mr-2 h-4 w-4" />
+                  <label className="text-xs sm:text-sm font-medium">Upload Logbook</label>
+                  <Button variant="outline" className="w-full py-2 text-xs sm:text-sm">
+                    <Upload className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Choose PDF File
                   </Button>
                 </div>
-                <Button onClick={handleProjectSubmit} className="w-full">
+                <Button 
+                  onClick={handleProjectSubmit} 
+                  className="w-full py-2 text-xs sm:text-sm"
+                >
                   Submit Project
                 </Button>
               </CardContent>
@@ -347,26 +478,46 @@ const SkillsModule = ({ user }) => {
           </div>
         </TabsContent>
 
+        {/* Badges Tab */}
         <TabsContent value="badges" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {badges.map((badge, index) => (
-              <Card key={index} className={`${badge.earned ? 'border-yellow-200 bg-yellow-50' : 'border-gray-200 bg-gray-50'}`}>
-                <CardContent className="p-4 text-center">
-                  <div className={`p-3 rounded-full inline-block mb-3 ${badge.earned ? 'bg-yellow-100' : 'bg-gray-100'}`}>
-                    <Trophy className={`h-8 w-8 ${badge.earned ? 'text-yellow-600' : 'text-gray-400'}`} />
+              <Card
+                key={index}
+                className={`hover:shadow-lg transition-shadow ${
+                  badge.earned
+                    ? "border-yellow-200 bg-yellow-50"
+                    : "border-gray-200 bg-gray-50"
+                }`}
+              >
+                <CardContent className="p-4 sm:p-6 text-center">
+                  <div
+                    className={`p-3 rounded-full inline-block mb-3 ${
+                      badge.earned ? "bg-yellow-100" : "bg-gray-100"
+                    }`}
+                  >
+                    <Trophy
+                      className={`h-6 w-6 sm:h-8 sm:w-8 ${
+                        badge.earned ? "text-yellow-600" : "text-gray-400"
+                      }`}
+                    />
                   </div>
-                  <h3 className={`font-medium mb-2 ${badge.earned ? 'text-yellow-800' : 'text-gray-600'}`}>
+                  <h3
+                    className={`font-medium mb-2 text-sm sm:text-base ${
+                      badge.earned ? "text-yellow-800" : "text-gray-600"
+                    }`}
+                  >
                     {badge.name}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-3">{badge.description}</p>
+                  <p className="text-xs sm:text-sm text-gray-600 mb-3">
+                    {badge.description}
+                  </p>
                   {badge.earned ? (
                     <div className="text-xs text-yellow-600">
                       Earned on {badge.date}
                     </div>
                   ) : (
-                    <div className="text-xs text-gray-500">
-                      Not yet earned
-                    </div>
+                    <div className="text-xs text-gray-500">Not yet earned</div>
                   )}
                 </CardContent>
               </Card>

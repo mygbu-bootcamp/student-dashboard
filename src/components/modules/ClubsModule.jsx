@@ -16,11 +16,14 @@ import {
   CheckCircle,
   Plus,
   Search,
-  Eye
+  Eye,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 
 const ClubsModule = ({ user }) => {
   const [activeTab, setActiveTab] = useState("my-clubs");
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // Mock data for clubs
   const myClubs = [
@@ -182,16 +185,101 @@ const ClubsModule = ({ user }) => {
     }
   ];
 
+  const toggleMobileMenu = () => {
+    setShowMobileMenu(!showMobileMenu);
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-900 to-indigo-700 rounded-lg p-6 text-white">
-        <h1 className="text-2xl font-bold mb-2">Clubs & Societies</h1>
-        <p className="text-indigo-100">Connect, collaborate, and contribute to campus life</p>
+      <div className="bg-gradient-to-r from-indigo-900 to-indigo-700 rounded-lg p-4 sm:p-6 text-white">
+        <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">Clubs & Societies</h1>
+        <p className="text-indigo-100 text-sm sm:text-base">Connect, collaborate, and contribute to campus life</p>
       </div>
 
-      {/* Tabs Navigation */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      {/* Mobile Tab Selector */}
+      <div className="sm:hidden">
+        <Button 
+          variant="outline" 
+          className="w-full flex items-center justify-between"
+          onClick={toggleMobileMenu}
+        >
+          <span>
+            {activeTab === "my-clubs" && "My Clubs"}
+            {activeTab === "discover" && "Discover"}
+            {activeTab === "events" && "Events"}
+            {activeTab === "participation" && "My Activity"}
+            {activeTab === "achievements" && "Achievements"}
+          </span>
+          {showMobileMenu ? (
+            <ChevronUp className="ml-2 h-4 w-4" />
+          ) : (
+            <ChevronDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+        
+        {showMobileMenu && (
+          <div className="mt-2 space-y-1">
+            <Button 
+              variant={activeTab === "my-clubs" ? "secondary" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => {
+                setActiveTab("my-clubs");
+                setShowMobileMenu(false);
+              }}
+            >
+              My Clubs
+            </Button>
+            <Button 
+              variant={activeTab === "discover" ? "secondary" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => {
+                setActiveTab("discover");
+                setShowMobileMenu(false);
+              }}
+            >
+              Discover
+            </Button>
+            <Button 
+              variant={activeTab === "events" ? "secondary" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => {
+                setActiveTab("events");
+                setShowMobileMenu(false);
+              }}
+            >
+              Events
+            </Button>
+            <Button 
+              variant={activeTab === "participation" ? "secondary" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => {
+                setActiveTab("participation");
+                setShowMobileMenu(false);
+              }}
+            >
+              My Activity
+            </Button>
+            <Button 
+              variant={activeTab === "achievements" ? "secondary" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => {
+                setActiveTab("achievements");
+                setShowMobileMenu(false);
+              }}
+            >
+              Achievements
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Tabs Navigation */}
+      <Tabs 
+        value={activeTab} 
+        onValueChange={setActiveTab} 
+        className="hidden sm:block"
+      >
         <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
           <TabsTrigger value="my-clubs">My Clubs</TabsTrigger>
           <TabsTrigger value="discover">Discover</TabsTrigger>
@@ -199,25 +287,27 @@ const ClubsModule = ({ user }) => {
           <TabsTrigger value="participation">My Activity</TabsTrigger>
           <TabsTrigger value="achievements">Achievements</TabsTrigger>
         </TabsList>
+      </Tabs>
 
-        {/* My Clubs Tab */}
-        <TabsContent value="my-clubs" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* My Clubs Tab */}
+      {(activeTab === "my-clubs") && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {myClubs.map((club) => (
-              <Card key={club.id}>
+              <Card key={club.id} className="hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <Users className="h-8 w-8 text-indigo-500" />
-                    <Badge variant={club.role === "Coordinator" ? "default" : "secondary"}>
+                    <Users className="h-6 w-6 sm:h-8 sm:w-8 text-indigo-500" />
+                    <Badge variant={club.role === "Coordinator" ? "default" : "secondary"} className="text-xs sm:text-sm">
                       {club.role}
                     </Badge>
                   </div>
-                  <CardTitle className="text-lg">{club.name}</CardTitle>
-                  <CardDescription>{club.description}</CardDescription>
+                  <CardTitle className="text-base sm:text-lg">{club.name}</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">{club.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm">
                       <div>
                         <p className="text-gray-500">Joined</p>
                         <p className="font-medium">{club.joinDate}</p>
@@ -225,7 +315,7 @@ const ClubsModule = ({ user }) => {
                       <div>
                         <p className="text-gray-500">Status</p>
                         <div className="flex items-center">
-                          <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+                          <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 mr-1" />
                           <span>{club.status}</span>
                         </div>
                       </div>
@@ -238,13 +328,13 @@ const ClubsModule = ({ user }) => {
                         <p className="font-medium">{club.hours}</p>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="flex-1">
-                        <Eye className="mr-2 h-4 w-4" />
-                        View Details
+                    <div className="flex gap-1 sm:gap-2">
+                      <Button size="sm" variant="outline" className="flex-1 text-xs sm:text-sm">
+                        <Eye className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                        Details
                       </Button>
-                      <Button size="sm" variant="destructive" className="flex-1">
-                        Leave Club
+                      <Button size="sm" variant="destructive" className="flex-1 text-xs sm:text-sm">
+                        Leave
                       </Button>
                     </div>
                   </div>
@@ -252,48 +342,52 @@ const ClubsModule = ({ user }) => {
               </Card>
             ))}
           </div>
-        </TabsContent>
+        </div>
+      )}
 
-        {/* Discover Clubs Tab */}
-        <TabsContent value="discover" className="space-y-6">
-          <div className="flex flex-col sm:flex-row gap-4">
+      {/* Discover Clubs Tab */}
+      {(activeTab === "discover") && (
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input placeholder="Search clubs..." className="pl-10" />
+              <Search className="absolute left-3 top-3 h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
+              <Input placeholder="Search clubs..." className="pl-8 sm:pl-10 text-xs sm:text-sm" />
             </div>
-            <Button variant="outline">Filter by Category</Button>
+            <Button variant="outline" className="text-xs sm:text-sm">
+              Filter by Category
+            </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {availableClubs.map((club) => (
-              <Card key={club.id}>
+              <Card key={club.id} className="hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <Users className="h-8 w-8 text-blue-500" />
-                    <Badge variant="outline">{club.category}</Badge>
+                    <Users className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
+                    <Badge variant="outline" className="text-xs sm:text-sm">{club.category}</Badge>
                   </div>
-                  <CardTitle className="text-lg">{club.name}</CardTitle>
-                  <CardDescription>{club.description}</CardDescription>
+                  <CardTitle className="text-base sm:text-lg">{club.name}</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">{club.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div className="text-sm space-y-2">
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="text-xs sm:text-sm space-y-1 sm:space-y-2">
                       <div className="flex items-center">
-                        <Users className="h-4 w-4 text-gray-500 mr-2" />
+                        <Users className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500 mr-1 sm:mr-2" />
                         <span>{club.members} members</span>
                       </div>
                       <div className="flex items-center">
-                        <Clock className="h-4 w-4 text-gray-500 mr-2" />
+                        <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500 mr-1 sm:mr-2" />
                         <span>{club.meetingTime}</span>
                       </div>
                     </div>
-                    <div className="p-3 bg-blue-50 rounded-lg">
-                      <p className="text-sm text-blue-800">
+                    <div className="p-2 sm:p-3 bg-blue-50 rounded-lg">
+                      <p className="text-xs sm:text-sm text-blue-800">
                         <strong>Requirements:</strong> {club.requirements}
                       </p>
                     </div>
-                    <Button className="w-full">
-                      <Plus className="mr-2 h-4 w-4" />
+                    <Button className="w-full text-xs sm:text-sm">
+                      <Plus className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                       Join Club
                     </Button>
                   </div>
@@ -301,127 +395,131 @@ const ClubsModule = ({ user }) => {
               </Card>
             ))}
           </div>
-        </TabsContent>
+        </div>
+      )}
 
-        {/* Events Tab */}
-        <TabsContent value="events" className="space-y-6">
-          <div className="space-y-4">
+      {/* Events Tab */}
+      {(activeTab === "events") && (
+        <div className="space-y-6">
+          <div className="space-y-3 sm:space-y-4">
             {upcomingEvents.map((event) => (
-              <Card key={event.id}>
-                <CardContent className="p-6">
-                  <div className="flex flex-col lg:flex-row lg:items-start justify-between mb-4">
+              <Card key={event.id} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col lg:flex-row lg:items-start justify-between mb-3 sm:mb-4">
                     <div className="flex-1">
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="text-lg font-semibold">{event.title}</h3>
-                        <Badge variant={event.status === "Registered" ? "default" : "outline"}>
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-2">
+                        <h3 className="text-base sm:text-lg font-semibold">{event.title}</h3>
+                        <Badge variant={event.status === "Registered" ? "default" : "outline"} className="text-xs sm:text-sm">
                           {event.status}
                         </Badge>
                       </div>
-                      <p className="text-gray-600 mb-3">{event.club}</p>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-4">
+                      <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">{event.club}</p>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm mb-3 sm:mb-4">
                         <div className="flex items-center">
-                          <Calendar className="mr-2 h-4 w-4 text-gray-500" />
+                          <Calendar className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
                           <span>{event.date}</span>
                         </div>
                         <div className="flex items-center">
-                          <Clock className="mr-2 h-4 w-4 text-gray-500" />
+                          <Clock className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
                           <span>{event.time}</span>
                         </div>
                         <div className="flex items-center">
-                          <MapPin className="mr-2 h-4 w-4 text-gray-500" />
+                          <MapPin className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
                           <span>{event.venue}</span>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-4 text-sm">
-                        <Badge variant="secondary">{event.type}</Badge>
+                      <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
+                        <Badge variant="secondary" className="text-xs sm:text-sm">{event.type}</Badge>
                         <span className="text-gray-600">
                           {event.registered}/{event.maxParticipants} registered
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button variant={event.status === "Registered" ? "secondary" : "default"}>
+                  <div className="flex gap-1 sm:gap-2">
+                    <Button variant={event.status === "Registered" ? "secondary" : "default"} className="text-xs sm:text-sm">
                       {event.status === "Registered" ? "Registered" : "Register"}
                     </Button>
-                    <Button variant="outline">View Details</Button>
+                    <Button variant="outline" className="text-xs sm:text-sm">Details</Button>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
-        </TabsContent>
+        </div>
+      )}
 
-        {/* My Activity Tab */}
-        <TabsContent value="participation" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      {/* My Activity Tab */}
+      {(activeTab === "participation") && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
             <Card>
-              <CardContent className="p-4 text-center">
-                <Trophy className="h-8 w-8 text-yellow-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-yellow-600">12</div>
-                <div className="text-sm text-gray-600">Events Participated</div>
+              <CardContent className="p-3 sm:p-4 text-center">
+                <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500 mx-auto mb-1 sm:mb-2" />
+                <div className="text-xl sm:text-2xl font-bold text-yellow-600">12</div>
+                <div className="text-xs sm:text-sm text-gray-600">Events Participated</div>
               </CardContent>
             </Card>
             <Card>
-              <CardContent className="p-4 text-center">
-                <Clock className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-blue-600">80</div>
-                <div className="text-sm text-gray-600">Total Hours</div>
+              <CardContent className="p-3 sm:p-4 text-center">
+                <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 mx-auto mb-1 sm:mb-2" />
+                <div className="text-xl sm:text-2xl font-bold text-blue-600">80</div>
+                <div className="text-xs sm:text-sm text-gray-600">Total Hours</div>
               </CardContent>
             </Card>
             <Card>
-              <CardContent className="p-4 text-center">
-                <Star className="h-8 w-8 text-purple-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-purple-600">8</div>
-                <div className="text-sm text-gray-600">Certificates Earned</div>
+              <CardContent className="p-3 sm:p-4 text-center">
+                <Star className="h-6 w-6 sm:h-8 sm:w-8 text-purple-500 mx-auto mb-1 sm:mb-2" />
+                <div className="text-xl sm:text-2xl font-bold text-purple-600">8</div>
+                <div className="text-xs sm:text-sm text-gray-600">Certificates Earned</div>
               </CardContent>
             </Card>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {myParticipation.map((participation) => (
-              <Card key={participation.id}>
-                <CardContent className="p-6">
-                  <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-4">
+              <Card key={participation.id} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-3 sm:mb-4">
                     <div>
-                      <h3 className="text-lg font-semibold mb-1">{participation.eventName}</h3>
-                      <p className="text-gray-600">{participation.club}</p>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500 mt-2">
+                      <h3 className="text-base sm:text-lg font-semibold mb-1">{participation.eventName}</h3>
+                      <p className="text-xs sm:text-sm text-gray-600">{participation.club}</p>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">
                         <span>Date: {participation.date}</span>
                         <span>Role: {participation.role}</span>
                         <span>Hours: {participation.hours}</span>
                       </div>
                     </div>
-                    <div className="flex flex-col items-end space-y-2">
+                    <div className="flex flex-col items-end gap-1 sm:gap-2 mt-2 sm:mt-0">
                       <Badge variant={
                         participation.status === "Completed" ? "default" :
                         participation.status === "Pending Approval" ? "secondary" : "outline"
-                      }>
+                      } className="text-xs sm:text-sm">
                         {participation.status}
                       </Badge>
                       {participation.certificate && (
-                        <Badge variant="outline" className="text-green-600">
+                        <Badge variant="outline" className="text-xs sm:text-sm text-green-600">
                           Certificate Available
                         </Badge>
                       )}
                     </div>
                   </div>
                   {participation.feedback && (
-                    <div className="bg-green-50 p-3 rounded-lg mb-3">
-                      <p className="text-sm text-green-800">
+                    <div className="bg-green-50 p-2 sm:p-3 rounded-lg mb-2 sm:mb-3">
+                      <p className="text-xs sm:text-sm text-green-800">
                         <strong>Feedback:</strong> {participation.feedback}
                       </p>
                     </div>
                   )}
-                  <div className="flex gap-2">
+                  <div className="flex gap-1 sm:gap-2">
                     {participation.certificate && (
-                      <Button size="sm" variant="outline">
-                        <Award className="mr-2 h-4 w-4" />
-                        Download Certificate
+                      <Button size="sm" variant="outline" className="text-xs sm:text-sm">
+                        <Award className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                        Certificate
                       </Button>
                     )}
-                    <Button size="sm" variant="outline">
-                      <Upload className="mr-2 h-4 w-4" />
+                    <Button size="sm" variant="outline" className="text-xs sm:text-sm">
+                      <Upload className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                       Upload Proof
                     </Button>
                   </div>
@@ -429,29 +527,31 @@ const ClubsModule = ({ user }) => {
               </Card>
             ))}
           </div>
-        </TabsContent>
+        </div>
+      )}
 
-        {/* Achievements Tab */}
-        <TabsContent value="achievements" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Achievements Tab */}
+      {(activeTab === "achievements") && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {achievements.map((achievement, index) => (
-              <Card key={index} className="border-yellow-200 bg-yellow-50">
-                <CardContent className="p-6">
-                  <div className="text-center mb-4">
-                    <Award className="h-12 w-12 text-yellow-600 mx-auto mb-3" />
-                    <h3 className="font-semibold text-lg">{achievement.title}</h3>
-                    <p className="text-sm text-gray-600">{achievement.club}</p>
+              <Card key={index} className="border-yellow-200 bg-yellow-50 hover:shadow-md transition-shadow">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="text-center mb-3 sm:mb-4">
+                    <Award className="h-8 w-8 sm:h-10 sm:h-12 text-yellow-600 mx-auto mb-2 sm:mb-3" />
+                    <h3 className="font-semibold text-base sm:text-lg">{achievement.title}</h3>
+                    <p className="text-xs sm:text-sm text-gray-600">{achievement.club}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm text-gray-700 mb-3">{achievement.description}</p>
-                    <Badge variant="secondary">{achievement.date}</Badge>
+                    <p className="text-xs sm:text-sm text-gray-700 mb-2 sm:mb-3">{achievement.description}</p>
+                    <Badge variant="secondary" className="text-xs sm:text-sm">{achievement.date}</Badge>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
-        </TabsContent>
-      </Tabs>
+        </div>
+      )}
     </div>
   );
 };
