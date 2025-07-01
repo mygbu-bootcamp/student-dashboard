@@ -68,7 +68,7 @@ const Sidebar = ({
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-4 border-b">
+          <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
               <img
@@ -91,7 +91,7 @@ const Sidebar = ({
           </div>
 
           {/* User info */}
-          <div className="p-4 border-b">
+          <div className="p-4 border-b border-gray-200">
             <div className="flex items-center space-x-3">
               <Avatar className="h-10 w-10">
                 <AvatarImage src={user?.photo} />
@@ -138,7 +138,7 @@ const Sidebar = ({
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t">
+          <div className="p-4 border-t border-gray-200">
             <Button
               variant="ghost"
               className="w-full justify-start text-gray-700 hover:bg-gray-100"
