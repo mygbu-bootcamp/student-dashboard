@@ -93,77 +93,79 @@ const ExamsModule = ({ user }) => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 px-4 md:px-6 lg:px-8 py-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Exams & Results</h1>
-          <p className="text-gray-600">Manage exam registration and view academic results</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Exams & Results</h1>
+          <p className="text-gray-600 text-sm sm:text-base">
+            Manage exam registration and view academic results
+          </p>
         </div>
-        <Button variant="outline" className="flex items-center">
+        <Button variant="outline" className="flex items-center w-full sm:w-auto justify-center">
           <Download className="mr-2 h-4 w-4" />
           Download Transcript
         </Button>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card><CardContent className="p-4"><div className="flex justify-between"><div><p className="text-sm text-gray-600">Current CGPA</p><p className="text-2xl font-bold text-blue-600">8.2</p></div><Award className="h-8 w-8 text-blue-500" /></div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="flex justify-between"><div><p className="text-sm text-gray-600">Last SGPA</p><p className="text-2xl font-bold text-green-600">8.5</p></div><TrendingUp className="h-8 w-8 text-green-500" /></div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="flex justify-between"><div><p className="text-sm text-gray-600">Registered Exams</p><p className="text-2xl font-bold text-purple-600">2</p></div><FileText className="h-8 w-8 text-purple-500" /></div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="flex justify-between"><div><p className="text-sm text-gray-600">Pending Exams</p><p className="text-2xl font-bold text-orange-600">2</p></div><Clock className="h-8 w-8 text-orange-500" /></div></CardContent></Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card><CardContent className="p-4"><div className="flex justify-between items-center"><div><p className="text-sm text-gray-600">Current CGPA</p><p className="text-2xl font-bold text-blue-600">8.2</p></div><Award className="h-8 w-8 text-blue-500" /></div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="flex justify-between items-center"><div><p className="text-sm text-gray-600">Last SGPA</p><p className="text-2xl font-bold text-green-600">8.5</p></div><TrendingUp className="h-8 w-8 text-green-500" /></div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="flex justify-between items-center"><div><p className="text-sm text-gray-600">Registered Exams</p><p className="text-2xl font-bold text-purple-600">2</p></div><FileText className="h-8 w-8 text-purple-500" /></div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="flex justify-between items-center"><div><p className="text-sm text-gray-600">Pending Exams</p><p className="text-2xl font-bold text-orange-600">2</p></div><Clock className="h-8 w-8 text-orange-500" /></div></CardContent></Card>
       </div>
 
-      {/* Exams and Latest Results */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <Card>
-          <CardHeader><CardTitle className="flex items-center"><Calendar className="mr-2 h-5 w-5 text-blue-500" />Upcoming Exams</CardTitle><CardDescription>Register for exams and download admit cards</CardDescription></CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {upcomingExams.map((exam, i) => (
-                <div key={i} className="border rounded-lg p-4">
-                  <div className="flex justify-between mb-2"><h3 className="font-medium">{exam.subject}</h3><Badge className={getStatusColor(exam.status)}>{exam.status}</Badge></div>
-                  <div className="text-sm text-gray-600 mb-3">
-                    <p>📅 {exam.date} at {exam.time}</p>
-                    <p>📍 {exam.venue}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    {exam.status === "Not Registered" && (
-                      <Button size="sm" disabled={!exam.eligible} className="flex-1">
-                        {exam.eligible ? "Register" : "Ineligible"}
-                      </Button>
-                    )}
-                    {exam.status === "Registered" && (
-                      <Button size="sm" variant="outline" className="flex items-center">
-                        <QrCode className="mr-1 h-4 w-4" />Admit Card
-                      </Button>
-                    )}
-                    {exam.status === "Pending" && (
-                      <Button size="sm" variant="secondary" disabled>Clear Dues</Button>
-                    )}
-                  </div>
+          <CardHeader><CardTitle className="flex items-center text-base sm:text-lg"><Calendar className="mr-2 h-5 w-5 text-blue-500" />Upcoming Exams</CardTitle><CardDescription>Register for exams and download admit cards</CardDescription></CardHeader>
+          <CardContent className="space-y-4">
+            {upcomingExams.map((exam, i) => (
+              <div key={i} className="border rounded-lg p-4 space-y-3">
+                <div className="flex flex-wrap justify-between items-center gap-2">
+                  <h3 className="font-medium">{exam.subject}</h3>
+                  <Badge className={getStatusColor(exam.status)}>{exam.status}</Badge>
                 </div>
-              ))}
-            </div>
+                <div className="text-sm text-gray-600 space-y-1">
+                  <p>📅 {exam.date} at {exam.time}</p>
+                  <p>📍 {exam.venue}</p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  {exam.status === "Not Registered" && (
+                    <Button size="sm" disabled={!exam.eligible} className="flex-1">
+                      {exam.eligible ? "Register" : "Ineligible"}
+                    </Button>
+                  )}
+                  {exam.status === "Registered" && (
+                    <Button size="sm" variant="outline" className="flex items-center flex-1 sm:flex-none">
+                      <QrCode className="mr-1 h-4 w-4" />
+                      Admit Card
+                    </Button>
+                  )}
+                  {exam.status === "Pending" && (
+                    <Button size="sm" variant="secondary" disabled className="flex-1">
+                      Clear Dues
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="flex items-center"><Award className="mr-2 h-5 w-5 text-green-500" />Latest Results - Semester 7</CardTitle><CardDescription>Subject-wise grades and performance</CardDescription></CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {subjectGrades.map((subj, i) => (
-                <div key={i} className="flex justify-between items-center p-3 border rounded-lg">
-                  <div>
-                    <p className="font-medium">{subj.subject}</p>
-                    <p className="text-sm text-gray-600">{subj.credits} Credits • {subj.marks} Marks</p>
-                  </div>
-                  <div className="text-right">
-                    <Badge className={getGradeColor(subj.grade)}>{subj.grade}</Badge>
-                    <p className="text-xs text-gray-500 mt-1">{subj.points} Points</p>
-                  </div>
+          <CardHeader><CardTitle className="flex items-center text-base sm:text-lg"><Award className="mr-2 h-5 w-5 text-green-500" />Latest Results - Semester 7</CardTitle><CardDescription>Subject-wise grades and performance</CardDescription></CardHeader>
+          <CardContent className="space-y-3">
+            {subjectGrades.map((subj, i) => (
+              <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 border rounded-lg gap-2">
+                <div>
+                  <p className="font-medium">{subj.subject}</p>
+                  <p className="text-sm text-gray-600">{subj.credits} Credits • {subj.marks} Marks</p>
                 </div>
-              ))}
-            </div>
+                <div className="text-right">
+                  <Badge className={getGradeColor(subj.grade)}>{subj.grade}</Badge>
+                  <p className="text-xs text-gray-500 mt-1 text-right">{subj.points} Points</p>
+                </div>
+              </div>
+            ))}
             <div className="mt-4 p-3 bg-blue-50 rounded-lg flex justify-between items-center">
               <span className="font-medium">Semester GPA:</span>
               <span className="text-xl font-bold text-blue-600">8.5</span>
@@ -172,44 +174,51 @@ const ExamsModule = ({ user }) => {
         </Card>
       </div>
 
-      {/* Semester-wise Results */}
       <Card>
         <CardHeader><CardTitle>Academic Progress</CardTitle><CardDescription>Semester-wise performance and CGPA trend</CardDescription></CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {semesterResults.map((res, i) => (
-              <div key={i} className="flex justify-between items-center p-4 border rounded-lg">
-                <div className="flex items-center gap-4">
-                  <div className="text-center"><p className="font-medium">{res.semester}</p><p className="text-sm text-gray-600">{res.year}</p></div>
-                  <Badge className={getStatusColor(res.status)}>{res.status}</Badge>
+        <CardContent className="space-y-4">
+          {semesterResults.map((res, i) => (
+            <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border rounded-lg gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="text-center sm:text-left">
+                  <p className="font-medium">{res.semester}</p>
+                  <p className="text-sm text-gray-600">{res.year}</p>
                 </div>
-                <div className="text-right space-x-6">
-                  <span><p className="text-sm text-gray-600">SGPA</p><p className="font-bold text-lg">{res.sgpa}</p></span>
-                  <span><p className="text-sm text-gray-600">CGPA</p><p className="font-bold text-lg">{res.cgpa}</p></span>
-                  <Button variant="ghost" size="sm"><Download className="h-4 w-4" /></Button>
-                </div>
+                <Badge className={getStatusColor(res.status)}>{res.status}</Badge>
               </div>
-            ))}
-          </div>
+              <div className="flex justify-between gap-6 w-full sm:w-auto text-sm text-gray-600">
+                <div className="text-center">
+                  <p>SGPA</p>
+                  <p className="font-bold text-lg">{res.sgpa}</p>
+                </div>
+                <div className="text-center">
+                  <p>CGPA</p>
+                  <p className="font-bold text-lg">{res.cgpa}</p>
+                </div>
+                <Button variant="ghost" size="sm">
+                  <Download className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
 
-      {/* Quick Actions */}
       <Card>
         <CardHeader><CardTitle>Quick Actions</CardTitle><CardDescription>Exam-related services and requests</CardDescription></CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="outline" className="flex flex-col items-center justify-center p-4 h-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <Button variant="outline" className="flex flex-col items-center justify-center p-4 h-auto text-center">
               <FileText className="h-6 w-6 mb-2 text-blue-500" />
               <p className="font-medium">Apply for Revaluation</p>
               <p className="text-sm text-gray-600">Request grade review</p>
             </Button>
-            <Button variant="outline" className="flex flex-col items-center justify-center p-4 h-auto">
+            <Button variant="outline" className="flex flex-col items-center justify-center p-4 h-auto text-center">
               <AlertTriangle className="h-6 w-6 mb-2 text-orange-500" />
               <p className="font-medium">Backlog Registration</p>
               <p className="text-sm text-gray-600">Register for failed subjects</p>
             </Button>
-            <Button variant="outline" className="flex flex-col items-center justify-center p-4 h-auto">
+            <Button variant="outline" className="flex flex-col items-center justify-center p-4 h-auto text-center">
               <Award className="h-6 w-6 mb-2 text-green-500" />
               <p className="font-medium">Grade Card</p>
               <p className="text-sm text-gray-600">Download official transcript</p>

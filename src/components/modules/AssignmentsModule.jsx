@@ -141,7 +141,8 @@ const AssignmentsModule = ({ user }) => {
           <h1 className="text-3xl font-bold text-gray-900">Assignments & Projects</h1>
           <p className="text-gray-600">Track your assignments, submissions, and project progress</p>
         </div>
-        <Button className="bg-blue-900 hover:bg-blue-800">
+        <Button className="bg-blue-900 hover:bg-blue-800 text-white
+        ">
           <Upload className="mr-2 h-4 w-4" />
           Submit Assignment
         </Button>
@@ -268,7 +269,7 @@ const AssignmentsModule = ({ user }) => {
 
                 <div className="flex space-x-2">
                   {assignment.status === "Pending" && (
-                    <Button size="sm" className="bg-blue-900 hover:bg-blue-800">
+                    <Button size="sm" className="bg-blue-900 hover:bg-blue-800 text-white">
                       <Upload className="mr-2 h-3 w-3" />
                       Submit
                     </Button>

@@ -1,12 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
-import { Separator } from "../components/ui/separator";
 import {
   User,
-  Calendar,
   FileText,
   BarChart3,
-  Settings,
   LogOut,
   Home,
   GraduationCap,
@@ -26,8 +24,6 @@ import {
   FolderOpen,
   MessageSquare
 } from "lucide-react";
-
-// Removed TypeScript interface, now props are dynamically accepted
 
 const menuItems = [
   { id: "dashboard", label: "Dashboard", icon: Home },
@@ -57,8 +53,14 @@ const Sidebar = ({
   sidebarOpen,
   setSidebarOpen,
   user,
-  onLogout,
 }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // or sessionStorage.clear()
+    navigate("/login"); // make sure your route is correct
+  };
+
   return (
     <>
       <div
@@ -71,13 +73,14 @@ const Sidebar = ({
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-              <img
-               src="https://tse4.mm.bing.net/th/id/OIP.lAzYxJcn7HVBTnCM80d-IwHaHw?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"  // <-- adjust the path if needed
-               alt="GBU Logo"
-               className="w-8 h-8 object-contain"
-               />
-               <span className="font-semibold text-gray-900 hidden lg:block">MyGBU</span>
-
+                <img
+                  src="https://tse4.mm.bing.net/th/id/OIP.lAzYxJcn7HVBTnCM80d-IwHaHw"
+                  alt="GBU Logo"
+                  className="w-8 h-8 object-contain"
+                />
+                <span className="font-semibold text-gray-900 hidden lg:block">
+                  MyGBU
+                </span>
               </div>
               <Button
                 variant="ghost"
@@ -90,7 +93,7 @@ const Sidebar = ({
             </div>
           </div>
 
-          {/* User info */}
+          {/* User Info */}
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center space-x-3">
               <Avatar className="h-10 w-10">
@@ -142,7 +145,7 @@ const Sidebar = ({
             <Button
               variant="ghost"
               className="w-full justify-start text-gray-700 hover:bg-gray-100"
-              onClick={onLogout}
+              onClick={handleLogout}
             >
               <LogOut className="mr-3 h-4 w-4" />
               Logout
