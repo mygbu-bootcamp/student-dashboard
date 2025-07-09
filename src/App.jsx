@@ -9,10 +9,11 @@ import { AuthProvider } from "./hooks/AuthContext";
 import ProtectedRoute from "./hooks/ProtectedRoute";
 
 // Pages
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+
 import LoginScreen from "./components/LoginScreen";
 import MainDashboard from "./components/MainDashboard";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -25,8 +26,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             {/* Public routes */}
-            <Route path="/login" element={<LoginScreen />} />
-            <Route path="/index" element={<Index />} />
+            <Route path="*" element={<LoginScreen />} />
+            <Route path="*" element={<Index />} />
 
             {/* Protected routes */}
             <Route

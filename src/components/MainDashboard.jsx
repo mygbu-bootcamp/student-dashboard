@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "../components/ui/button";
 import Sidebar from "../components/Sidebar";
-import DashboardHome from "../components/dashboard/DashboardHome";
+import DashboardHome from "../components/modules/Dashboard";
 import ProfileModule from "../components/modules/ProfileModule";
 import AcademicModule from "../components/modules/AcademicModule";
 import AttendanceModule from "../components/modules/AttendanceModule";
