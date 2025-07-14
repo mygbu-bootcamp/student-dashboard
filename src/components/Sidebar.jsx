@@ -22,7 +22,7 @@ import {
   Building,
   HelpCircle,
   FolderOpen,
-  MessageSquare
+  MessageSquare,
 } from "lucide-react";
 
 const menuItems = [
@@ -57,103 +57,110 @@ const Sidebar = ({
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // or sessionStorage.clear()
-    navigate("/login"); // make sure your route is correct
+    navigate("/login");
+  };
+
+  // Provide fallback user data if none passed
+  const displayUser = user || {
+    name: "Aarav Sharma",
+    studentId: "2021BCS001",
+    photo: "A",
   };
 
   return (
-    <>
-      <div
-        className={`${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
-      >
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <img
-                  src="https://tse4.mm.bing.net/th/id/OIP.lAzYxJcn7HVBTnCM80d-IwHaHw"
-                  alt="GBU Logo"
-                  className="w-8 h-8 object-contain"
-                />
-                <span className="font-semibold text-gray-900 hidden lg:block">
-                  MyGBU
-                </span>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSidebarOpen(false)}
-                className="lg:hidden"
-              >
-                <X className="h-5 w-5" />
-              </Button>
-            </div>
-          </div>
-
-          {/* User Info */}
-          <div className="p-4 border-b border-gray-200">
+    <div
+      className={`${
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      } fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-md transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
+    >
+      <div className="flex flex-col h-full">
+        {/* Header */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={user?.photo} />
-                <AvatarFallback className="bg-blue-100 text-blue-900">
-                  {user?.name?.charAt(0) || "S"}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
-                  {user?.name}
-                </p>
-                <p className="text-xs text-gray-500 truncate">
-                  {user?.studentId}
-                </p>
-              </div>
+              <img
+                src="https://tse4.mm.bing.net/th/id/OIP.lAzYxJcn7HVBTnCM80d-IwHaHw"
+                alt="GBU Logo"
+                className="w-8 h-8 object-contain"
+              />
+              <span className="font-semibold text-gray-900 hidden lg:block">
+                MyGBU
+              </span>
             </div>
-          </div>
-
-          {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto p-4">
-            <div className="space-y-1">
-              {menuItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Button
-                    key={item.id}
-                    variant={activeModule === item.id ? "default" : "ghost"}
-                    className={`w-full justify-start ${
-                      activeModule === item.id
-                        ? "bg-blue-900 text-white hover:bg-blue-800"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                    onClick={() => {
-                      setActiveModule(item.id);
-                      setSidebarOpen(false);
-                    }}
-                  >
-                    <Icon className="mr-3 h-4 w-4" />
-                    {item.label}
-                  </Button>
-                );
-              })}
-            </div>
-          </nav>
-
-          {/* Footer */}
-          <div className="p-4 border-t border-gray-200">
             <Button
               variant="ghost"
-              className="w-full justify-start text-gray-700 hover:bg-gray-100"
-              onClick={handleLogout}
+              size="sm"
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden"
             >
-              <LogOut className="mr-3 h-4 w-4" />
-              Logout
+              <X className="h-5 w-5" />
             </Button>
           </div>
         </div>
+
+       {/* User Info */}
+<div className="p-4 border-b border-gray-200">
+  <div className="flex items-center space-x-3">
+    <Avatar className="h-10 w-10 bg-blue-100 text-blue-900 font-semibold">
+      <AvatarImage src={displayUser.photo} />
+      <AvatarFallback>
+        {displayUser.name?.charAt(0) || "S"}
+      </AvatarFallback>
+    </Avatar>
+    <div className="flex-1 min-w-0">
+      <p className="text-sm font-medium text-gray-900 truncate">
+        {displayUser.name}
+      </p>
+      <p className="text-xs text-gray-500 truncate">
+        {displayUser.studentId}
+      </p>
+    </div>
+  </div>
+</div>
+
+
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+          <div className="space-y-1">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeModule === item.id;
+
+              return (
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  className={`w-full justify-start rounded-lg px-4 py-2 text-sm font-medium ${
+                    isActive
+                      ? "bg-blue-900 text-white hover:bg-blue-800"
+                      : "text-gray-800 hover:bg-gray-100"
+                  }`}
+                  onClick={() => {
+                    setActiveModule(item.id);
+                    setSidebarOpen(false);
+                  }}
+                >
+                  <Icon className="mr-3 h-4 w-4" />
+                  {item.label}
+                </Button>
+              );
+            })}
+          </div>
+        </nav>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-200">
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-gray-700 hover:bg-gray-100"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-3 h-4 w-4" />
+            Logout
+          </Button>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

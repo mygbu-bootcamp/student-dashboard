@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
-import { Progress } from "../../components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Input } from "../../components/ui/input";
-import { Textarea } from "../../components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Progress } from "../components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
 import {
   ClipboardList,
   Upload,
@@ -372,7 +372,7 @@ const AssignmentsModule = ({ user }) => {
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Assignment Title</label>
+                  <label className="text-sm font-medium text-white">Assignment Title</label>
                   <Input placeholder="Select assignment to submit" className="mt-1" />
                 </div>
                 
@@ -408,7 +408,7 @@ const AssignmentsModule = ({ user }) => {
                 </div>
                 
                 <div className="flex space-x-2">
-                  <Button className="bg-blue-900 hover:bg-blue-800">
+                  <Button className="bg-blue-900 hover:bg-blue-800 text-white">
                     Submit Assignment
                   </Button>
                   <Button variant="outline">

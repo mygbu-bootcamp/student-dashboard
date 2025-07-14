@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
-import { Input } from "../../components/ui/input";
-import { Textarea } from "../../components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { 
   Heart, 
   Users, 
@@ -269,7 +269,7 @@ const SocialImpactModule = ({ user }) => {
                 <CardContent className="pt-0">
                   <div className="space-y-3 sm:space-y-4">
                     {activities.slice(0, 3).map((activity) => (
-                      <div key={activity.id} className="flex items-start space-x-3 p-2 sm:p-3 border rounded-lg">
+                      <div key={activity.id} className="flex items-start space-x-3 p-2 sm:p-3 border border-gray-200 rounded-lg">
                         <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-sm sm:text-base truncate">{activity.title}</h4>
@@ -293,7 +293,7 @@ const SocialImpactModule = ({ user }) => {
                 <CardContent className="pt-0">
                   <div className="space-y-3 sm:space-y-4">
                     {programs.filter(p => p.enrolled).map((program) => (
-                      <div key={program.id} className="p-3 sm:p-4 border rounded-lg">
+                      <div key={program.id} className="p-3 sm:p-4 border border-gray-200 rounded-lg">
                         <h4 className="font-medium mb-2 text-sm sm:text-base">{program.name}</h4>
                         <p className="text-xs sm:text-sm text-gray-600 mb-3">{program.description}</p>
                         <div className="space-y-2 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
@@ -424,7 +424,7 @@ const SocialImpactModule = ({ user }) => {
                           </div>
                         </div>
                         
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-gray-200">
                           <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                             <Badge variant="outline" className="text-xs">{activity.impact}</Badge>
                             {activity.certificate && (
