@@ -1,30 +1,110 @@
-import * as React from "react"
-import * as PopoverPrimitive from "@radix-ui/react-popover"
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { cn } from "../../lib/utils"
+// Simplified cn utility
+const cn = (...classes) => classes.filter(Boolean).join(' ');
 
-const Popover = PopoverPrimitive.Root
+// Custom Popover implementation
+const PopoverContext = React.createContext();
 
-const PopoverTrigger = PopoverPrimitive.Trigger
-
-const PopoverContent = React.forwardRef(function PopoverContent(
-  { className, align = "center", sideOffset = 4, ...props }, ref
-) {
+const Popover = ({ children, ...props }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
   return (
-    <PopoverPrimitive.Portal>
-      <PopoverPrimitive.Content
-        ref={ref}
-        align={align}
-        sideOffset={sideOffset}
+    <PopoverContext.Provider value={{ isOpen, setIsOpen }}>
+      <div className="relative" {...props}>
+        {children}
+      </div>
+    </PopoverContext.Provider>
+  );
+};
+
+const PopoverTrigger = ({ children, asChild = false, ...props }) => {
+  const { setIsOpen } = React.useContext(PopoverContext);
+  
+  const handleClick = () => {
+    setIsOpen(prev => !prev);
+  };
+
+  if (asChild) {
+    return React.cloneElement(React.Children.only(children), {
+      onClick: handleClick,
+      ...props
+    });
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      aria-expanded={useContext(PopoverContext).isOpen}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+const PopoverContent = React.forwardRef(
+  ({ className, align = "center", sideOffset = 4, children, ...props }, ref) => {
+    const { isOpen, setIsOpen } = React.useContext(PopoverContext);
+    const contentRef = useRef(null);
+    const triggerRef = useRef(null);
+
+    // Handle click outside to close
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (contentRef.current && !contentRef.current.contains(event.target) &&
+            triggerRef.current && !triggerRef.current.contains(event.target)) {
+          setIsOpen(false);
+        }
+      };
+
+      if (isOpen) {
+        document.addEventListener('mousedown', handleClickOutside);
+      }
+
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [isOpen, setIsOpen]);
+
+    // Animation styles
+    const getAnimationStyles = (isOpen) => {
+      const base = "transition-all duration-200 ease-in-out";
+      if (!isOpen) return `${base} opacity-0 scale-95`;
+      return `${base} opacity-100 scale-100`;
+    };
+
+    // Positioning logic
+    const getPositionStyles = (align) => {
+      const positions = {
+        center: "left-1/2 -translate-x-1/2",
+        start: "left-0",
+        end: "right-0"
+      };
+      return positions[align] || positions.center;
+    };
+
+    if (!isOpen) return null;
+
+    return (
+      <div
+        ref={ref || contentRef}
         className={cn(
-          "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+          "z-50 w-72 rounded-md bg-white p-4 text-gray-900 shadow-lg outline-none",
+          getAnimationStyles(isOpen),
+          getPositionStyles(align),
           className
         )}
+        style={{ marginTop: `${sideOffset}px` }}
         {...props}
-      />
-    </PopoverPrimitive.Portal>
-  )
-})
-PopoverContent.displayName = PopoverPrimitive.Content.displayName
+      >
+        {children}
+      </div>
+    );
+  }
+);
+PopoverContent.displayName = "PopoverContent";
 
-export { Popover, PopoverTrigger, PopoverContent }
+export { Popover, PopoverTrigger, PopoverContent };

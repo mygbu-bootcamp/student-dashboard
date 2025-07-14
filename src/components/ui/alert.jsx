@@ -1,37 +1,26 @@
-import * as React from "react"
-import { cva } from "class-variance-authority"
+import * as React from "react";
+import { cn } from "../../lib/utils";
 
-import { cn } from "../../lib/utils"
+const Alert = React.forwardRef(({ className, variant = "default", ...props }, ref) => {
+  const baseStyles = "relative w-full rounded-lg p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground";
+  
+  const variantStyles = {
+    default: "bg-background text-foreground",
+    destructive: "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
+  };
 
-const alertVariants = cva(
-  "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
-  {
-    variants: {
-      variant: {
-        default: "bg-background text-foreground",
-        destructive:
-          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
-
-const Alert = React.forwardRef(function Alert({ className, variant, ...props }, ref) {
   return (
     <div
       ref={ref}
       role="alert"
-      className={cn(alertVariants({ variant }), className)}
+      className={cn(baseStyles, variantStyles[variant], className)}
       {...props}
     />
   );
 });
-Alert.displayName = "Alert"
+Alert.displayName = "Alert";
 
-const AlertTitle = React.forwardRef(function AlertTitle({ className, ...props }, ref) {
+const AlertTitle = React.forwardRef(({ className, ...props }, ref) => {
   return (
     <h5
       ref={ref}
@@ -40,9 +29,9 @@ const AlertTitle = React.forwardRef(function AlertTitle({ className, ...props },
     />
   );
 });
-AlertTitle.displayName = "AlertTitle"
+AlertTitle.displayName = "AlertTitle";
 
-const AlertDescription = React.forwardRef(function AlertDescription({ className, ...props }, ref) {
+const AlertDescription = React.forwardRef(({ className, ...props }, ref) => {
   return (
     <div
       ref={ref}
@@ -51,6 +40,6 @@ const AlertDescription = React.forwardRef(function AlertDescription({ className,
     />
   );
 });
-AlertDescription.displayName = "AlertDescription"
+AlertDescription.displayName = "AlertDescription";
 
-export { Alert, AlertTitle, AlertDescription }
+export { Alert, AlertTitle, AlertDescription };

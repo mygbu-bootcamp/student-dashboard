@@ -1,34 +1,130 @@
-import { GripVertical } from "lucide-react"
-import * as ResizablePrimitive from "react-resizable-panels"
+import * as React from "react";
+import { useState, useEffect, useRef } from "react";
 
-import { cn } from "../../lib/utils"
+// Simplified cn utility
+const cn = (...classes) => classes.filter(Boolean).join(' ');
 
-const ResizablePanelGroup = ({ className, ...props }) => (
-  <ResizablePrimitive.PanelGroup
-    className={cn(
-      "flex h-full w-full data-[panel-group-direction=vertical]:flex-col",
-      className
-    )}
-    {...props}
-  />
-)
+// Custom GripVertical icon (replacing lucide-react)
+const GripVertical = () => (
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    <circle cx="9" cy="12" r="1" />
+    <circle cx="9" cy="5" r="1" />
+    <circle cx="9" cy="19" r="1" />
+    <circle cx="15" cy="12" r="1" />
+    <circle cx="15" cy="5" r="1" />
+    <circle cx="15" cy="19" r="1" />
+  </svg>
+);
 
-const ResizablePanel = ResizablePrimitive.Panel
+const ResizablePanelGroup = ({ 
+  className, 
+  direction = "horizontal", 
+  children, 
+  ...props 
+}) => {
+  return (
+    <div
+      className={cn(
+        "flex h-full w-full",
+        direction === "vertical" ? "flex-col" : "",
+        className
+      )}
+      data-panel-group-direction={direction}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
 
-const ResizableHandle = ({ withHandle, className, ...props }) => (
-  <ResizablePrimitive.PanelResizeHandle
-    className={cn(
-      "relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90",
-      className
-    )}
-    {...props}
-  >
-    {withHandle && (
-      <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
-        <GripVertical className="h-2.5 w-2.5" />
-      </div>
-    )}
-  </ResizablePrimitive.PanelResizeHandle>
-)
+const ResizablePanel = ({ 
+  className, 
+  defaultSize = 50, 
+  minSize = 10, 
+  children, 
+  ...props 
+}) => {
+  const [size, setSize] = useState(defaultSize);
+  const panelRef = useRef(null);
 
-export { ResizablePanelGroup, ResizablePanel, ResizableHandle }
+  return (
+    <div
+      ref={panelRef}
+      className={cn("relative", className)}
+      style={{
+        flexBasis: `${size}%`,
+        minWidth: direction === "horizontal" ? `${minSize}%` : undefined,
+        minHeight: direction === "vertical" ? `${minSize}%` : undefined,
+      }}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+const ResizableHandle = ({ 
+  withHandle = true, 
+  className, 
+  onResize, 
+  ...props 
+}) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const [startPos, setStartPos] = useState(0);
+  const [currentPos, setCurrentPos] = useState(0);
+  const handleRef = useRef(null);
+  const groupDirection = "horizontal"; // Would normally get from context
+
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMouseMove = (e) => {
+      const pos = groupDirection === "horizontal" ? e.clientX : e.clientY;
+      setCurrentPos(pos);
+      if (onResize) onResize(pos - startPos);
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, startPos, groupDirection, onResize]);
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartPos(groupDirection === "horizontal" ? e.clientX : e.clientY);
+    setCurrentPos(groupDirection === "horizontal" ? e.clientX : e.clientY);
+  };
+
+  return (
+    <div
+      ref={handleRef}
+      className={cn(
+        "relative flex items-center justify-center",
+        "bg-gray-200 hover:bg-gray-300 transition-colors",
+        groupDirection === "horizontal" ? "w-1 cursor-col-resize" : "h-1 cursor-row-resize",
+        className
+      )}
+      onMouseDown={handleMouseDown}
+      {...props}
+    >
+      {withHandle && (
+        <div className={cn(
+          "z-10 flex items-center justify-center rounded-sm bg-gray-400",
+          groupDirection === "horizontal" ? "h-4 w-3" : "w-4 h-3"
+        )}>
+          <GripVertical />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export { ResizablePanelGroup, ResizablePanel, ResizableHandle };

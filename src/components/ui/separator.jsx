@@ -1,25 +1,46 @@
-import * as React from "react"
-import * as SeparatorPrimitive from "@radix-ui/react-separator"
+import * as React from 'react';
 
-import { cn } from "../../lib/utils"
+const Separator = React.forwardRef(
+  (
+    {
+      className = '',
+      orientation = 'horizontal',
+      decorative = true,
+      ...props
+    },
+    ref
+  ) => {
+    // ARIA attributes for accessibility
+    const ariaProps = decorative
+      ? { 'aria-hidden': true }
+      : { role: 'separator', 'aria-orientation': orientation };
 
-const Separator = React.forwardRef(function Separator(
-  { className, orientation = "horizontal", decorative = true, ...props }, ref
-) {
-  return (
-    <SeparatorPrimitive.Root
-      ref={ref}
-      decorative={decorative}
-      orientation={orientation}
-      className={cn(
-        "shrink-0 bg-border",
-        orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
-        className
-      )}
-      {...props}
-    />
-  )
-})
-Separator.displayName = SeparatorPrimitive.Root.displayName
+    // Shadow styles to replace borders
+    const shadowStyle = {
+      boxShadow:
+        orientation === 'horizontal'
+          ? '0 1px 0 0 rgba(0, 0, 0, 0.1)'
+          : '1px 0 0 0 rgba(0, 0, 0, 0.1)',
+    };
 
-export { Separator }
+    return (
+      <div
+        ref={ref}
+        {...ariaProps}
+        {...props}
+        style={{ ...shadowStyle, ...props.style }}
+        className={[
+          'shrink-0 bg-transparent',
+          orientation === 'horizontal' ? 'h-[1px] w-full' : 'h-full w-[1px]',
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      />
+    );
+  }
+);
+
+Separator.displayName = 'Separator';
+
+export { Separator };

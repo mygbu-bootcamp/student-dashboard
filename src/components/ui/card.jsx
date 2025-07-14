@@ -1,20 +1,19 @@
-import * as React from "react"
-
-import { cn } from "../../lib/utils"
+import * as React from "react";
+import { cn } from "../../lib/utils";
 
 const Card = React.forwardRef(function Card({ className, ...props }, ref) {
   return (
     <div
       ref={ref}
       className={cn(
-        "rounded-lg bg-card text-card-foreground shadow-sm", // removed `border`
+        "rounded-lg bg-white text-card-foreground shadow-sm w-full", // Changed bg-card to bg-white
         className
       )}
       {...props}
     />
   );
 });
-Card.displayName = "Card"
+Card.displayName = "Card";
 
 const CardHeader = React.forwardRef(function CardHeader({ className, ...props }, ref) {
   return (
@@ -25,7 +24,7 @@ const CardHeader = React.forwardRef(function CardHeader({ className, ...props },
     />
   );
 });
-CardHeader.displayName = "CardHeader"
+CardHeader.displayName = "CardHeader";
 
 const CardTitle = React.forwardRef(function CardTitle({ className, ...props }, ref) {
   return (
@@ -39,7 +38,7 @@ const CardTitle = React.forwardRef(function CardTitle({ className, ...props }, r
     />
   );
 });
-CardTitle.displayName = "CardTitle"
+CardTitle.displayName = "CardTitle";
 
 const CardDescription = React.forwardRef(function CardDescription({ className, ...props }, ref) {
   return (
@@ -50,14 +49,14 @@ const CardDescription = React.forwardRef(function CardDescription({ className, .
     />
   );
 });
-CardDescription.displayName = "CardDescription"
+CardDescription.displayName = "CardDescription";
 
 const CardContent = React.forwardRef(function CardContent({ className, ...props }, ref) {
   return (
     <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
   );
 });
-CardContent.displayName = "CardContent"
+CardContent.displayName = "CardContent";
 
 const CardFooter = React.forwardRef(function CardFooter({ className, ...props }, ref) {
   return (
@@ -68,6 +67,6 @@ const CardFooter = React.forwardRef(function CardFooter({ className, ...props },
     />
   );
 });
-CardFooter.displayName = "CardFooter"
+CardFooter.displayName = "CardFooter";
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };

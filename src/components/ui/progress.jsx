@@ -1,25 +1,40 @@
-import * as React from "react"
-import * as ProgressPrimitive from "@radix-ui/react-progress"
+import * as React from "react";
 
-import { cn } from "../../lib/utils"
+// Simplified cn utility
+const cn = (...classes) => classes.filter(Boolean).join(' ');
 
-const Progress = React.forwardRef(function Progress({ className, value, ...props }, ref) {
+const Progress = React.forwardRef(function Progress(
+  { className, value = 0, ...props },
+  ref
+) {
+  // Ensure value is between 0 and 100
+  const progressValue = Math.min(100, Math.max(0, value || 0));
+  
   return (
-    <ProgressPrimitive.Root
+    <div
       ref={ref}
       className={cn(
-        "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
+        "relative h-4 w-full overflow-hidden rounded-full bg-gray-200", // bg-secondary replacement
         className
       )}
+      role="progressbar"
+      aria-valuenow={progressValue}
+      aria-valuemin={0}
+      aria-valuemax={100}
       {...props}
     >
-      <ProgressPrimitive.Indicator
-        className="h-full w-full flex-1 bg-primary transition-all"
-        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+      <div
+        className="h-full w-full flex-1 bg-blue-600 transition-all" // bg-primary replacement
+        style={{
+          transform: `translateX(-${100 - progressValue}%)`,
+          transitionProperty: 'transform',
+          transitionDuration: '400ms',
+          transitionTimingFunction: 'cubic-bezier(0.65, 0, 0.35, 1)'
+        }}
       />
-    </ProgressPrimitive.Root>
-  )
-})
-Progress.displayName = ProgressPrimitive.Root.displayName
+    </div>
+  );
+});
+Progress.displayName = "Progress";
 
-export { Progress }
+export { Progress };
