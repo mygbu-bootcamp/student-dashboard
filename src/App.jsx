@@ -14,7 +14,7 @@ import LoginScreen from "./components/LoginScreen";
 import MainDashboard from "./components/MainDashboard";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import UnderDevLogin from "./components/underdevelopmentLogin"; // import your component
+import UnderDevLogin from "./components/underdevelopmentLogin";
 
 const queryClient = new QueryClient();
 
