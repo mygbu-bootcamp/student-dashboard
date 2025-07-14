@@ -1,8 +1,8 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
-import { Alert, AlertDescription } from "../../components/ui/alert";
-import { Input } from "../../components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Input } from "../components/ui/input";
 import {
   Book,
   Search,
@@ -121,7 +121,7 @@ const LibraryModule = ({ user }) => {
 
       {/* Overdue Alert */}
       {overdueBooks.length > 0 && (
-        <Alert className="border-red-200 bg-red-50">
+        <Alert className="border border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4 text-red-600" />
           <AlertDescription className="text-red-800">
             <strong>Overdue Alert:</strong> You have {overdueBooks.length} overdue book(s). 
@@ -165,7 +165,7 @@ const LibraryModule = ({ user }) => {
           <CardContent>
             <div className="space-y-4">
               {issuedBooks.map((book, index) => (
-                <div key={index} className="border rounded-lg p-4">
+                <div key={index} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-medium text-sm">{book.title}</h3>
                     <Badge className={getStatusColor(book.status)}>
@@ -206,7 +206,7 @@ const LibraryModule = ({ user }) => {
           <CardContent>
             <div className="space-y-4">
               {reservedBooks.map((book, index) => (
-                <div key={index} className="border rounded-lg p-4">
+                <div key={index} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-medium text-sm">{book.title}</h3>
                     <Badge className="bg-purple-100 text-purple-800">
@@ -236,7 +236,7 @@ const LibraryModule = ({ user }) => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {digitalResources.map((resource, index) => (
-              <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+              <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                 <div className="flex-1">
                   <p className="font-medium">{resource.title}</p>
                   <p className="text-sm text-gray-600">{resource.type}</p>
@@ -268,7 +268,7 @@ const LibraryModule = ({ user }) => {
           <CardContent>
             <div className="space-y-3">
               {fines.map((fine, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                <div key={index} className="flex items-center justify-between p-3  border-gray-200 rounded-lg">
                   <div className="flex-1">
                     <p className="font-medium text-sm">{fine.book}</p>
                     <p className="text-xs text-gray-600">{fine.days} days overdue</p>

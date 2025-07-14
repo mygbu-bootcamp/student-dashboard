@@ -8,17 +8,13 @@ const Tabs = ({ defaultValue, value: propValue, onValueChange, children, ...prop
   const value = isControlled ? propValue : localValue;
 
   const handleValueChange = (newValue) => {
-    if (!isControlled) {
-      setLocalValue(newValue);
-    }
-    if (onValueChange) {
-      onValueChange(newValue);
-    }
+    if (!isControlled) setLocalValue(newValue);
+    if (onValueChange) onValueChange(newValue);
   };
 
   return (
     <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
-      <div {...props}>{children}</div>
+      <div className="w-full" {...props}>{children}</div>
     </TabsContext.Provider>
   );
 };
@@ -27,7 +23,7 @@ const TabsList = React.forwardRef(({ className = "", children, ...props }, ref) 
   return (
     <div
       ref={ref}
-      className={`inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground ${className}`}
+      className={`w-full flex h-[48px] items-center justify-between rounded-xl bg-[#f1f5f9] p-1 ${className}`}
       role="tablist"
       {...props}
     >
@@ -42,57 +38,52 @@ const TabsList = React.forwardRef(({ className = "", children, ...props }, ref) 
 });
 TabsList.displayName = "TabsList";
 
-const TabsTrigger = React.forwardRef(({ 
-  className = "", 
-  value, 
-  parentProps,
-  children, 
-  ...props 
-}, ref) => {
-  const { value: contextValue, onValueChange } = React.useContext(TabsContext);
-  const isActive = value === contextValue;
+const TabsTrigger = React.forwardRef(
+  ({ className = "", value, parentProps, children, ...props }, ref) => {
+    const { value: contextValue, onValueChange } = React.useContext(TabsContext);
+    const isActive = value === contextValue;
 
-  const handleClick = () => {
-    onValueChange(value);
-  };
+    const handleClick = () => {
+      onValueChange(value);
+    };
 
-  return (
-    <button
-      ref={ref}
-      role="tab"
-      aria-selected={isActive}
-      onClick={handleClick}
-      className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-        isActive ? 'bg-background text-foreground shadow-sm' : ''
-      } ${className}`}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-});
+    return (
+      <button
+        ref={ref}
+        role="tab"
+        aria-selected={isActive}
+        onClick={handleClick}
+        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
+          isActive
+            ? "bg-white text-black shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        } ${className}`}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
 TabsTrigger.displayName = "TabsTrigger";
 
-const TabsContent = React.forwardRef(({ 
-  className = "", 
-  value, 
-  children, 
-  ...props 
-}, ref) => {
-  const { value: contextValue } = React.useContext(TabsContext);
-  const isActive = value === contextValue;
+const TabsContent = React.forwardRef(
+  ({ className = "", value, children, ...props }, ref) => {
+    const { value: contextValue } = React.useContext(TabsContext);
+    const isActive = value === contextValue;
 
-  return isActive ? (
-    <div
-      ref={ref}
-      role="tabpanel"
-      className={`mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${className}`}
-      {...props}
-    >
-      {children}
-    </div>
-  ) : null;
-});
+    return isActive ? (
+      <div
+        ref={ref}
+        role="tabpanel"
+        className={`mt-4 px-4 sm:px-8 ${className}`}
+        {...props}
+      >
+        {children}
+      </div>
+    ) : null;
+  }
+);
 TabsContent.displayName = "TabsContent";
 
 export { Tabs, TabsList, TabsTrigger, TabsContent };

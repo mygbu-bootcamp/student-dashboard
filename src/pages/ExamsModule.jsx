@@ -5,9 +5,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle
-} from "../../components/ui/card";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
+} from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
 import {
   FileText,
   Download,
@@ -119,7 +119,7 @@ const ExamsModule = ({ user }) => {
           <CardHeader><CardTitle className="flex items-center text-base sm:text-lg"><Calendar className="mr-2 h-5 w-5 text-blue-500" />Upcoming Exams</CardTitle><CardDescription>Register for exams and download admit cards</CardDescription></CardHeader>
           <CardContent className="space-y-4">
             {upcomingExams.map((exam, i) => (
-              <div key={i} className="border rounded-lg p-4 space-y-3">
+              <div key={i} className="border border-gray-200 rounded-lg p-4 space-y-3">
                 <div className="flex flex-wrap justify-between items-center gap-2">
                   <h3 className="font-medium">{exam.subject}</h3>
                   <Badge className={getStatusColor(exam.status)}>{exam.status}</Badge>
@@ -155,7 +155,7 @@ const ExamsModule = ({ user }) => {
           <CardHeader><CardTitle className="flex items-center text-base sm:text-lg"><Award className="mr-2 h-5 w-5 text-green-500" />Latest Results - Semester 7</CardTitle><CardDescription>Subject-wise grades and performance</CardDescription></CardHeader>
           <CardContent className="space-y-3">
             {subjectGrades.map((subj, i) => (
-              <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 border rounded-lg gap-2">
+              <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 border border-gray-200 rounded-lg gap-2">
                 <div>
                   <p className="font-medium">{subj.subject}</p>
                   <p className="text-sm text-gray-600">{subj.credits} Credits • {subj.marks} Marks</p>
@@ -178,7 +178,7 @@ const ExamsModule = ({ user }) => {
         <CardHeader><CardTitle>Academic Progress</CardTitle><CardDescription>Semester-wise performance and CGPA trend</CardDescription></CardHeader>
         <CardContent className="space-y-4">
           {semesterResults.map((res, i) => (
-            <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border rounded-lg gap-4">
+            <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-200 rounded-lg gap-4">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 <div className="text-center sm:text-left">
                   <p className="font-medium">{res.semester}</p>

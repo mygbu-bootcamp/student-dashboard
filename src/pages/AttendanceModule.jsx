@@ -1,5 +1,5 @@
-import { Button } from "../../components/ui/button";
-import { Alert, AlertDescription } from "../../components/ui/alert";
+import { Button } from "../components/ui/button";
+import { Alert, AlertDescription } from "../components/ui/alert";
 import { AlertTriangle, Download } from "lucide-react";
 import AttendanceStatsCards from "./attendance/AttendanceStatsCards";
 import AttendanceChart from "./attendance/AttendanceChart";

@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
-import { Progress } from "../../components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { useToast } from "../../hooks/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Progress } from "../components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { useToast } from "../hooks/use-toast";
 import { 
   Heart,
   Calendar,
@@ -162,7 +162,7 @@ const WellnessModule = ({ user }) => {
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white">
             <Button variant="outline" className="h-auto p-4" onClick={() => setActiveTab("mood")}>
               <div className="text-center">
                 <Heart className="h-6 w-6 mx-auto mb-2 text-pink-500" />
@@ -196,7 +196,7 @@ const WellnessModule = ({ user }) => {
               <CardContent>
                 <div className="space-y-3">
                   {recentMoods.map((entry, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                       <div className="flex items-center space-x-3">
                         <span className="text-2xl">{moodOptions.find(m => m.value === entry.mood)?.emoji}</span>
                         <div>
@@ -219,7 +219,7 @@ const WellnessModule = ({ user }) => {
               <CardContent>
                 <div className="space-y-3">
                   {sleepData.map((entry, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                       <div>
                         <p className="font-medium">{entry.date}</p>
                         <p className="text-sm text-gray-600">{entry.hours} hours</p>
@@ -262,13 +262,13 @@ const WellnessModule = ({ user }) => {
               <div>
                 <label className="text-sm font-medium mb-2 block">What's on your mind? (Optional)</label>
                 <textarea 
-                  className="w-full p-3 border rounded-lg" 
+                  className="w-full p-3 border border-gray-200 rounded-lg" 
                   rows={3}
                   placeholder="Share what's making you feel this way..."
                 />
               </div>
 
-              <Button onClick={handleMoodSubmit} className="w-full">
+              <Button onClick={handleMoodSubmit} className="w-full bg-black text-white">
                 <Plus className="mr-2 h-4 w-4" />
                 Log Today's Mood
               </Button>
@@ -284,7 +284,7 @@ const WellnessModule = ({ user }) => {
                 <CardDescription>Sync your health and fitness data</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
                       <Heart className="h-4 w-4 text-red-500" />
@@ -294,10 +294,10 @@ const WellnessModule = ({ user }) => {
                       <p className="text-sm text-gray-600">Syncing steps, sleep, heart rate</p>
                     </div>
                   </div>
-                  <Badge variant="default">Connected</Badge>
+                  <Badge variant="tertiary">Connected</Badge>
                 </div>
 
-                <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                       <CheckCircle className="h-4 w-4 text-green-500" />
@@ -310,7 +310,7 @@ const WellnessModule = ({ user }) => {
                   <Button variant="outline" size="sm">Connect</Button>
                 </div>
 
-                <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                       <Clock className="h-4 w-4 text-blue-500" />
@@ -372,7 +372,7 @@ const WellnessModule = ({ user }) => {
                 <CardDescription>Immediate help when you need it most</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button variant="destructive" className="w-full">
+                <Button variant="destructive" className="w-full bg-red-500 text-white">
                   <Bell className="mr-2 h-4 w-4" />
                   Emergency Mental Health Support
                 </Button>
@@ -392,7 +392,7 @@ const WellnessModule = ({ user }) => {
               <CardContent>
                 <div className="space-y-3">
                   {mentors.map((mentor) => (
-                    <div key={mentor.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={mentor.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                       <div className="flex-1">
                         <h4 className="font-medium">{mentor.name}</h4>
                         <p className="text-sm text-gray-600">{mentor.specialization}</p>
@@ -404,6 +404,7 @@ const WellnessModule = ({ user }) => {
                       <Button 
                         size="sm" 
                         variant={mentor.status === "Available" ? "default" : "secondary"}
+                        className="bg-black text-white"
                         onClick={() => handleMentorConnect(mentor.name)}
                         disabled={mentor.status !== "Available"}
                       >

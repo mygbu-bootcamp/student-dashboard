@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Badge } from "../../components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Progress } from "../../components/ui/progress";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Progress } from "../components/ui/progress";
 import {
   BookOpen,
   Calendar,
@@ -17,7 +17,13 @@ import {
   ChevronUp
 } from "lucide-react";
 
-const AcademicModule = ({ user }) => {
+const AcademicModule = ({ user = {
+  studentId: "2021BCS001",
+  name: "Aarav Sharma",
+  programme: "B.Tech",
+  branch: "Computer Science & Engineering",
+  semester: "6"
+} }) => {
   const [selectedSemester, setSelectedSemester] = useState("6");
   const [activeTab, setActiveTab] = useState("registration");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -68,7 +74,7 @@ const AcademicModule = ({ user }) => {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Academic Management</h1>
           <p className="text-sm sm:text-base text-gray-600">Course registration, timetable, and academic progress</p>
         </div>
-        <Button className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800">
+        <Button className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white">
           <Download className="mr-2 h-4 w-4" />
           <span className="hidden sm:inline">Download Transcript</span>
           <span className="sm:hidden">Transcript</span>
@@ -159,55 +165,82 @@ const AcademicModule = ({ user }) => {
       {(activeTab === "registration") && (
         <div className="space-y-6">
           <Card className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <CardTitle className="flex items-center">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center text-xl">
                 <FileText className="mr-2 h-5 w-5 text-blue-500" />
                 Semester Registration - Spring 2024
               </CardTitle>
-              <CardDescription>Complete your semester registration</CardDescription>
+              <CardDescription className="text-gray-500">Complete your semester registration</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Student Info */}
-                <div className="space-y-3 sm:space-y-4">
-                  <h3 className="font-semibold text-sm sm:text-base text-gray-900">Student Information</h3>
-                  <div className="space-y-2 sm:space-y-3">
-                    <Input value={user?.studentId} disabled className="bg-gray-50 text-xs sm:text-sm" placeholder="Roll Number" />
-                    <Input value={user?.name} disabled className="bg-gray-50 text-xs sm:text-sm" placeholder="Full Name" />
-                    <Input value={user?.programme} disabled className="bg-gray-50 text-xs sm:text-sm" placeholder="Programme" />
-                    <Input value={user?.branch} disabled className="bg-gray-50 text-xs sm:text-sm" placeholder="Branch" />
+                <div className="space-y-6">
+                  <h3 className="font-semibold text-lg text-gray-900">Student Information</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Roll Number</label>
+                      <Input value={user?.studentId} disabled className="bg-gray-50" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                      <Input value={user?.name} disabled className="bg-gray-50" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Programme</label>
+                      <Input value={user?.programme} disabled className="bg-gray-50" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Branch</label>
+                      <Input value={user?.branch} disabled className="bg-gray-50" />
+                    </div>
                   </div>
                 </div>
 
                 {/* Registration Fields */}
-                <div className="space-y-3 sm:space-y-4">
-                  <h3 className="font-semibold text-sm sm:text-base text-gray-900">Registration Details</h3>
-                  <div className="space-y-2 sm:space-y-3">
-                    <Input placeholder="Enter current address" className="text-xs sm:text-sm" />
-                    <Input placeholder="Enter contact number" className="text-xs sm:text-sm" />
-                    <Input placeholder="Enter Aadhar number" className="text-xs sm:text-sm" />
-                    <Input placeholder="Enter guardian name" className="text-xs sm:text-sm" />
-                    <Input placeholder="Enter guardian contact" className="text-xs sm:text-sm" />
+                <div className="space-y-6">
+                  <h3 className="font-semibold text-lg text-gray-900">Registration Details</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Current Address</label>
+                      <Input placeholder="Enter current address" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Contact Number</label>
+                      <Input placeholder="Enter contact number" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Aadhar Number</label>
+                      <Input placeholder="Enter Aadhar number" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Guardian Name</label>
+                      <Input placeholder="Enter guardian name" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Guardian Contact</label>
+                      <Input placeholder="Enter guardian contact" />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mr-2" />
-                    <span className="font-medium text-xs sm:text-sm text-green-800">Fee Payment Status</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                    <span className="font-medium text-green-800">Fee Payment Status</span>
                   </div>
-                  <Badge className="bg-green-100 text-green-800 text-xs sm:text-sm">Paid</Badge>
+                  <Badge className="bg-green-100 text-green-800">Paid</Badge>
                 </div>
-                <p className="text-xs sm:text-sm text-green-700 mt-1 sm:mt-2">
+                <p className="text-sm text-green-700 mt-2">
                   All fees for Semester 6 have been cleared. Registration is enabled.
                 </p>
               </div>
 
-              <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-end gap-2 sm:gap-4">
+              <div className="mt-6 flex flex-col sm:flex-row justify-end gap-4">
                 <Button variant="outline" className="w-full sm:w-auto">Save Draft</Button>
-                <Button className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800">
+                <Button className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white">
                   Submit Registration
                 </Button>
               </div>
@@ -219,27 +252,27 @@ const AcademicModule = ({ user }) => {
       {/* Courses Tab */}
       {(activeTab === "courses") && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle className="text-sm sm:text-base">Current Subjects - Semester {user?.semester}</CardTitle>
+                <CardTitle>Current Subjects - Semester {user?.semester}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {subjects.map(subject => (
-                  <div key={subject.code} className="p-2 sm:p-3 border rounded-lg space-y-1 sm:space-y-2">
+                  <div key={subject.code} className="p-3 border border-gray-200 rounded-lg space-y-2">
                     <div className="flex justify-between">
                       <div>
-                        <p className="font-medium text-xs sm:text-sm">{subject.name}</p>
-                        <p className="text-xs text-gray-600">{subject.code}</p>
+                        <p className="font-medium">{subject.name}</p>
+                        <p className="text-sm text-gray-600">{subject.code}</p>
                       </div>
                       <div className="text-right">
-                        <Badge variant={subject.type === "Core" ? "default" : "secondary"} className="text-xs sm:text-sm">
+                        <Badge variant={subject.type === "Core" ? "default" : "secondary"}>
                           {subject.type}
                         </Badge>
-                        <p className="text-xs mt-1">{subject.credits} Credits</p>
+                        <p className="text-sm mt-1">{subject.credits} Credits</p>
                       </div>
                     </div>
-                    <div className="flex justify-between text-xs sm:text-sm">
+                    <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Current Grade</span>
                       <span className="text-green-600 font-medium">{subject.grade}</span>
                     </div>
@@ -250,21 +283,21 @@ const AcademicModule = ({ user }) => {
 
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle className="text-sm sm:text-base">Available Electives</CardTitle>
+                <CardTitle>Available Electives</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {electiveOptions.map(elective => (
-                  <div key={elective.code} className="p-2 sm:p-3 border rounded-lg space-y-1">
+                  <div key={elective.code} className="p-3 border border-gray-200 rounded-lg space-y-1">
                     <div className="flex justify-between">
                       <div>
-                        <p className="font-medium text-xs sm:text-sm">{elective.name}</p>
-                        <p className="text-xs text-gray-600">{elective.code}</p>
+                        <p className="font-medium">{elective.name}</p>
+                        <p className="text-sm text-gray-600">{elective.code}</p>
                       </div>
-                      <p className="text-xs sm:text-sm font-medium">{elective.credits} Credits</p>
+                      <p className="font-medium">{elective.credits} Credits</p>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-500">{elective.prerequisite}</span>
-                      <Button size="sm" variant="outline" className="text-xs sm:text-sm">Select</Button>
+                      <span className="text-sm text-gray-500">{elective.prerequisite}</span>
+                      <Button size="sm" variant="outline">Select</Button>
                     </div>
                   </div>
                 ))}
@@ -281,29 +314,31 @@ const AcademicModule = ({ user }) => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Calendar className="mr-2 h-5 w-5 text-blue-500" />
-                <span className="text-sm sm:text-base">Weekly Timetable</span>
+                Weekly Timetable
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3 sm:space-y-4">
+              <div className="space-y-4">
                 {timetable.map(day => (
-                  <div key={day.day} className="border rounded-lg p-3 sm:p-4">
-                    <h3 className="font-semibold text-sm sm:text-base mb-2 sm:mb-3">{day.day}</h3>
-                    {day.slots.map((slot, index) => (
-                      <div key={index} className="flex flex-col sm:flex-row justify-between p-2 bg-gray-50 rounded items-start sm:items-center gap-2">
-                        <div className="flex space-x-2 sm:space-x-3 items-center">
-                          <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
-                          <span className="text-xs sm:text-sm">{slot.time}</span>
-                          <span className="text-xs sm:text-sm font-medium">{slot.subject}</span>
+                  <div key={day.day} className="border border-gray-200 rounded-lg p-4">
+                    <h3 className="font-semibold text-lg mb-4">{day.day}</h3>
+                    <div className="space-y-2">
+                      {day.slots.map((slot, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center space-x-4">
+                            <Clock className="h-4 w-4 text-gray-500" />
+                            <span className="text-sm font-medium">{slot.time}</span>
+                            <span className="text-sm font-medium">{slot.subject}</span>
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <Badge variant={slot.type === "Lab" ? "secondary" : "outline"}>
+                              {slot.type}
+                            </Badge>
+                            <span className="text-sm text-gray-600">{slot.room}</span>
+                          </div>
                         </div>
-                        <div className="text-right sm:text-left">
-                          <Badge variant={slot.type === "Lab" ? "secondary" : "outline"} className="text-xs sm:text-sm">
-                            {slot.type}
-                          </Badge>
-                          <p className="text-xs text-gray-500">{slot.room}</p>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -315,28 +350,30 @@ const AcademicModule = ({ user }) => {
       {/* Progress Tab */}
       {(activeTab === "progress") && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <TrendingUp className="mr-2 h-5 w-5 text-green-500" />
-                  <span className="text-sm sm:text-base">Academic Progress</span>
+                  Academic Progress
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center mb-4 sm:mb-6">
-                  <p className="text-2xl sm:text-3xl font-bold text-green-600">8.5</p>
-                  <p className="text-xs sm:text-sm text-gray-600">Current CGPA</p>
+                <div className="text-center mb-6">
+                  <p className="text-3xl font-bold text-green-600">8.5</p>
+                  <p className="text-sm text-gray-600">Current CGPA</p>
                 </div>
-                {[82, 84, 86, 83, 87].map((val, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between text-xs sm:text-sm mb-1">
-                      <span>Semester {i + 1}</span>
-                      <span>{(val / 10).toFixed(1)}</span>
+                <div className="space-y-3">
+                  {[82, 84, 86, 83, 87].map((val, i) => (
+                    <div key={i}>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>Semester {i + 1}</span>
+                        <span>{(val / 10).toFixed(1)}</span>
+                      </div>
+                      <Progress value={val} className="h-2" />
                     </div>
-                    <Progress value={val} className="h-2" />
-                  </div>
-                ))}
+                  ))}
+                </div>
               </CardContent>
             </Card>
 
@@ -344,29 +381,31 @@ const AcademicModule = ({ user }) => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <BookOpen className="mr-2 h-5 w-5 text-blue-500" />
-                  <span className="text-sm sm:text-base">Credit Progress</span>
+                  Credit Progress
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center mb-4 sm:mb-6">
-                  <p className="text-2xl sm:text-3xl font-bold text-blue-600">142/160</p>
-                  <p className="text-xs sm:text-sm text-gray-600">Credits Completed</p>
+                <div className="text-center mb-6">
+                  <p className="text-3xl font-bold text-blue-600">142/160</p>
+                  <p className="text-sm text-gray-600">Credits Completed</p>
                 </div>
-                {[
-                  { label: "Core Subjects", value: "96/120", percent: 80 },
-                  { label: "Electives", value: "30/25", percent: 100 },
-                  { label: "Project Work", value: "16/15", percent: 100 },
-                ].map((item, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between text-xs sm:text-sm mb-1">
-                      <span>{item.label}</span>
-                      <span>{item.value}</span>
+                <div className="space-y-3">
+                  {[
+                    { label: "Core Subjects", value: "96/120", percent: 80 },
+                    { label: "Electives", value: "30/25", percent: 100 },
+                    { label: "Project Work", value: "16/15", percent: 100 },
+                  ].map((item, i) => (
+                    <div key={i}>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>{item.label}</span>
+                        <span>{item.value}</span>
+                      </div>
+                      <Progress value={item.percent} className="h-2" />
                     </div>
-                    <Progress value={item.percent} className="h-2" />
-                  </div>
-                ))}
-                <div className="p-2 sm:p-3 mt-3 sm:mt-4 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-xs sm:text-sm text-green-800 font-medium">
+                  ))}
+                </div>
+                <div className="p-3 mt-4 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm text-green-800 font-medium">
                     On track for graduation! 18 credits remaining.
                   </p>
                 </div>
