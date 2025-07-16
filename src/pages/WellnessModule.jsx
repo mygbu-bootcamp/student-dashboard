@@ -14,7 +14,11 @@ import {
   Star,
   Plus,
   Users,
-  Bell
+  Bell, Frown,
+  Meh,
+  Smile,
+  SmilePlus,
+  Laugh
 } from "lucide-react";
 
 const WellnessModule = ({ user }) => {
@@ -31,14 +35,14 @@ const WellnessModule = ({ user }) => {
     checkInStreak: 12
   };
 
-  const moodOptions = [
-    { emoji: "😢", label: "Very Sad", value: 1 },
-    { emoji: "😔", label: "Sad", value: 2 },
-    { emoji: "😐", label: "Okay", value: 3 },
-    { emoji: "🙂", label: "Good", value: 4 },
-    { emoji: "😊", label: "Great", value: 5 },
-    { emoji: "😄", label: "Excellent", value: 6 }
-  ];
+const moodOptions = [
+  { icon: Frown, label: "Very Sad", value: 1 },
+  { icon: Meh, label: "Sad", value: 2 },
+  { icon: Smile, label: "Okay", value: 3 },
+  { icon: SmilePlus, label: "Good", value: 4 },
+  { icon: Laugh, label: "Great", value: 5 },
+  { icon: Star, label: "Excellent", value: 6 }
+];
 
   const recentMoods = [
     { date: "2024-03-25", mood: 4, note: "Good productive day" },
@@ -198,7 +202,13 @@ const WellnessModule = ({ user }) => {
                   {recentMoods.map((entry, index) => (
                     <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                       <div className="flex items-center space-x-3">
-                        <span className="text-2xl">{moodOptions.find(m => m.value === entry.mood)?.emoji}</span>
+                        {
+  (() => {
+    const MoodIcon = moodOptions.find(m => m.value === entry.mood)?.icon;
+    return MoodIcon ? <MoodIcon className="h-5 w-5 text-gray-600" /> : null;
+  })()
+}
+
                         <div>
                           <p className="font-medium">{entry.date}</p>
                           <p className="text-sm text-gray-600">{entry.note}</p>
@@ -245,18 +255,19 @@ const WellnessModule = ({ user }) => {
               <div>
                 <label className="text-sm font-medium mb-3 block">Select your mood:</label>
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-                  {moodOptions.map((mood) => (
-                    <Button
-                      key={mood.value}
-                      variant={selectedMood === mood.value.toString() ? "default" : "outline"}
-                      className="h-auto p-4 flex flex-col"
-                      onClick={() => setSelectedMood(mood.value.toString())}
-                    >
-                      <span className="text-2xl mb-2">{mood.emoji}</span>
-                      <span className="text-xs">{mood.label}</span>
-                    </Button>
-                  ))}
-                </div>
+  {moodOptions.map((mood) => (
+    <Button
+      key={mood.value}
+      variant={selectedMood === mood.value.toString() ? "default" : "outline"}
+      className="h-auto p-4 flex flex-col items-center"
+      onClick={() => setSelectedMood(mood.value.toString())}
+    >
+      <mood.icon className="h-6 w-6 mb-2" />
+      <span className="text-xs">{mood.label}</span>
+    </Button>
+  ))}
+</div>
+
               </div>
 
               <div>

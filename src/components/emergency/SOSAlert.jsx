@@ -1,9 +1,9 @@
 
 import { useState } from "react";
-import { Button } from "../../components/ui/button";
+import { Button, buttonVariants } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
-import { useToast } from "../../hooks/use-toast";
+import { useToast, toast } from "../../hooks/use-toast";
 import { AlertTriangle, Phone, Users, Settings, MapPin } from "lucide-react";
 
 const SOSAlert = () => {
@@ -66,7 +66,7 @@ const SOSAlert = () => {
           }`}
           onClick={() => setShowSOSDialog(true)}
         >
-          <AlertTriangle className="h-8 w-8" />
+          <AlertTriangle className="h-10 w-10 text-white " />
         </Button>
       </div>
 
@@ -87,7 +87,7 @@ const SOSAlert = () => {
               {/* Emergency Type Selection */}
               <div>
                 <label className="text-sm font-medium mb-2 block">Emergency Type:</label>
-                <select className="w-full p-2 border rounded-lg">
+                <select className="w-full p-2 border border-gray-200 rounded-lg">
                   <option>Medical Emergency</option>
                   <option>Security Threat</option>
                   <option>Fire Emergency</option>
@@ -101,7 +101,7 @@ const SOSAlert = () => {
               <div>
                 <label className="text-sm font-medium mb-2 block">Additional Message (Optional):</label>
                 <textarea 
-                  className="w-full p-2 border rounded-lg" 
+                  className="w-full p-2 border border-gray-200 rounded-lg" 
                   rows={3}
                   placeholder="Describe the emergency situation..."
                 />
@@ -163,7 +163,7 @@ const SOSAlert = () => {
       {/* Active SOS Status */}
       {isSOSActive && (
         <div className="fixed top-4 left-4 right-4 z-40">
-          <Card className="border-red-500 bg-red-50">
+          <Card className="border border-red-500 bg-red-50">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -177,7 +177,7 @@ const SOSAlert = () => {
                   size="sm" 
                   variant="outline" 
                   onClick={handleSOSCancel}
-                  className="border-red-300 text-red-600 hover:bg-red-100"
+                  className="border border-red-300 text-red-600 hover:bg-red-100"
                 >
                   Cancel Alert
                 </Button>

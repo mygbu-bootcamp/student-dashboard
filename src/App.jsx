@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Toaster } from "../src/components/ui/toaster";
 import { Toaster as Sonner } from "../src/components/ui/sonner";
 import { TooltipProvider } from "../src/components/ui/tooltip";
@@ -15,6 +15,16 @@ import MainDashboard from "./components/MainDashboard";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import UnderDevLogin from "./components/underdevelopmentLogin";
+
+// Quick Access Pages
+import Attendance from "./pages/AttendanceModule";
+import Skills from "./pages/SkillsModule";
+import Wellness from "./pages/WellnessModule";
+import Store from "./pages/GBUStoreModule";
+import Documents from "./pages/DocumentVaultModule";
+import Goals from "./pages/GoalTrackerModule";
+import Hostel from "./pages/HostelMessModule";
+import Placement from "./pages/PlacementModule";
 
 const queryClient = new QueryClient();
 
@@ -36,16 +46,78 @@ const App = () => {
               <UnderDevLogin onLogin={handleDevLogin} />
             ) : (
               <Routes>
-                {/* Public routes */}
+                {/* Public Routes */}
                 <Route path="*" element={<LoginScreen />} />
                 <Route path="*" element={<Index />} />
 
-                {/* Protected routes */}
-                <Route
-                  path="/dashboard"
-                  element={
+                {/* Protected Routes */}
+                <Route path="/dashboard"element={
                     <ProtectedRoute>
                       <MainDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/attendance"
+                  element={
+                    <ProtectedRoute>
+                      <Attendance />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/skills"
+                  element={
+                    <ProtectedRoute>
+                      <Skills />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/WellnessModule"
+                  element={
+                    <ProtectedRoute>
+                      <Wellness />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/store"
+                  element={
+                    <ProtectedRoute>
+                      <Store />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/documents"
+                  element={
+                    <ProtectedRoute>
+                      <Documents />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/goals"
+                  element={
+                    <ProtectedRoute>
+                      <Goals />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/hostel"
+                  element={
+                    <ProtectedRoute>
+                      <Hostel />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/placement"
+                  element={
+                    <ProtectedRoute>
+                      <Placement />
                     </ProtectedRoute>
                   }
                 />

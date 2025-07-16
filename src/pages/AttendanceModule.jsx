@@ -44,7 +44,7 @@ const AttendanceModule = ({ user }) => {
 
       {/* Alert for low attendance */}
       {criticalSubjects.length > 0 && (
-        <Alert className="border-red-200 bg-red-50">
+        <Alert className="border border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4 text-red-600" />
           <AlertDescription className="text-red-800">
             <strong>Attendance Alert:</strong> You have {criticalSubjects.length} subject(s) with attendance below 75%. 

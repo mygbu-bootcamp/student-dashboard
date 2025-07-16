@@ -168,9 +168,9 @@ const NotificationsModule = ({ user }) => {
           </div>
           <div className="text-center">
             <div className="relative">
-              <Bell className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
+              <Bell className=" h-6 w-6 sm:h-7 sm:w-7 text-white" />
               {unreadCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-red-500 text-xs">
+                <Badge className="absolute -top-2 -right-6 sm:-top-3 sm:-right-0 bg-red-500 text-xs text-white h-5 w-2 items-center justify-center">
                   {unreadCount}
                 </Badge>
               )}

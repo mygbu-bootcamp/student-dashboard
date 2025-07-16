@@ -211,27 +211,6 @@ const NewsSection = () => {
           </CardContent>
         </Card>
       </div>
-
-      {/* Motivational Footer */}
-      <Card className="bg-gradient-to-r from-blue-900 to-purple-900 text-white">
-        <CardContent className="p-6 text-center">
-          <h3 className="text-xl font-bold mb-2">🚀 Ready to Shape Your Future?</h3>
-          <p className="text-blue-100 mb-4">
-            Join thousands of GBU students who are already transforming their dreams into reality through innovation, dedication, and smart learning.
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            <Badge className="bg-white/20 text-white border-white/30">
-              #InnovateWithGBU
-            </Badge>
-            <Badge className="bg-white/20 text-white border-white/30">
-              #SmartCampus
-            </Badge>
-            <Badge className="bg-white/20 text-white border-white/30">
-              #FutureReady
-            </Badge>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };

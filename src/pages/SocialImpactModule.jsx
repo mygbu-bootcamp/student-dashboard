@@ -153,20 +153,23 @@ const SocialImpactModule = ({ user }) => {
   return (
     <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-green-900 to-blue-700 rounded-lg p-4 sm:p-6 text-white">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex-1">
-              <h1 className="text-xl sm:text-2xl font-bold mb-2">Social Impact & Community Service</h1>
-              <p className="text-green-100 text-sm sm:text-base">Track your NSS/NCC activities and community contributions</p>
-            </div>
-            <div className="flex sm:flex-col items-center sm:text-center gap-2 sm:gap-0">
-              <Heart className="h-8 w-8 sm:h-12 sm:w-12 text-white" />
-              <div className="bg-white/20 rounded-lg p-2 sm:p-3">
-                <div className="text-xs sm:text-sm text-green-100">Impact Score</div>
-                <div className="text-lg sm:text-xl font-bold">{userStats.impactScore}</div>
-              </div>
-            </div>
+       {/* Header */}
+<div className="bg-gradient-to-r from-green-900 to-blue-700 rounded-lg p-4 sm:p-6 text-white">
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="flex-1">
+      <h1 className="text-xl sm:text-2xl font-bold mb-2">Social Impact & Community Service</h1>
+      <p className="text-green-100 text-sm sm:text-base">
+        Track your NSS/NCC activities and community contributions
+      </p>
+    </div>
+
+    <div className="flex sm:flex-col items-center sm:items-center sm:text-center gap-2 sm:gap-0">
+      <div className="bg-white/20 rounded-lg p-2 sm:p-3 flex flex-col items-center text-center">
+        <Heart className="h-8 w-8 sm:h-8 sm:w-8 text-white mb-1" />
+        <div className="text-xs sm:text-sm text-green-100">Impact Score</div>
+        <div className="text-lg sm:text-xl font-bold">{userStats.impactScore}</div>
+      </div>
+    </div>
           </div>
         </div>
 

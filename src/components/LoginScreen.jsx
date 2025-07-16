@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/AuthContext"; // ← adjust the path if needed
+import { useAuth } from "../hooks/AuthContext";
 
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -31,6 +31,7 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [studentId, setStudentId] = useState("");
+  const [loginError, setLoginError] = useState("");
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -45,7 +46,6 @@ const LoginScreen = () => {
       login(res.data);
       navigate("/dashboard");
     } catch (error) {
-      // Fallback hardcoded credentials
       const hardcodedEmail = "admin@gbu.ac.in";
       const hardcodedPassword = "admin123";
 
@@ -63,7 +63,7 @@ const LoginScreen = () => {
         navigate("/dashboard");
       } else {
         console.error("Login failed:", error);
-        alert("Invalid credentials or server error.");
+        setLoginError("Invalid email or password. Please try again.");
       }
     }
   };
@@ -88,6 +88,7 @@ const LoginScreen = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
       <div className="flex min-h-screen">
+        {/* Left Panel */}
         <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 relative overflow-hidden">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-10 left-10 w-32 h-32 border border-white rounded-full" />
@@ -141,9 +142,10 @@ const LoginScreen = () => {
           </div>
         </div>
 
-        {/* Right - Login */}
+        {/* Right Panel - Login */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
           <div className="w-full max-w-md">
+            {/* Mobile Header */}
             <div className="lg:hidden text-center mb-8">
               <div className="w-16 h-16 bg-blue-900 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <GraduationCap className="w-8 h-8 text-white" />
@@ -154,6 +156,7 @@ const LoginScreen = () => {
               <p className="text-gray-600">Gautam Buddha University</p>
             </div>
 
+            {/* Login Card */}
             <Card className="shadow-xl border-0 bg-white/95 backdrop-blur-sm">
               <CardHeader className="text-center space-y-2">
                 <CardTitle className="text-2xl text-blue-900 font-semibold">
@@ -180,10 +183,11 @@ const LoginScreen = () => {
                     </TabsTrigger>
                   </TabsList>
 
+                  {/* Email Login Tab */}
                   <TabsContent value="email" className="space-y-4 mt-6">
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700">
+                        <label className="text-sm font-medium text-gray-700 ">
                           Email Address
                         </label>
                         <div className="relative">
@@ -192,7 +196,10 @@ const LoginScreen = () => {
                             type="email"
                             placeholder="student@gbu.ac.in"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => {
+                              setEmail(e.target.value);
+                              setLoginError("");
+                            }}
                             className="pl-10 h-11 border-gray-200"
                           />
                         </div>
@@ -202,17 +209,27 @@ const LoginScreen = () => {
                           Password
                         </label>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400 " />
                           <Input
                             type="password"
                             placeholder="Enter your password"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="pl-10 h-11 border-gray-200"
+                            onChange={(e) => {
+                              setPassword(e.target.value);
+                              setLoginError("");
+                            }}
+                            className="pl-10 h-11  border-gray-200"
                           />
                         </div>
                       </div>
                     </div>
+
+                    {loginError && (
+                      <div className="text-sm text-red-600 font-medium text-center">
+                        {loginError}
+                      </div>
+                    )}
+
                     <Button
                       onClick={handleLogin}
                       className="w-full h-11 bg-blue-900 hover:bg-blue-800 text-white font-medium rounded-lg"
@@ -221,6 +238,7 @@ const LoginScreen = () => {
                     </Button>
                   </TabsContent>
 
+                  {/* Student ID Tab */}
                   <TabsContent value="student-id" className="space-y-4 mt-6">
                     <div className="space-y-4">
                       <div className="space-y-2">
@@ -247,6 +265,7 @@ const LoginScreen = () => {
                   </TabsContent>
                 </Tabs>
 
+                {/* OAuth Divider */}
                 <div className="space-y-4">
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
@@ -289,7 +308,7 @@ const LoginScreen = () => {
             </Card>
 
             <div className="mt-8 text-center text-sm text-gray-500">
-              <p>© 2024 Gautam Buddha University. All rights reserved.</p>
+              <p>© 2025 Gautam Buddha University. All rights reserved.</p>
               <p className="mt-1">Secure login powered by MyGBU Smart Campus</p>
             </div>
           </div>

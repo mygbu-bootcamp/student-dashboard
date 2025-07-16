@@ -220,7 +220,7 @@ const FeesModule = ({ user }) => {
                 </div>
               </div>
             ))}
-            <div className="border-t pt-3 mt-3">
+            <div className="border-t border-gray-200 pt-3 mt-3">
               <div className="flex justify-between items-center">
                 <span className="font-bold text-lg">Total Semester Fee:</span>
                 <span className="font-bold text-xl text-blue-600">₹{feeStructure.reduce((sum, item) => sum + item.amount, 0).toLocaleString()}</span>

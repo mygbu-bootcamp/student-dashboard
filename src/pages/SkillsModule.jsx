@@ -307,7 +307,7 @@ const SkillsModule = ({ user }) => {
             <div className="flex-1">
               <Input placeholder="Search labs..." className="text-sm" />
             </div>
-            <select className="p-2 border rounded-lg text-sm">
+            <select className="p-2 border border-gray-200 rounded-lg text-sm">
               <option>All Labs</option>
               <option>Technical</option>
               <option>Research</option>
@@ -469,7 +469,7 @@ const SkillsModule = ({ user }) => {
                 </div>
                 <Button 
                   onClick={handleProjectSubmit} 
-                  className="w-full py-2 text-xs sm:text-sm"
+                  className="w-full py-2 text-xs sm:text-sm bg-black text-white"
                 >
                   Submit Project
                 </Button>

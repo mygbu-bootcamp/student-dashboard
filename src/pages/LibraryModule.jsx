@@ -140,13 +140,13 @@ const LibraryModule = ({ user }) => {
           <CardDescription>Find books, journals, and digital resources</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-2">
+          <div className="flex gap-2 bg-">
             <Input 
               placeholder="Search by title, author, or ISBN..." 
               className="flex-1"
             />
-            <Button>
-              <Search className="h-4 w-4" />
+            <Button variant="outline" className="flex items-center bg-black text-white">
+              <Search className="h-4 w-4 " />
             </Button>
           </div>
         </CardContent>
@@ -268,7 +268,7 @@ const LibraryModule = ({ user }) => {
           <CardContent>
             <div className="space-y-3">
               {fines.map((fine, index) => (
-                <div key={index} className="flex items-center justify-between p-3  border-gray-200 rounded-lg">
+                <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                   <div className="flex-1">
                     <p className="font-medium text-sm">{fine.book}</p>
                     <p className="text-xs text-gray-600">{fine.days} days overdue</p>
@@ -280,7 +280,7 @@ const LibraryModule = ({ user }) => {
                     </Badge>
                   </div>
                   {fine.status === "Pending" && (
-                    <Button size="sm" className="ml-2">
+                    <Button size="sm" className="ml-2 bg-black text-white" >
                       Pay Fine
                     </Button>
                   )}

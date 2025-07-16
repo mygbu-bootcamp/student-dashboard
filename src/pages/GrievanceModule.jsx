@@ -279,7 +279,7 @@ const GrievanceModule = ({ user }) => {
               </div>
 
               {/* Submit Button */}
-              <Button onClick={handleSubmitGrievance} className="w-full">
+              <Button onClick={handleSubmitGrievance} className="w-full bg-black text-white">
                 <Send className="mr-2 h-4 w-4" />
                 Submit Grievance
               </Button>
@@ -291,8 +291,8 @@ const GrievanceModule = ({ user }) => {
         <TabsContent value="history">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-600" />
+              <CardTitle className="flex items-center gap-2 ">
+                <FileText className="h-5 w-5 text-blue-600 " />
                 Grievance History & Status
               </CardTitle>
               <CardDescription>
@@ -314,18 +314,18 @@ const GrievanceModule = ({ user }) => {
                 <TableBody>
                   {grievances.map((grievance) => (
                     <TableRow key={grievance.id}>
-                      <TableCell className="font-medium">{grievance.id}</TableCell>
-                      <TableCell>{grievance.category}</TableCell>
-                      <TableCell>{grievance.dateSubmitted}</TableCell>
-                      <TableCell>
+                      <TableCell className="font-medium  border-t border-gray-200">{grievance.id}</TableCell>
+                      <TableCell className="font-medium  border-t border-gray-200">{grievance.category}</TableCell>
+                      <TableCell className="font-medium  border-t border-gray-200">{grievance.dateSubmitted}</TableCell>
+                      <TableCell className="font-medium  border-t border-gray-200">
                         <div className="flex items-center gap-2">
                           {getStatusIcon(grievance.status)}
                           {getStatusBadge(grievance.status)}
                         </div>
                       </TableCell>
-                      <TableCell>{grievance.assignedAuthority || 'Pending Assignment'}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
+                      <TableCell className="font-medium  border-t border-gray-200">{grievance.assignedAuthority || 'Pending Assignment'}</TableCell>
+                      <TableCell className="font-medium  border-t border-gray-200">
+                        <div className="flex gap-2 ">
                           <Button
                             variant="outline"
                             size="sm"
@@ -349,7 +349,7 @@ const GrievanceModule = ({ user }) => {
                                 });
                               }}
                             >
-                              <RotateCcw className="h-4 w-4 mr-1" />
+                              <RotateCcw className="h-4 w-4 mr-1 " />
                               Reopen
                             </Button>
                           )}

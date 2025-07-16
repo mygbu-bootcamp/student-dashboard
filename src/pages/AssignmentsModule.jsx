@@ -315,7 +315,7 @@ const AssignmentsModule = ({ user }) => {
                   <h4 className="font-medium mb-3">Project Phases</h4>
                   <div className="space-y-3">
                     {project.phases.map((phase, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                         <div className="flex items-center space-x-3">
                           <div className={`w-3 h-3 rounded-full ${
                             phase.status === "Completed" ? "bg-green-500" :
@@ -346,7 +346,7 @@ const AssignmentsModule = ({ user }) => {
                 </div>
 
                 <div className="flex space-x-2">
-                  <Button size="sm" className="bg-blue-900 hover:bg-blue-800">
+                  <Button size="sm" className="bg-blue-900 hover:bg-blue-800 text-white">
                     Update Progress
                   </Button>
                   <Button variant="outline" size="sm">
@@ -383,7 +383,7 @@ const AssignmentsModule = ({ user }) => {
                 
                 <div>
                   <label className="text-sm font-medium text-gray-700">Upload Files</label>
-                  <div className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <div className="mt-1 border-2 border-dashed border-gray-200 rounded-lg p-6 text-center">
                     <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                     <p className="text-sm text-gray-600">
                       Drag and drop files here, or click to browse

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import NewsSection from "../pages/NewsSection";
+import { useNavigate } from "react-router-dom";
 import {
   Calendar,
   CheckCircle,
@@ -22,6 +23,7 @@ import {
 } from "lucide-react";
 
 const DashboardHome = ({ user }) => {
+  const navigate = useNavigate();
   const [currentThought] = useState(() => {
     const thoughts = [
       "Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill",
@@ -246,13 +248,14 @@ const DashboardHome = ({ user }) => {
               const Icon = action.icon;
               return (
                 <Button 
-                  key={index}
+                 key={index}
                   variant="outline" 
                   className="h-auto p-4 flex flex-col hover:shadow-md transition-all duration-200 hover:scale-105"
-                >
+                  onClick={() => navigate(`/${action.action}`)} // navigate to route based on action.action
+                  >
                   <Icon className={`h-6 w-6 mb-2 ${action.color}`} />
                   <span className="text-sm text-center">{action.title}</span>
-                </Button>
+                  </Button>
               );
             })}
           </div>

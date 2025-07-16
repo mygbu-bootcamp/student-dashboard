@@ -177,7 +177,7 @@ const GoalTrackerModule = ({ user }) => {
 
   // Converted TaskCard to plain JS props
   const TaskCard = ({ task }) => (
-    <Card className="mb-4 hover:shadow-md transition-shadow">
+    <Card className="mb-4 ">
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-2">
           <h4 className="font-medium text-sm">{task.title}</h4>
@@ -240,22 +240,26 @@ const GoalTrackerModule = ({ user }) => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-900 to-purple-700 rounded-lg p-6 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">Goals & Task Tracker</h1>
-            <p className="text-indigo-100">Manage your tasks and achieve your goals systematically</p>
-          </div>
-          <div className="text-center">
-            <Target className="h-12 w-12 text-white mb-2" />
-            <div className="bg-white/20 rounded-lg p-2">
-              <div className="text-sm text-indigo-100">Tasks Today</div>
-              <div className="text-lg font-bold">{tasks.todo.length + tasks.inProgress.length}</div>
-            </div>
-          </div>
+    {/* Header */}
+<div className="bg-gradient-to-r from-indigo-900 to-purple-700 rounded-lg p-6 text-white">
+  <div className="flex items-center justify-between">
+    <div>
+      <h1 className="text-2xl font-bold mb-2">Goals & Task Tracker</h1>
+      <p className="text-indigo-100">
+        Manage your tasks and achieve your goals systematically
+      </p>
+    </div>
+    <div className="text-center">
+      <div className="bg-white/20 rounded-lg p-2 flex flex-col items-center text-center">
+        <Target className="h-8 w-8 text-white mb-2" />
+        <div className="text-sm text-indigo-100">Tasks Today</div>
+        <div className="text-lg font-bold">
+          {tasks.todo.length + tasks.inProgress.length}
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -443,7 +447,7 @@ const GoalTrackerModule = ({ user }) => {
                     <div>
                       <label className="text-sm font-medium">Priority</label>
                       <select 
-                        className="w-full p-2 border rounded-md"
+                        className="w-full p-2 border border-gray-200 rounded-md"
                         value={newTask.priority}
                         onChange={(e) => setNewTask({...newTask, priority: e.target.value})}
                       >
@@ -505,7 +509,7 @@ const GoalTrackerModule = ({ user }) => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-sm font-medium">Type</label>
-                      <select className="w-full p-2 border rounded-md">
+                      <select className="w-full p-2 border border-gray-200 rounded-md">
                         <option>Academic</option>
                         <option>Career</option>
                         <option>Health</option>

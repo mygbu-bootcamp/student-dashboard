@@ -146,22 +146,25 @@ const GBUStoreModule = ({ user }) => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-purple-900 to-blue-700 rounded-lg p-6 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">GBU Store & Startup Ecosystem</h1>
-            <p className="text-purple-100">Shop from campus stores and student ventures</p>
-          </div>
-          <div className="text-center">
-            <Store className="h-12 w-12 text-white mb-2" />
-            <div className="bg-white/20 rounded-lg p-2">
-              <div className="text-sm text-purple-100">GBU Wallet</div>
-              <div className="text-lg font-bold">₹{walletBalance}</div>
-            </div>
-          </div>
-        </div>
+    {/* Header */}
+<div className="bg-gradient-to-r from-purple-900 to-blue-700 rounded-lg p-6 text-white">
+  <div className="flex items-center justify-between">
+    <div>
+      <h1 className="text-2xl font-bold mb-2">GBU Store & Startup Ecosystem</h1>
+      <p className="text-purple-100">Shop from campus stores and student ventures</p>
+    </div>
+
+    {/* Store Logo + Wallet Box */}
+    <div className="text-center">
+      <div className="bg-white/20 rounded-lg p-4 flex flex-col items-center justify-center text-center">
+        <Store className="h-8 w-8 text-white mb-1" />
+        <div className="text-sm text-purple-100">GBU Wallet</div>
+        <div className="text-lg font-bold">₹{walletBalance}</div>
       </div>
+    </div>
+  </div>
+</div>
+
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

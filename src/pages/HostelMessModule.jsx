@@ -143,21 +143,23 @@ const HostelMessModule = ({ user }) => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-orange-900 to-red-700 rounded-lg p-6 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">Hostel & Mess Services</h1>
-            <p className="text-orange-100">Manage your accommodation and dining services</p>
-          </div>
-          <div className="text-center">
-            <Building className="h-12 w-12 text-white mb-2" />
-            <div className="bg-white/20 rounded-lg p-2">
-              <div className="text-sm text-orange-100">Room</div>
-              <div className="text-lg font-bold">{hostelInfo.room}</div>
-            </div>
-          </div>
+  <div className="bg-gradient-to-r from-orange-900 to-red-700 rounded-lg p-6 text-white">
+    <div className="flex items-center justify-between">
+      <div>
+        <h1 className="text-2xl font-bold mb-2">Hostel & Mess Services</h1>
+        <p className="text-orange-100">
+          Manage your accommodation and dining services
+        </p>
+      </div>
+      <div className="text-center">
+        <div className="bg-white/20 rounded-lg p-2 flex flex-col items-center text-center">
+          <Building className="h-8 w-8 text-white mb-2" />
+          <div className="text-sm text-orange-100">Room</div>
+          <div className="text-lg font-bold">{hostelInfo.room}</div>
         </div>
       </div>
+    </div>
+  </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -276,7 +278,7 @@ const HostelMessModule = ({ user }) => {
                   </div>
                   
                   <div className="pt-4">
-                    <Button className="w-full">
+                    <Button className="w-full bg-black text-white">
                       <Phone className="mr-2 h-4 w-4" />
                       Contact Warden
                     </Button>
@@ -468,7 +470,7 @@ const HostelMessModule = ({ user }) => {
                     <label htmlFor="emergency" className="text-sm">Emergency Leave</label>
                   </div>
                   
-                  <Button onClick={handleLeaveSubmit} className="w-full">
+                  <Button onClick={handleLeaveSubmit} className="w-full bg-black text-white">
                     <Send className="mr-2 h-4 w-4" />
                     Submit Leave Request
                   </Button>
@@ -553,7 +555,7 @@ const HostelMessModule = ({ user }) => {
                     />
                   </div>
                   
-                  <Button onClick={handleFeedbackSubmit} className="w-full">
+                  <Button onClick={handleFeedbackSubmit} className="w-full bg-black text-white">
                     <Send className="mr-2 h-4 w-4" />
                     Submit Feedback
                   </Button>

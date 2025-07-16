@@ -53,7 +53,7 @@ const ProfileModule = () => {
     branch: "Computer Science & Engineering",
     semester: "6th",
     studentId: "2021BCS001",
-    photo: null
+    photo:"A"
   };
 
   const handleSave = () => {
@@ -199,7 +199,7 @@ const ProfileModule = () => {
                         value={profileData.name}
                         onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
                         disabled={!isEditing}
-                        className="bg-white border-gray-300"
+                        className="bg-white border border-gray-300"
                       />
                     </div>
                     <div>
@@ -207,7 +207,7 @@ const ProfileModule = () => {
                       <Input
                         value={profileData.email}
                         disabled
-                        className="bg-gray-50 border-gray-300"
+                        className="bg-gray-50 border border-gray-300"
                       />
                     </div>
                     <div>
@@ -216,7 +216,7 @@ const ProfileModule = () => {
                         value={profileData.phone}
                         onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
                         disabled={!isEditing}
-                        className="bg-white border-gray-300"
+                        className="bg-white border border-gray-300"
                       />
                     </div>
                     <div>
@@ -225,7 +225,7 @@ const ProfileModule = () => {
                         value={profileData.address}
                         onChange={(e) => setProfileData(prev => ({ ...prev, address: e.target.value }))}
                         disabled={!isEditing}
-                        className="bg-white border-gray-300"
+                        className="bg-white border border-gray-300"
                       />
                     </div>
                   </div>
@@ -236,7 +236,7 @@ const ProfileModule = () => {
                       value={profileData.about}
                       onChange={(e) => setProfileData(prev => ({ ...prev, about: e.target.value }))}
                       disabled={!isEditing}
-                      className="bg-white border-gray-300 min-h-[100px]"
+                      className="bg-white border border-gray-300 min-h-[100px]"
                       rows={4}
                     />
                   </div>
@@ -248,7 +248,7 @@ const ProfileModule = () => {
                   <Button variant="outline" onClick={() => setIsEditing(false)} className="w-full sm:w-auto">
                     Cancel
                   </Button>
-                  <Button onClick={handleSave} className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800">
+                  <Button onClick={handleSave} className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white">
                     Save Changes
                   </Button>
                 </div>
@@ -373,7 +373,7 @@ const ProfileModule = () => {
             <CardContent>
               <div className="space-y-4">
                 {profileData.certifications.map((cert, index) => (
-                  <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border rounded-lg bg-white gap-3">
+                  <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-gray-200 rounded-lg bg-white gap-3">
                     <div className="flex items-center space-x-3">
                       <div className="p-2 bg-yellow-100 rounded-lg">
                         <Award className="h-5 w-5 text-yellow-600" />
@@ -411,7 +411,7 @@ const ProfileModule = () => {
               <CardDescription className="text-gray-600">Auto-generated academic resume based on your profile</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="bg-white border rounded-lg p-6 lg:p-8 shadow-sm max-w-3xl mx-auto">
+              <div className="bg-white border border-gray-200 rounded-lg p-6 lg:p-8 shadow-sm max-w-3xl mx-auto">
                 {/* Resume Preview */}
                 <div className="text-center mb-6">
                   <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">{profileData.name}</h2>
