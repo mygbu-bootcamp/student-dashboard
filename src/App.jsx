@@ -74,7 +74,7 @@ const App = () => {
                   }
                 />
                 <Route
-                  path="/WellnessModule"
+                  path="/wellness"
                   element={
                     <ProtectedRoute>
                       <Wellness />

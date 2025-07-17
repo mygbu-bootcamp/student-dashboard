@@ -1,7 +1,109 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
-import { Calendar, Trophy, Users, Lightbulb, Award, ExternalLink } from "lucide-react";
+import React from 'react';
+import {
+  Calendar,
+  Trophy,
+  Users,
+  Lightbulb,
+  Award,
+  ExternalLink
+} from "lucide-react";
+
+// Custom Card Component (re-used from previous turn)
+const Card = ({ children, className }) => (
+  <div className={`bg-white rounded-xl shadow-sm border border-gray-200 ${className}`}>
+    {children}
+  </div>
+);
+
+const CardHeader = ({ children, className }) => (
+  <div className={`p-6 pb-2 ${className}`}>
+    {children}
+  </div>
+);
+
+const CardTitle = ({ children, className }) => (
+  <h3 className={`text-lg font-semibold text-gray-900 ${className}`}>
+    {children}
+  </h3>
+);
+
+const CardDescription = ({ children, className }) => (
+  <p className={`text-sm text-gray-600 ${className}`}>
+    {children}
+  </p>
+);
+
+const CardContent = ({ children, className }) => (
+  <div className={`p-6 pt-4 ${className}`}>
+    {children}
+  </div>
+);
+
+// Custom Badge Component (modified to support more variants)
+const Badge = ({ children, className, variant = 'default' }) => {
+  let variantClasses = "";
+  switch (variant) {
+    case 'secondary':
+      variantClasses = "bg-gray-100 text-gray-800";
+      break;
+    case 'destructive':
+      variantClasses = "bg-red-100 text-red-800";
+      break;
+    case 'outline':
+      variantClasses = "border border-gray-300 text-gray-700";
+      break;
+    case 'default':
+    default:
+      variantClasses = "bg-blue-100 text-blue-800"; // Assuming default for student achievement
+      break;
+  }
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variantClasses} ${className}`}>
+      {children}
+    </span>
+  );
+};
+
+// Custom Button Component (re-used from previous turn)
+const Button = ({ children, className, variant = 'default', size = 'default', ...props }) => {
+  const baseClasses = "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  let variantClasses = "";
+  let sizeClasses = "";
+
+  switch (variant) {
+    case 'outline':
+      variantClasses = "border border-gray-300 bg-white text-gray-700 hover:bg-gray-100";
+      break;
+    case 'black':
+      variantClasses = "bg-black text-white hover:bg-gray-800";
+      break;
+    default:
+      variantClasses = "bg-blue-600 text-white hover:bg-blue-700";
+      break;
+  }
+
+  switch (size) {
+    case 'sm':
+      sizeClasses = "h-8 px-3 py-1";
+      break;
+    case 'lg':
+      sizeClasses = "h-12 px-6 py-3";
+      break;
+    case 'icon':
+      sizeClasses = "h-10 w-10";
+      break;
+    default:
+      sizeClasses = "h-10 px-4 py-2";
+      break;
+  }
+
+  return (
+    <button className={`${baseClasses} ${variantClasses} ${sizeClasses} ${className}`} {...props}>
+      {children}
+    </button>
+  );
+};
+
 
 const NewsSection = () => {
   const achievements = [
@@ -11,7 +113,7 @@ const NewsSection = () => {
       description: "Team 'InnovateGBU' secures first place in the National Innovation Challenge 2024",
       category: "Achievement",
       date: "March 15, 2024",
-      image: "/api/placeholder/300/200",
+      image: "https://placehold.co/300x200/E0F2F7/2C5282?text=Hackathon", // Placeholder for image
       badge: "National Level",
       type: "student"
     },
@@ -21,7 +123,7 @@ const NewsSection = () => {
       description: "Dr. Priya Sharma's research on AI in Agriculture featured in prestigious journal",
       category: "Research",
       date: "March 12, 2024",
-      image: "/api/placeholder/300/200",
+      image: "https://placehold.co/300x200/F0FDF4/065F46?text=Research", // Placeholder for image
       badge: "Faculty Achievement",
       type: "faculty"
     },
@@ -31,7 +133,7 @@ const NewsSection = () => {
       description: "State-of-the-art AI/ML and IoT research facility inaugurated by Hon'ble Vice Chancellor",
       category: "Infrastructure",
       date: "March 10, 2024",
-      image: "/api/placeholder/300/200",
+      image: "https://placehold.co/300x200/F3F4F6/4B5563?text=Lab", // Placeholder for image
       badge: "University News",
       type: "university"
     }
@@ -95,7 +197,7 @@ const NewsSection = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-screen-xl mx-auto space-y-6 p-4 md:p-6 lg:p-8">
       {/* Achievements Carousel */}
       <Card>
         <CardHeader>
@@ -109,9 +211,13 @@ const NewsSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {achievements.map((achievement) => (
               <div key={achievement.id} className="group relative overflow-hidden rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-300">
-                <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                  <Trophy className="h-12 w-12 text-blue-600" />
-                </div>
+                {/* Replaced image with placeholder and onerror for robustness */}
+                <img
+                  src={achievement.image}
+                  alt={achievement.title}
+                  className="w-full h-32 object-cover"
+                  onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/300x200/E0E0E0/666666?text=Image+Error`; }}
+                />
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <Badge variant={achievement.type === 'student' ? 'default' : achievement.type === 'faculty' ? 'secondary' : 'outline'}>
@@ -184,11 +290,11 @@ const NewsSection = () => {
           <CardContent>
             <div className="space-y-3">
               {announcements.map((announcement) => (
-                <div 
-                  key={announcement.id} 
+                <div
+                  key={announcement.id}
                   className={`p-3 rounded-lg border ${
-                    announcement.urgent 
-                      ? 'border-red-200 bg-red-50' 
+                    announcement.urgent
+                      ? 'border-red-200 bg-red-50'
                       : 'border-gray-200 bg-gray-50'
                   }`}
                 >

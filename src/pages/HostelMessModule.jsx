@@ -1,13 +1,7 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
-import { Input } from "../components/ui/input";
-import { Textarea } from "../components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { 
-  Building, 
-  Utensils, 
+import React, { useState } from "react";
+import {
+  Building,
+  Utensils,
   Calendar,
   MapPin,
   Users,
@@ -21,6 +15,196 @@ import {
   Phone,
   Mail
 } from "lucide-react";
+
+// Custom Card Component (re-used from previous turn)
+const Card = ({ children, className }) => (
+  <div className={`bg-white rounded-xl border border-gray-200 ${className}`}>
+    {children}
+  </div>
+);
+
+const CardHeader = ({ children, className }) => (
+  <div className={`p-6 pb-2 ${className}`}>
+    {children}
+  </div>
+);
+
+const CardTitle = ({ children, className }) => (
+  <h3 className={`text-lg font-semibold text-gray-900 ${className}`}>
+    {children}
+  </h3>
+);
+
+const CardDescription = ({ children, className }) => (
+  <p className={`text-sm text-gray-600 ${className}`}>
+    {children}
+  </p>
+);
+
+const CardContent = ({ children, className }) => (
+  <div className={`p-6 pt-4 ${className}`}>
+    {children}
+  </div>
+);
+
+// Custom Badge Component (re-used from previous turn, adjusted for new variants)
+const Badge = ({ children, className, variant = 'default' }) => {
+  let variantClasses = "";
+  switch (variant) {
+    case 'secondary':
+      variantClasses = "bg-gray-100 text-gray-800";
+      break;
+    case 'destructive':
+      variantClasses = "bg-red-100 text-red-800";
+      break;
+    case 'outline':
+      variantClasses = "border border-gray-300 text-gray-700";
+      break;
+    case 'default':
+    default:
+      variantClasses = "bg-blue-100 text-blue-800";
+      break;
+  }
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variantClasses} ${className}`}>
+      {children}
+    </span>
+  );
+};
+
+// Custom Button Component (re-used from previous turn)
+const Button = ({ children, className, variant = 'default', size = 'default', ...props }) => {
+  const baseClasses = "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  let variantClasses = "";
+  let sizeClasses = "";
+
+  switch (variant) {
+    case 'outline':
+      variantClasses = "border border-gray-300 bg-white text-gray-700 hover:bg-gray-100";
+      break;
+    case 'black':
+      variantClasses = "bg-black text-white hover:bg-gray-800";
+      break;
+    default:
+      variantClasses = "bg-black text-white hover:bg-black/80";
+      break;
+  }
+
+  switch (size) {
+    case 'sm':
+      sizeClasses = "h-8 px-3 py-1";
+      break;
+    case 'lg':
+      sizeClasses = "h-12 px-6 py-3";
+      break;
+    case 'icon':
+      sizeClasses = "h-10 w-10";
+      break;
+    default:
+      sizeClasses = "h-10 px-4 py-2";
+      break;
+  }
+
+  return (
+    <button className={`${baseClasses} ${variantClasses} ${sizeClasses} ${className}`} {...props}>
+      {children}
+    </button>
+  );
+};
+
+// Custom Input Component (re-used from previous turn)
+const Input = ({ className, type = "text", ...props }) => (
+  <input
+    type={type}
+    className={`flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+    {...props}
+  />
+);
+
+// Custom Textarea Component
+const Textarea = ({ className, ...props }) => (
+  <textarea
+    className={`flex min-h-[80px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+    {...props}
+  />
+);
+
+// New Tabs Components using React Context
+const TabsContext = React.createContext();
+
+const Tabs = ({ defaultValue, value: propValue, onValueChange, children, ...props }) => {
+  const [localValue, setLocalValue] = React.useState(defaultValue);
+  const isControlled = propValue !== undefined;
+  const value = isControlled ? propValue : localValue;
+
+  const handleValueChange = (newValue) => {
+    if (!isControlled) setLocalValue(newValue);
+    if (onValueChange) onValueChange(newValue);
+  };
+
+  return (
+    <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
+      <div className="w-full" {...props}>{children}</div>
+    </TabsContext.Provider>
+  );
+};
+
+const TabsList = React.forwardRef(({ className = "", children, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={`w-full flex h-[48px] items-center justify-between rounded-xl bg-[#f1f5f9] p-1 ${className}`}
+      role="tablist"
+      {...props}
+    >
+      {children}
+    </div>
+  );
+});
+
+const TabsTrigger = React.forwardRef(({ className = "", children, value, ...props }, ref) => {
+  const { value: activeTab, onValueChange } = React.useContext(TabsContext);
+  const isActive = activeTab === value;
+
+  return (
+    <button
+      ref={ref}
+      className={`inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 flex-1 h-full ${
+        isActive ? "bg-white text-gray-900 shadow" : "text-gray-500 hover:text-gray-900"
+      } ${className}`}
+      onClick={() => onValueChange(value)}
+      role="tab"
+      aria-selected={isActive}
+      id={`tab-${value}`}
+      aria-controls={`tabpanel-${value}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+});
+
+const TabsContent = React.forwardRef(({ className = "", children, value, ...props }, ref) => {
+  const { value: activeTab } = React.useContext(TabsContext);
+
+  if (value !== activeTab) {
+    return null;
+  }
+
+  return (
+    <div
+      ref={ref}
+      className={`mt-2 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 ${className}`}
+      role="tabpanel"
+      id={`tabpanel-${value}`}
+      aria-labelledby={`tab-${value}`}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+});
+
 
 const HostelMessModule = ({ user }) => {
   const [activeTab, setActiveTab] = useState("hostel");
@@ -59,7 +243,7 @@ const HostelMessModule = ({ user }) => {
         items: ["Aloo Paratha", "Curd", "Pickle", "Tea/Coffee"]
       },
       lunch: {
-        time: "12:00 PM - 2:00 PM", 
+        time: "12:00 PM - 2:00 PM",
         items: ["Rice", "Dal Tadka", "Mixed Veg", "Roti", "Salad"]
       },
       dinner: {
@@ -141,25 +325,25 @@ const HostelMessModule = ({ user }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6 lg:p-8 font-sans"> {/* Changed font-['Inter'] to font-sans */}
       {/* Header */}
-  <div className="bg-gradient-to-r from-orange-900 to-red-700 rounded-lg p-6 text-white">
-    <div className="flex items-center justify-between">
-      <div>
-        <h1 className="text-2xl font-bold mb-2">Hostel & Mess Services</h1>
-        <p className="text-orange-100">
-          Manage your accommodation and dining services
-        </p>
-      </div>
-      <div className="text-center">
-        <div className="bg-white/20 rounded-lg p-2 flex flex-col items-center text-center">
-          <Building className="h-8 w-8 text-white mb-2" />
-          <div className="text-sm text-orange-100">Room</div>
-          <div className="text-lg font-bold">{hostelInfo.room}</div>
+      <div className="bg-gradient-to-r from-orange-900 to-red-700 rounded-lg p-6 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold mb-2">Hostel & Mess Services</h1>
+            <p className="text-orange-100">
+              Manage your accommodation and dining services
+            </p>
+          </div>
+          <div className="text-center">
+            <div className="bg-white/20 rounded-lg p-2 flex flex-col items-center text-center">
+              <Building className="h-8 w-8 text-white mb-2" />
+              <div className="text-sm text-orange-100">Room</div>
+              <div className="text-lg font-bold">{hostelInfo.room}</div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -173,7 +357,7 @@ const HostelMessModule = ({ user }) => {
         <Card>
           <CardContent className="p-4 text-center">
             <Users className="h-6 w-6 text-green-500 mx-auto mb-2" />
-            <div className="text-lg font-bold text-green-600">{hostelInfo.occupied}/{hostelInfo.block_capacity}</div>
+            <div className="text-lg font-bold">{hostelInfo.occupied}/{hostelInfo.block_capacity}</div>
             <div className="text-sm text-gray-600">Occupancy</div>
           </CardContent>
         </Card>
@@ -193,8 +377,8 @@ const HostelMessModule = ({ user }) => {
         </Card>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+      <Tabs defaultValue="hostel" value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
           <TabsTrigger value="hostel">Hostel Info</TabsTrigger>
           <TabsTrigger value="mess">Mess Menu</TabsTrigger>
           <TabsTrigger value="leave">Leave Requests</TabsTrigger>
@@ -229,7 +413,7 @@ const HostelMessModule = ({ user }) => {
                       <p className="text-gray-600">{hostelInfo.roomType}</p>
                     </div>
                   </div>
-                  
+
                   <div>
                     <span className="font-medium">Roommates:</span>
                     <div className="mt-2 space-y-2">
@@ -260,7 +444,7 @@ const HostelMessModule = ({ user }) => {
                       <p className="text-sm text-gray-600">Block Warden</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-3">
                     <Phone className="h-5 w-5 text-gray-400" />
                     <div>
@@ -268,7 +452,7 @@ const HostelMessModule = ({ user }) => {
                       <p className="text-sm text-gray-600">Mobile</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-3">
                     <Mail className="h-5 w-5 text-gray-400" />
                     <div>
@@ -276,7 +460,7 @@ const HostelMessModule = ({ user }) => {
                       <p className="text-sm text-gray-600">Email</p>
                     </div>
                   </div>
-                  
+
                   <div className="pt-4">
                     <Button className="w-full bg-black text-white">
                       <Phone className="mr-2 h-4 w-4" />
@@ -336,7 +520,7 @@ const HostelMessModule = ({ user }) => {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium">Lunch</h4>
@@ -351,7 +535,7 @@ const HostelMessModule = ({ user }) => {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium">Dinner</h4>
@@ -450,7 +634,7 @@ const HostelMessModule = ({ user }) => {
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="text-sm font-medium">Reason for Leave</label>
                     <Textarea
@@ -459,17 +643,18 @@ const HostelMessModule = ({ user }) => {
                       onChange={(e) => setLeaveRequest({...leaveRequest, reason: e.target.value})}
                     />
                   </div>
-                  
+
                   <div className="flex items-center space-x-2">
                     <input
                       type="checkbox"
                       id="emergency"
                       checked={leaveRequest.emergency}
                       onChange={(e) => setLeaveRequest({...leaveRequest, emergency: e.target.checked})}
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-black"
                     />
                     <label htmlFor="emergency" className="text-sm">Emergency Leave</label>
                   </div>
-                  
+
                   <Button onClick={handleLeaveSubmit} className="w-full bg-black text-white">
                     <Send className="mr-2 h-4 w-4" />
                     Submit Leave Request
@@ -503,7 +688,7 @@ const HostelMessModule = ({ user }) => {
                             {leave.status}
                           </Badge>
                         </div>
-                        
+
                         {leave.approvedBy && (
                           <div className="text-xs text-gray-600">
                             Approved by: {leave.approvedBy}
@@ -535,8 +720,8 @@ const HostelMessModule = ({ user }) => {
                         <Star
                           key={star}
                           className={`h-6 w-6 cursor-pointer ${
-                            star <= feedback.rating 
-                              ? "text-yellow-400 fill-current" 
+                            star <= feedback.rating
+                              ? "text-yellow-400 fill-current"
                               : "text-gray-300"
                           }`}
                           onClick={() => setFeedback({...feedback, rating: star})}
@@ -545,7 +730,7 @@ const HostelMessModule = ({ user }) => {
                       <span className="text-sm text-gray-600">({feedback.rating}/5)</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="text-sm font-medium">Comments & Suggestions</label>
                     <Textarea
@@ -554,7 +739,7 @@ const HostelMessModule = ({ user }) => {
                       onChange={(e) => setFeedback({...feedback, message: e.target.value})}
                     />
                   </div>
-                  
+
                   <Button onClick={handleFeedbackSubmit} className="w-full bg-black text-white">
                     <Send className="mr-2 h-4 w-4" />
                     Submit Feedback
@@ -573,7 +758,7 @@ const HostelMessModule = ({ user }) => {
                 <div className="space-y-4">
                   <div className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <div className="font-medium">Anonymous Student</div>
+                      <div className="font-medium">Default Student</div>
                       <div className="flex items-center">
                         <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
                         <span>4/5</span>
@@ -584,10 +769,10 @@ const HostelMessModule = ({ user }) => {
                     </p>
                     <div className="text-xs text-gray-500 mt-2">March 24, 2024</div>
                   </div>
-                  
+
                   <div className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <div className="font-medium">Anonymous Student</div>
+                      <div className="font-medium">Default Student</div>
                       <div className="flex items-center">
                         <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
                         <span>3/5</span>
@@ -598,10 +783,10 @@ const HostelMessModule = ({ user }) => {
                     </p>
                     <div className="text-xs text-gray-500 mt-2">March 23, 2024</div>
                   </div>
-                  
+
                   <div className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <div className="font-medium">Anonymous Student</div>
+                      <div className="font-medium">Default Student</div>
                       <div className="flex items-center">
                         <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
                         <span>5/5</span>

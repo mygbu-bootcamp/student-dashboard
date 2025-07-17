@@ -1,19 +1,13 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
-import { Input } from "../components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { 
-  Bell, 
-  Calendar, 
-  DollarSign, 
-  Heart, 
+import {
+  Bell,
+  Calendar,
+  DollarSign,
+  Heart,
   GraduationCap,
   Settings,
   Search,
   Filter,
-  MailOpen,
   Archive,
   Trash2,
   ExternalLink,
@@ -21,16 +15,114 @@ import {
   Info,
   CheckCircle,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
 } from "lucide-react";
+
+import * as React from "react";
+
+const TabsContext = React.createContext();
+
+const Tabs = ({ defaultValue, value: propValue, onValueChange, children, ...props }) => {
+  const [localValue, setLocalValue] = React.useState(defaultValue);
+  const isControlled = propValue !== undefined;
+  const value = isControlled ? propValue : localValue;
+
+  const handleValueChange = (newValue) => {
+    if (!isControlled) setLocalValue(newValue);
+    if (onValueChange) onValueChange(newValue);
+  };
+
+  return (
+    <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
+      <div className="w-full" {...props}>{children}</div>
+    </TabsContext.Provider>
+  );
+};
+
+const TabsList = React.forwardRef(({ className = "", children, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={`w-full flex h-[48px] items-center justify-between rounded-xl bg-[#f1f5f9] p-1 ${className}`}
+      role="tablist"
+      {...props}
+    >
+      {React.Children.map(children, (child) => {
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child, { parentProps: props });
+        }
+        return child;
+      })}
+    </div>
+  );
+});
+TabsList.displayName = "TabsList";
+
+const TabsTrigger = React.forwardRef(
+  ({ className = "", value, parentProps, children, ...props }, ref) => {
+    const { value: contextValue, onValueChange } = React.useContext(TabsContext);
+    const isActive = value === contextValue;
+
+    const handleClick = () => {
+      onValueChange(value);
+    };
+
+    return (
+      <button
+        ref={ref}
+        role="tab"
+        aria-selected={isActive}
+        onClick={handleClick}
+        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
+          isActive
+            ? "bg-white text-black "
+            : "text-muted-foreground hover:text-foreground"
+        } ${className}`}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+TabsTrigger.displayName = "TabsTrigger";
+
+const TabsContent = React.forwardRef(
+  ({ className = "", value, children, ...props }, ref) => {
+    const { value: contextValue } = React.useContext(TabsContext);
+    const isActive = value === contextValue;
+
+    return isActive ? (
+      <div
+        ref={ref}
+        role="tabpanel"
+        className={`mt-4 px-4 sm:px-8 ${className}`}
+        {...props}
+      >
+        {children}
+      </div>
+    ) : null;
+  }
+);
+TabsContent.displayName = "TabsContent";
+
 
 const NotificationsModule = ({ user }) => {
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [notificationSettings, setNotificationSettings] = useState({
+    push: true,
+    email: true,
+    sms: false,
+    academic: "All",
+    finance: "Important Only",
+    event: "All",
+    wellness: "Daily",
+  });
 
   // Mock notification data
-  const notifications = [
+  const [notifications, setNotifications] = useState([
     {
       id: 1,
       title: "Fee Payment Due",
@@ -115,7 +207,7 @@ const NotificationsModule = ({ user }) => {
       icon: GraduationCap,
       color: "text-orange-500"
     }
-  ];
+  ]);
 
   const categories = [
     { id: "all", label: "All", count: notifications.length },
@@ -128,7 +220,7 @@ const NotificationsModule = ({ user }) => {
 
   const filteredNotifications = notifications.filter(notification => {
     const matchesSearch = notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         notification.message.toLowerCase().includes(searchTerm.toLowerCase());
+                          notification.message.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = activeTab === "all" || notification.category === activeTab;
     return matchesSearch && matchesCategory;
   });
@@ -157,6 +249,22 @@ const NotificationsModule = ({ user }) => {
     setShowMobileMenu(!showMobileMenu);
   };
 
+  const handleMarkAllRead = () => {
+    setNotifications(notifications.map(n => ({ ...n, read: true })));
+  };
+
+  const handleMarkAsRead = (id) => {
+    setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+
+  const handleDeleteNotification = (id) => {
+    setNotifications(notifications.filter(n => n.id !== id));
+  };
+
+  const handleNotificationSettingChange = (setting, value) => {
+    setNotificationSettings(prev => ({ ...prev, [setting]: value }));
+  };
+
   return (
     <div className="space-y-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
@@ -170,9 +278,9 @@ const NotificationsModule = ({ user }) => {
             <div className="relative">
               <Bell className=" h-6 w-6 sm:h-7 sm:w-7 text-white" />
               {unreadCount > 0 && (
-                <Badge className="absolute -top-2 -right-6 sm:-top-3 sm:-right-0 bg-red-500 text-xs text-white h-5 w-2 items-center justify-center">
+                <span className="absolute -top-2 -right-6 sm:-top-3 sm:-right-0 bg-red-500 text-xs text-white h-5 w-5 rounded-full flex items-center justify-center">
                   {unreadCount}
-                </Badge>
+                </span>
               )}
             </div>
             <p className="text-xs sm:text-sm text-blue-100 mt-1 sm:mt-2">{unreadCount} unread</p>
@@ -182,80 +290,83 @@ const NotificationsModule = ({ user }) => {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
-        <Card>
-          <CardContent className="p-2 sm:p-4 text-center">
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="p-2 sm:p-4 text-center">
             <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-red-500 mx-auto mb-1 sm:mb-2" />
             <div className="text-base sm:text-lg font-bold text-red-600">
               {notifications.filter(n => n.priority === "High").length}
             </div>
             <div className="text-xs sm:text-sm text-gray-600">High Priority</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-2 sm:p-4 text-center">
+          </div>
+        </div>
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="p-2 sm:p-4 text-center">
             <Info className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-500 mx-auto mb-1 sm:mb-2" />
             <div className="text-base sm:text-lg font-bold text-yellow-600">
               {notifications.filter(n => n.priority === "Medium").length}
             </div>
             <div className="text-xs sm:text-sm text-gray-600">Medium Priority</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-2 sm:p-4 text-center">
+          </div>
+        </div>
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="p-2 sm:p-4 text-center">
             <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-500 mx-auto mb-1 sm:mb-2" />
             <div className="text-base sm:text-lg font-bold text-green-600">
               {notifications.filter(n => n.actionable).length}
             </div>
             <div className="text-xs sm:text-sm text-gray-600">Actionable</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-2 sm:p-4 text-center">
+          </div>
+        </div>
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="p-2 sm:p-4 text-center">
             <Archive className="h-5 w-5 sm:h-6 sm:w-6 text-gray-500 mx-auto mb-1 sm:mb-2" />
             <div className="text-base sm:text-lg font-bold text-gray-600">
               {notifications.filter(n => n.read).length}
             </div>
             <div className="text-xs sm:text-sm text-gray-600">Read</div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Search and Filter */}
-      <Card>
-        <CardContent className="p-3 sm:p-4">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="p-3 sm:p-4">
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-3 h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
-              <Input
+              <input
+                type="text"
                 placeholder="Search notifications..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 sm:pl-10 text-xs sm:text-sm"
+                className="pl-8 sm:pl-10 text-xs sm:text-sm w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
               />
             </div>
             <div className="flex gap-1 sm:gap-2">
-              <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+              <button className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-gray-700  hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black">
                 <Filter className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">Filter</span>
-              </Button>
-              <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+              </button>
+              <button
+                onClick={handleMarkAllRead}
+                className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-gray-700  hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black"
+              >
                 <span className="hidden sm:inline">Mark All Read</span>
                 <span className="sm:hidden">Read All</span>
-              </Button>
-              <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+              </button>
+              <button className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-gray-700  hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black">
                 <Settings className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">Settings</span>
-              </Button>
+              </button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Mobile Category Selector */}
       <div className="sm:hidden">
-        <Button 
-          variant="outline" 
-          className="w-full flex items-center justify-between"
+        <button
+          className="w-full flex items-center justify-between rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black"
           onClick={toggleMobileMenu}
         >
           <span>
@@ -266,82 +377,95 @@ const NotificationsModule = ({ user }) => {
           ) : (
             <ChevronDown className="ml-2 h-4 w-4" />
           )}
-        </Button>
-        
+        </button>
+
         {showMobileMenu && (
           <div className="mt-2 space-y-1">
             {categories.map((category) => (
-              <Button 
+              <button
                 key={category.id}
-                variant={activeTab === category.id ? "secondary" : "ghost"} 
-                className="w-full justify-start"
+                className={`w-full text-left px-4 py-2 text-sm rounded-md ${
+                  activeTab === category.id
+                    ? 'bg-gray-100 text-gray-900'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
                 onClick={() => {
                   setActiveTab(category.id);
                   setShowMobileMenu(false);
                 }}
               >
-                {category.label}
-                {category.count > 0 && (
-                  <Badge variant="secondary" className="ml-1 text-xs">
-                    {category.count}
-                  </Badge>
-                )}
-              </Button>
+                <div className="flex items-center">
+                  {category.label}
+                  {category.count > 0 && (
+                    <span className="ml-1 inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-800">
+                      {category.count}
+                    </span>
+                  )}
+                </div>
+              </button>
             ))}
           </div>
         )}
       </div>
 
       {/* Desktop Category Tabs */}
-      <Tabs 
-        value={activeTab} 
-        onValueChange={setActiveTab} 
-        className="hidden sm:block"
-      >
-        <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
-          {categories.map((category) => (
-            <TabsTrigger key={category.id} value={category.id} className="relative">
-              {category.label}
-              {category.count > 0 && (
-                <Badge variant="secondary" className="ml-1 text-xs">
-                  {category.count}
-                </Badge>
-              )}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+      <div className="hidden sm:block">
+        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList>
+            {categories.map((category) => (
+              <TabsTrigger key={category.id} value={category.id}>
+                <div className="flex items-center">
+                  {category.label}
+                  {category.count > 0 && (
+                    <span className="ml-1 inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-800">
+                      {category.count}
+                    </span>
+                  )}
+                </div>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
+
 
       {/* Notifications List */}
       <div className="space-y-3 sm:space-y-4">
         {filteredNotifications.length === 0 ? (
-          <Card>
-            <CardContent className="p-6 sm:p-8 text-center">
+          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="p-6 sm:p-8 text-center">
               <Bell className="h-8 w-8 sm:h-10 sm:w-10 text-gray-300 mx-auto mb-2 sm:mb-4" />
               <h3 className="text-base sm:text-lg font-medium text-gray-600 mb-1 sm:mb-2">No notifications found</h3>
               <p className="text-xs sm:text-sm text-gray-500">
                 {searchTerm ? "Try adjusting your search terms" : "You're all caught up!"}
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ) : (
           filteredNotifications.map((notification) => {
             const Icon = notification.icon;
             const PriorityIcon = getPriorityIcon(notification.priority);
-            
+
             return (
-              <Card key={notification.id} className={`${!notification.read ? 'border-blue-200 bg-blue-50' : ''} hover:shadow-md transition-shadow`}>
-                <CardContent className="p-3 sm:p-4">
+              <div
+                key={notification.id}
+                className={`bg-white rounded-lg border ${
+                  !notification.read ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
+                } `}
+              >
+                <div className="p-3 sm:p-4">
                   <div className="flex items-start gap-3 sm:gap-4">
                     <div className={`p-1.5 sm:p-2 rounded-full bg-gray-100 ${notification.color}`}>
                       <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-2">
                         <div className="flex-1">
                           <div className="flex items-center gap-1 sm:gap-2 mb-1">
-                            <h4 className={`font-medium text-sm sm:text-base ${!notification.read ? 'text-blue-900' : 'text-gray-900'}`}>
+                            <h4 className={`font-medium text-sm sm:text-base ${
+                              !notification.read ? 'text-blue-900' : 'text-gray-900'
+                            }`}>
                               {notification.title}
                             </h4>
                             {!notification.read && (
@@ -351,104 +475,171 @@ const NotificationsModule = ({ user }) => {
                           <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">{notification.message}</p>
                           <div className="flex items-center gap-2 sm:gap-4 text-xs text-gray-500">
                             <span>{notification.date} at {notification.time}</span>
-                            <Badge variant="outline" className="text-xs">{notification.category}</Badge>
+                            <span className="inline-flex items-center rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-medium">
+                              {notification.category}
+                            </span>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-1 sm:gap-2">
-                          <div className={`px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full flex items-center gap-0.5 sm:gap-1 ${getPriorityColor(notification.priority)}`}>
+                          <div className={`px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full flex items-center gap-0.5 sm:gap-1 ${
+                            getPriorityColor(notification.priority)
+                          }`}>
                             <PriorityIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                             <span className="text-xs font-medium">{notification.priority}</span>
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                         <div className="flex gap-1 sm:gap-2">
                           {notification.actionable && (
-                            <Button size="sm" variant="default" className="text-xs sm:text-sm">
+                            <button className="inline-flex items-center rounded-md border border-transparent bg-black px-3 py-1.5 text-xs sm:text-sm font-medium text-white  hover:bg-black/80 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                               <ExternalLink className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                               {notification.actionText}
-                            </Button>
+                            </button>
                           )}
                           {!notification.read && (
-                            <Button size="sm" variant="outline" className="text-xs sm:text-sm">
+                            <button
+                              onClick={() => handleMarkAsRead(notification.id)}
+                              className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
                               Mark as Read
-                            </Button>
+                            </button>
                           )}
                         </div>
-                        
+
                         <div className="flex gap-0.5 sm:gap-1">
-                          <Button size="sm" variant="ghost" className="p-1.5 sm:p-2">
+                          <button className="rounded-md p-1.5 sm:p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100">
                             <Archive className="h-3 w-3 sm:h-4 sm:w-4" />
-                          </Button>
-                          <Button size="sm" variant="ghost" className="p-1.5 sm:p-2">
+                          </button>
+                          <button
+                            onClick={() => handleDeleteNotification(notification.id)}
+                            className="rounded-md p-1.5 sm:p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+                          >
                             <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                          </Button>
+                          </button>
                         </div>
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             );
           })
         )}
       </div>
 
       {/* Notification Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center text-sm sm:text-base">
-            <Settings className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
-            Notification Preferences
-          </CardTitle>
-          <CardDescription className="text-xs sm:text-sm">Customize how you receive notifications</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="border-b border-transparent px-4 py-5 sm:px-6">
+          <div className="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap">
+            <div className="ml-4 mt-2">
+              <h3 className="text-sm sm:text-base font-medium leading-6 text-gray-900 flex items-center">
+                <Settings className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
+                Notification Preferences
+              </h3>
+            </div>
+          </div>
+          <p className="mt-1 text-xs sm:text-sm text-gray-500">Customize how you receive notifications</p>
+        </div>
+        <div className="p-4 sm:p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-3 sm:space-y-4">
               <h4 className="font-medium text-sm sm:text-base">Notification Methods</h4>
               <div className="space-y-2 sm:space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs sm:text-sm">Push Notifications</span>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm">Enabled</Button>
+                  <button
+                    onClick={() => handleNotificationSettingChange("push", !notificationSettings.push)}
+                    className={`inline-flex items-center rounded-md border ${
+                      notificationSettings.push ? 'border-blue-500 bg-blue-500 text-white' : 'border-gray-300 bg-white text-gray-700'
+                    } px-3 py-1 text-xs sm:text-sm font-medium hover:opacity-80`}
+                  >
+                    {notificationSettings.push ? "Enabled" : "Disabled"}
+                  </button>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs sm:text-sm">Email Notifications</span>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm">Enabled</Button>
+                  <button
+                    onClick={() => handleNotificationSettingChange("email", !notificationSettings.email)}
+                    className={`inline-flex items-center rounded-md border ${
+                      notificationSettings.email ? 'border-blue-500 bg-blue-500 text-white' : 'border-gray-300 bg-white text-gray-700'
+                    } px-3 py-1 text-xs sm:text-sm font-medium hover:opacity-80`}
+                  >
+                    {notificationSettings.email ? "Enabled" : "Disabled"}
+                  </button>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs sm:text-sm">SMS Alerts</span>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm">Disabled</Button>
+                  <button
+                    onClick={() => handleNotificationSettingChange("sms", !notificationSettings.sms)}
+                    className={`inline-flex items-center rounded-md border ${
+                      notificationSettings.sms ? 'border-blue-500 bg-blue-500 text-white' : 'border-gray-300 bg-white text-gray-700'
+                    } px-3 py-1 text-xs sm:text-sm font-medium hover:opacity-80`}
+                  >
+                    {notificationSettings.sms ? "Enabled" : "Disabled"}
+                  </button>
                 </div>
               </div>
             </div>
-            
+
             <div className="space-y-3 sm:space-y-4">
               <h4 className="font-medium text-sm sm:text-base">Category Preferences</h4>
               <div className="space-y-2 sm:space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs sm:text-sm">Academic Reminders</span>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm">All</Button>
+                  <select
+                    value={notificationSettings.academic}
+                    onChange={(e) => handleNotificationSettingChange("academic", e.target.value)}
+                    className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs sm:text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="All">All</option>
+                    <option value="Important Only">Important Only</option>
+                    <option value="None">None</option>
+                  </select>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs sm:text-sm">Fee Notifications</span>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm">Important Only</Button>
+                  <select
+                    value={notificationSettings.finance}
+                    onChange={(e) => handleNotificationSettingChange("finance", e.target.value)}
+                    className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs sm:text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="All">All</option>
+                    <option value="Important Only">Important Only</option>
+                    <option value="None">None</option>
+                  </select>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs sm:text-sm">Event Updates</span>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm">All</Button>
+                  <select
+                    value={notificationSettings.event}
+                    onChange={(e) => handleNotificationSettingChange("event", e.target.value)}
+                    className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs sm:text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="All">All</option>
+                    <option value="Important Only">Important Only</option>
+                    <option value="None">None</option>
+                  </select>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs sm:text-sm">Wellness Reminders</span>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm">Daily</Button>
+                  <select
+                    value={notificationSettings.wellness}
+                    onChange={(e) => handleNotificationSettingChange("wellness", e.target.value)}
+                    className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs sm:text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="Daily">Daily</option>
+                    <option value="Weekly">Weekly</option>
+                    <option value="Never">Never</option>
+                  </select>
                 </div>
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

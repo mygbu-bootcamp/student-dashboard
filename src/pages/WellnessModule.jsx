@@ -1,11 +1,6 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
-import { Progress } from "../components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { useToast } from "../hooks/use-toast";
-import { 
+import * as React from "react"; // Import React for the Tabs components
+import {
   Heart,
   Calendar,
   CheckCircle,
@@ -14,17 +9,130 @@ import {
   Star,
   Plus,
   Users,
-  Bell, Frown,
+  Bell,
+  Frown,
   Meh,
   Smile,
   SmilePlus,
-  Laugh
+  Laugh,
 } from "lucide-react";
+
+// Helper component for a simple message box instead of shadcn/ui toast
+const MessageBox = ({ message, type, onClose }) => {
+  if (!message) return null;
+
+  const bgColor = type === "destructive" ? "bg-red-500" : "bg-green-500";
+  const textColor = "text-white";
+
+  return (
+    <div
+      className={`fixed bottom-4 right-4 p-4 rounded-lg shadow-lg flex items-center justify-between z-50 ${bgColor} ${textColor}`}
+      role="alert"
+    >
+      <span>{message}</span>
+      <button onClick={onClose} className="ml-4 font-bold">
+        &times;
+      </button>
+    </div>
+  );
+};
+
+// --- New Tabs Components Integrated Directly ---
+
+const TabsContext = React.createContext();
+
+const Tabs = ({ defaultValue, value: propValue, onValueChange, children, ...props }) => {
+  const [localValue, setLocalValue] = React.useState(defaultValue);
+  const isControlled = propValue !== undefined;
+  const value = isControlled ? propValue : localValue;
+
+  const handleValueChange = (newValue) => {
+    if (!isControlled) setLocalValue(newValue);
+    if (onValueChange) onValueChange(newValue);
+  };
+
+  return (
+    <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
+      <div className="w-full" {...props}>{children}</div>
+    </TabsContext.Provider>
+  );
+};
+
+const TabsList = React.forwardRef(({ className = "", children, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={`w-full flex h-[48px] items-center justify-between rounded-xl bg-[#f1f5f9] p-1 ${className}`}
+      role="tablist"
+      {...props}
+    >
+      {React.Children.map(children, (child) => {
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child, { parentProps: props });
+        }
+        return child;
+      })}
+    </div>
+  );
+});
+TabsList.displayName = "TabsList";
+
+const TabsTrigger = React.forwardRef(
+  ({ className = "", value, parentProps, children, ...props }, ref) => {
+    const { value: contextValue, onValueChange } = React.useContext(TabsContext);
+    const isActive = value === contextValue;
+
+    const handleClick = () => {
+      onValueChange(value);
+    };
+
+    return (
+      <button
+        ref={ref}
+        role="tab"
+        aria-selected={isActive}
+        onClick={handleClick}
+        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
+          isActive
+            ? "bg-white text-black"
+            : "text-muted-foreground hover:text-foreground"
+        } ${className}`}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+TabsTrigger.displayName = "TabsTrigger";
+
+const TabsContent = React.forwardRef(
+  ({ className = "", value, children, ...props }, ref) => {
+    const { value: contextValue } = React.useContext(TabsContext);
+    const isActive = value === contextValue;
+
+    return isActive ? (
+      <div
+        ref={ref}
+        role="tabpanel"
+        className={`mt-4 px-4 sm:px-8 ${className}`}
+        {...props}
+      >
+        {children}
+      </div>
+    ) : null;
+  }
+);
+TabsContent.displayName = "TabsContent";
+
+// --- End of New Tabs Components ---
+
 
 const WellnessModule = ({ user }) => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [selectedMood, setSelectedMood] = useState("");
-  const { toast } = useToast();
+  const [moodNote, setMoodNote] = useState("");
+  const [message, setMessage] = useState(null);
 
   // Mock data
   const wellnessStats = {
@@ -32,30 +140,30 @@ const WellnessModule = ({ user }) => {
     sleepAverage: 6.5,
     screenTimeDaily: 8.2,
     stepsToday: 6847,
-    checkInStreak: 12
+    checkInStreak: 12,
   };
 
-const moodOptions = [
-  { icon: Frown, label: "Very Sad", value: 1 },
-  { icon: Meh, label: "Sad", value: 2 },
-  { icon: Smile, label: "Okay", value: 3 },
-  { icon: SmilePlus, label: "Good", value: 4 },
-  { icon: Laugh, label: "Great", value: 5 },
-  { icon: Star, label: "Excellent", value: 6 }
-];
+  const moodOptions = [
+    { icon: Frown, label: "Very Sad", value: 1 },
+    { icon: Meh, label: "Sad", value: 2 },
+    { icon: Smile, label: "Okay", value: 3 },
+    { icon: SmilePlus, label: "Good", value: 4 },
+    { icon: Laugh, label: "Great", value: 5 },
+    { icon: Star, label: "Excellent", value: 6 },
+  ];
 
   const recentMoods = [
     { date: "2024-03-25", mood: 4, note: "Good productive day" },
     { date: "2024-03-24", mood: 3, note: "Feeling stressed about exams" },
     { date: "2024-03-23", mood: 5, note: "Great day with friends" },
-    { date: "2024-03-22", mood: 4, note: "Normal day" }
+    { date: "2024-03-22", mood: 4, note: "Normal day" },
   ];
 
   const sleepData = [
     { date: "2024-03-25", hours: 7.5, quality: "Good" },
     { date: "2024-03-24", hours: 6.0, quality: "Poor" },
     { date: "2024-03-23", hours: 8.0, quality: "Excellent" },
-    { date: "2024-03-22", hours: 6.5, quality: "Fair" }
+    { date: "2024-03-22", hours: 6.5, quality: "Fair" },
   ];
 
   const mentors = [
@@ -65,7 +173,7 @@ const moodOptions = [
       specialization: "Stress Management",
       rating: 4.9,
       sessions: 45,
-      status: "Available"
+      status: "Available",
     },
     {
       id: 2,
@@ -73,7 +181,7 @@ const moodOptions = [
       specialization: "Academic Counseling",
       rating: 4.8,
       sessions: 32,
-      status: "Busy"
+      status: "Busy",
     },
     {
       id: 3,
@@ -81,220 +189,463 @@ const moodOptions = [
       specialization: "Life Coaching",
       rating: 4.7,
       sessions: 28,
-      status: "Available"
-    }
+      status: "Available",
+    },
   ];
+
+  const showMessage = (msg, type = "default") => {
+    setMessage({ text: msg, type });
+    setTimeout(() => setMessage(null), 3000); // Hide after 3 seconds
+  };
 
   const handleMoodSubmit = () => {
     if (!selectedMood) {
-      toast({
-        title: "Please select a mood",
-        description: "Choose how you're feeling today before submitting.",
-        variant: "destructive"
-      });
+      showMessage(
+        "Please select a mood. Choose how you're feeling today before submitting.",
+        "destructive"
+      );
       return;
     }
-    
-    toast({
-      title: "Mood Logged",
-      description: "Your daily mood check-in has been recorded successfully!"
-    });
+
+    // In a real app, you would send selectedMood and moodNote to a backend
+    console.log("Mood Logged:", { mood: selectedMood, note: moodNote });
+
+    showMessage("Your daily mood check-in has been recorded successfully!");
     setSelectedMood("");
+    setMoodNote("");
   };
 
   const handleMentorConnect = (mentorName) => {
-    toast({
-      title: "Mentor Request Sent",
-      description: `Your wellness consultation request has been sent to ${mentorName}!`
-    });
+    showMessage(
+      `Your wellness consultation request has been sent to ${mentorName}!`
+    );
+  };
+
+  // Generic Card Component (replaces shadcn/ui Card)
+  const CustomCard = ({ children, className }) => (
+    <div
+      className={`rounded-lg border border-gray-200 bg-white text-gray-950 ${className}`}
+    >
+      {children}
+    </div>
+  );
+
+  // Generic CardHeader Component
+  const CustomCardHeader = ({ children, className }) => (
+    <div className={`flex flex-col space-y-1.5 p-6 ${className}`}>
+      {children}
+    </div>
+  );
+
+  // Generic CardTitle Component
+  const CustomCardTitle = ({ children, className }) => (
+    <h3 className={`text-2xl font-semibold leading-none tracking-tight ${className}`}>
+      {children}
+    </h3>
+  );
+
+  // Generic CardDescription Component
+  const CustomCardDescription = ({ children, className }) => (
+    <p className={`text-sm text-gray-500 ${className}`}>{children}</p>
+  );
+
+  // Generic CardContent Component
+  const CustomCardContent = ({ children, className }) => (
+    <div className={`p-6 pt-0 ${className}`}>{children}</div>
+  );
+
+  // Generic Button Component (replaces shadcn/ui Button)
+  const CustomButton = ({
+    children,
+    variant = "default",
+    size = "md",
+    className,
+    onClick,
+    disabled,
+    ...props
+  }) => {
+    let baseStyle =
+      "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
+    let variantStyle = "";
+    let sizeStyle = "";
+
+    switch (variant) {
+      case "default":
+        variantStyle = "bg-black text-white hover:bg-gray-800";
+        break;
+      case "destructive":
+        variantStyle = "bg-red-500 text-white hover:bg-red-600";
+        break;
+      case "outline":
+        variantStyle = "border border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-900";
+        break;
+      case "secondary":
+        variantStyle = "bg-gray-100 text-gray-900 hover:bg-gray-200";
+        break;
+      case "ghost":
+        variantStyle = "hover:bg-gray-100 hover:text-gray-900";
+        break;
+      case "link":
+        variantStyle = "text-gray-900 underline-offset-4 hover:underline";
+        break;
+      case "tertiary": // Custom variant for badges
+        variantStyle = "bg-purple-100 text-purple-700";
+        break;
+      default:
+        variantStyle = "bg-black text-white hover:bg-gray-800";
+    }
+
+    switch (size) {
+      case "default":
+        sizeStyle = "h-10 px-4 py-2";
+        break;
+      case "sm":
+        sizeStyle = "h-9 rounded-md px-3";
+        break;
+      case "lg":
+        sizeStyle = "h-11 rounded-md px-8";
+        break;
+      case "icon":
+        sizeStyle = "h-10 w-10";
+        break;
+      case "md": // Custom size for general buttons
+        sizeStyle = "h-10 px-4 py-2";
+        break;
+      case "full": // Custom size for full width buttons
+        sizeStyle = "h-10 px-4 py-2 w-full";
+        break;
+      case "auto": // Custom size for buttons with auto height/padding
+        sizeStyle = "p-4";
+        break;
+      default:
+        sizeStyle = "h-10 px-4 py-2";
+    }
+
+    return (
+      <button
+        className={`${baseStyle} ${variantStyle} ${sizeStyle} ${className}`}
+        onClick={onClick}
+        disabled={disabled}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  };
+
+  // Generic Badge Component (replaces shadcn/ui Badge)
+  const CustomBadge = ({ children, variant = "default", className }) => {
+    let baseStyle =
+      "inline-flex items-center rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-gray-950 focus:ring-offset-2";
+    let variantStyle = "";
+
+    switch (variant) {
+      case "default":
+        variantStyle = "border-transparent bg-gray-900 text-white hover:bg-gray-900/80";
+        break;
+      case "secondary":
+        variantStyle = "border-transparent bg-gray-100 text-gray-900 hover:bg-gray-100/80";
+        break;
+      case "destructive":
+        variantStyle = "border-transparent bg-red-500 text-white hover:bg-red-500/80";
+        break;
+      case "outline":
+        variantStyle = "text-gray-950";
+        break;
+      case "tertiary": // Custom variant for connected apps
+        variantStyle = "bg-emerald-100 text-emerald-700";
+        break;
+      default:
+        variantStyle = "border-transparent bg-gray-900 text-white hover:bg-gray-900/80";
+    }
+
+    return (
+      <span className={`${baseStyle} ${variantStyle} ${className}`}>
+        {children}
+      </span>
+    );
+  };
+
+  // Generic Progress Component (replaces shadcn/ui Progress)
+  const CustomProgress = ({ value, className }) => {
+    const progressValue = Math.max(0, Math.min(100, value)); // Ensure value is between 0 and 100
+    return (
+      <div
+        className={`relative h-2 w-full overflow-hidden rounded-full bg-gray-200 ${className}`}
+      >
+        <div
+          className="h-full w-full flex-1 bg-gray-900 transition-all"
+          style={{ transform: `translateX(-${100 - progressValue}%)` }}
+        />
+      </div>
+    );
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-8 font-inter">
       {/* Header */}
       <div className="bg-gradient-to-r from-pink-900 to-purple-700 rounded-lg p-6 text-white">
-        <h1 className="text-2xl font-bold mb-2">Wellness & Mental Health</h1>
-        <p className="text-pink-100">Track your well-being and maintain a healthy lifestyle</p>
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">
+          Wellness & Mental Health
+        </h1>
+        <p className="text-pink-100 text-sm md:text-base">
+          Track your well-being and maintain a healthy lifestyle
+        </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="mood">Mood Journal</TabsTrigger>
-          <TabsTrigger value="health">Health Sync</TabsTrigger>
-          <TabsTrigger value="support">Support</TabsTrigger>
+      <Tabs defaultValue="dashboard" value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="dashboard">
+            Dashboard
+          </TabsTrigger>
+          <TabsTrigger value="mood">
+            Mood Journal
+          </TabsTrigger>
+          <TabsTrigger value="health">
+            Health Sync
+          </TabsTrigger>
+          <TabsTrigger value="support">
+            Support
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard" className="space-y-6">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Heart className="h-8 w-8 text-pink-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-pink-600">{wellnessStats.weeklyMoodAverage}</div>
-                <div className="text-sm text-gray-600">Mood Average</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Clock className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-blue-600">{wellnessStats.sleepAverage}h</div>
-                <div className="text-sm text-gray-600">Sleep Average</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Settings className="h-8 w-8 text-orange-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-orange-600">{wellnessStats.screenTimeDaily}h</div>
-                <div className="text-sm text-gray-600">Screen Time</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-green-600">{wellnessStats.stepsToday}</div>
-                <div className="text-sm text-gray-600">Steps Today</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Star className="h-8 w-8 text-purple-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-purple-600">{wellnessStats.checkInStreak}</div>
-                <div className="text-sm text-gray-600">Check-in Streak</div>
-              </CardContent>
-            </Card>
-          </div>
+        {/* Stats Cards */}
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+  <CustomCard className="h-36">
+    <CustomCardContent className="h-full flex flex-col items-center justify-center text-center">
+      <Heart className="h-8 w-8 text-pink-500 mb-2" />
+      <div className="text-2xl font-bold text-pink-600">
+        {wellnessStats.weeklyMoodAverage}
+      </div>
+      <div className="text-sm text-gray-600">Mood Average</div>
+    </CustomCardContent>
+  </CustomCard>
+
+  <CustomCard className="h-36">
+    <CustomCardContent className="h-full flex flex-col items-center justify-center text-center">
+      <Clock className="h-8 w-8 text-blue-500 mb-2" />
+      <div className="text-2xl font-bold text-blue-600">
+        {wellnessStats.sleepAverage}h
+      </div>
+      <div className="text-sm text-gray-600">Sleep Average</div>
+    </CustomCardContent>
+  </CustomCard>
+
+  <CustomCard className="h-36">
+    <CustomCardContent className="h-full flex flex-col items-center justify-center text-center">
+      <Settings className="h-8 w-8 text-orange-500 mb-2" />
+      <div className="text-2xl font-bold text-orange-600">
+        {wellnessStats.screenTimeDaily}h
+      </div>
+      <div className="text-sm text-gray-600">Screen Time</div>
+    </CustomCardContent>
+  </CustomCard>
+
+  <CustomCard className="h-36">
+    <CustomCardContent className="h-full flex flex-col items-center justify-center text-center">
+      <CheckCircle className="h-8 w-8 text-green-500 mb-2" />
+      <div className="text-2xl font-bold text-green-600">
+        {wellnessStats.stepsToday}
+      </div>
+      <div className="text-sm text-gray-600">Steps Today</div>
+    </CustomCardContent>
+  </CustomCard>
+
+  <CustomCard className="h-36">
+    <CustomCardContent className="h-full flex flex-col items-center justify-center text-center">
+      <Star className="h-8 w-8 text-purple-500 mb-2" />
+      <div className="text-2xl font-bold text-purple-600">
+        {wellnessStats.checkInStreak}
+      </div>
+      <div className="text-sm text-gray-600">Check-in Streak</div>
+    </CustomCardContent>
+  </CustomCard>
+</div>
+
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white">
-            <Button variant="outline" className="h-auto p-4" onClick={() => setActiveTab("mood")}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 rounded-lg">
+            <CustomButton
+              variant="outline"
+              size="auto"
+              onClick={() => setActiveTab("mood")}
+            >
               <div className="text-center">
                 <Heart className="h-6 w-6 mx-auto mb-2 text-pink-500" />
                 <p className="font-medium">Daily Mood Check-in</p>
                 <p className="text-sm text-gray-600">Log how you're feeling</p>
               </div>
-            </Button>
-            <Button variant="outline" className="h-auto p-4" onClick={() => setActiveTab("health")}>
+            </CustomButton>
+            <CustomButton
+              variant="outline"
+              size="auto"
+              onClick={() => setActiveTab("health")}
+            >
               <div className="text-center">
                 <Settings className="h-6 w-6 mx-auto mb-2 text-blue-500" />
                 <p className="font-medium">Sync Health Data</p>
                 <p className="text-sm text-gray-600">Connect fitness apps</p>
               </div>
-            </Button>
-            <Button variant="outline" className="h-auto p-4" onClick={() => setActiveTab("support")}>
+            </CustomButton>
+            <CustomButton
+              variant="outline"
+              size="auto"
+              onClick={() => setActiveTab("support")}
+            >
               <div className="text-center">
                 <Users className="h-6 w-6 mx-auto mb-2 text-green-500" />
                 <p className="font-medium">Get Support</p>
                 <p className="text-sm text-gray-600">Talk to a counselor</p>
               </div>
-            </Button>
+            </CustomButton>
           </div>
 
           {/* Recent Activity */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Mood Entries</CardTitle>
-                <CardDescription>Your mood tracking history</CardDescription>
-              </CardHeader>
-              <CardContent>
+            <CustomCard>
+              <CustomCardHeader>
+                <CustomCardTitle>Recent Mood Entries</CustomCardTitle>
+                <CustomCardDescription>
+                  Your mood tracking history
+                </CustomCardDescription>
+              </CustomCardHeader>
+              <CustomCardContent>
                 <div className="space-y-3">
                   {recentMoods.map((entry, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+                    >
                       <div className="flex items-center space-x-3">
-                        {
-  (() => {
-    const MoodIcon = moodOptions.find(m => m.value === entry.mood)?.icon;
-    return MoodIcon ? <MoodIcon className="h-5 w-5 text-gray-600" /> : null;
-  })()
-}
+                        {(() => {
+                          const MoodIcon = moodOptions.find(
+                            (m) => m.value === entry.mood
+                          )?.icon;
+                          return MoodIcon ? (
+                            <MoodIcon className="h-5 w-5 text-gray-600" />
+                          ) : null;
+                        })()}
 
                         <div>
                           <p className="font-medium">{entry.date}</p>
-                          <p className="text-sm text-gray-600">{entry.note}</p>
+                          <p className="text-sm text-gray-600">
+                            {entry.note}
+                          </p>
                         </div>
                       </div>
-                      <Badge variant="outline">{entry.mood}/6</Badge>
+                      <CustomBadge variant="outline">
+                        {entry.mood}/6
+                      </CustomBadge>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </CustomCardContent>
+            </CustomCard>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Sleep Tracking</CardTitle>
-                <CardDescription>Your sleep pattern analysis</CardDescription>
-              </CardHeader>
-              <CardContent>
+            <CustomCard>
+              <CustomCardHeader>
+                <CustomCardTitle>Sleep Tracking</CustomCardTitle>
+                <CustomCardDescription>
+                  Your sleep pattern analysis
+                </CustomCardDescription>
+              </CustomCardHeader>
+              <CustomCardContent>
                 <div className="space-y-3">
                   {sleepData.map((entry, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+                    >
                       <div>
                         <p className="font-medium">{entry.date}</p>
-                        <p className="text-sm text-gray-600">{entry.hours} hours</p>
+                        <p className="text-sm text-gray-600">
+                          {entry.hours} hours
+                        </p>
                       </div>
-                      <Badge variant={entry.quality === "Excellent" ? "default" : entry.quality === "Good" ? "secondary" : "outline"}>
+                      <CustomBadge
+                        variant={
+                          entry.quality === "Excellent"
+                            ? "default"
+                            : entry.quality === "Good"
+                            ? "secondary"
+                            : "outline"
+                        }
+                      >
                         {entry.quality}
-                      </Badge>
+                      </CustomBadge>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </CustomCardContent>
+            </CustomCard>
           </div>
         </TabsContent>
 
         <TabsContent value="mood" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Daily Mood Check-in</CardTitle>
-              <CardDescription>How are you feeling today? Your emotions matter.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <CustomCard>
+            <CustomCardHeader>
+              <CustomCardTitle>Daily Mood Check-in</CustomCardTitle>
+              <CustomCardDescription>
+                How are you feeling today? Your emotions matter.
+              </CustomCardDescription>
+            </CustomCardHeader>
+            <CustomCardContent className="space-y-6">
               <div>
-                <label className="text-sm font-medium mb-3 block">Select your mood:</label>
+                <label className="text-sm font-medium mb-3 block">
+                  Select your mood:
+                </label>
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-  {moodOptions.map((mood) => (
-    <Button
-      key={mood.value}
-      variant={selectedMood === mood.value.toString() ? "default" : "outline"}
-      className="h-auto p-4 flex flex-col items-center"
-      onClick={() => setSelectedMood(mood.value.toString())}
-    >
-      <mood.icon className="h-6 w-6 mb-2" />
-      <span className="text-xs">{mood.label}</span>
-    </Button>
-  ))}
-</div>
-
+                  {moodOptions.map((mood) => (
+                    <CustomButton
+                      key={mood.value}
+                      variant={
+                        selectedMood === mood.value.toString()
+                          ? "default"
+                          : "outline"
+                      }
+                      size="auto"
+                      className="flex flex-col items-center"
+                      onClick={() => setSelectedMood(mood.value.toString())}
+                    >
+                      <mood.icon className="h-6 w-6 mb-2" />
+                      <span className="text-xs">{mood.label}</span>
+                    </CustomButton>
+                  ))}
+                </div>
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">What's on your mind? (Optional)</label>
-                <textarea 
-                  className="w-full p-3 border border-gray-200 rounded-lg" 
+                <label className="text-sm font-medium mb-2 block">
+                  What's on your mind? (Optional)
+                </label>
+                <textarea
+                  className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-950"
                   rows={3}
                   placeholder="Share what's making you feel this way..."
+                  value={moodNote}
+                  onChange={(e) => setMoodNote(e.target.value)}
                 />
               </div>
 
-              <Button onClick={handleMoodSubmit} className="w-full bg-black text-white">
+              <CustomButton onClick={handleMoodSubmit} size="full">
                 <Plus className="mr-2 h-4 w-4" />
                 Log Today's Mood
-              </Button>
-            </CardContent>
-          </Card>
+              </CustomButton>
+            </CustomCardContent>
+          </CustomCard>
         </TabsContent>
 
         <TabsContent value="health" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Connected Apps</CardTitle>
-                <CardDescription>Sync your health and fitness data</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <CustomCard>
+              <CustomCardHeader>
+                <CustomCardTitle>Connected Apps</CustomCardTitle>
+                <CustomCardDescription>
+                  Sync your health and fitness data
+                </CustomCardDescription>
+              </CustomCardHeader>
+              <CustomCardContent className="space-y-4">
                 <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
@@ -302,10 +653,12 @@ const moodOptions = [
                     </div>
                     <div>
                       <p className="font-medium">Apple Health</p>
-                      <p className="text-sm text-gray-600">Syncing steps, sleep, heart rate</p>
+                      <p className="text-sm text-gray-600">
+                        Syncing steps, sleep, heart rate
+                      </p>
                     </div>
                   </div>
-                  <Badge variant="tertiary">Connected</Badge>
+                  <CustomBadge variant="tertiary">Connected</CustomBadge>
                 </div>
 
                 <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
@@ -315,10 +668,14 @@ const moodOptions = [
                     </div>
                     <div>
                       <p className="font-medium">Google Fit</p>
-                      <p className="text-sm text-gray-600">Activity tracking</p>
+                      <p className="text-sm text-gray-600">
+                        Activity tracking
+                      </p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm">Connect</Button>
+                  <CustomButton variant="outline" size="sm">
+                    Connect
+                  </CustomButton>
                 </div>
 
                 <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
@@ -328,107 +685,144 @@ const moodOptions = [
                     </div>
                     <div>
                       <p className="font-medium">Fitbit</p>
-                      <p className="text-sm text-gray-600">Comprehensive health tracking</p>
+                      <p className="text-sm text-gray-600">
+                        Comprehensive health tracking
+                      </p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm">Connect</Button>
+                  <CustomButton variant="outline" size="sm">
+                    Connect
+                  </CustomButton>
                 </div>
-              </CardContent>
-            </Card>
+              </CustomCardContent>
+            </CustomCard>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Health Goals</CardTitle>
-                <CardDescription>Set and track your wellness objectives</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <CustomCard>
+              <CustomCardHeader>
+                <CustomCardTitle>Health Goals</CustomCardTitle>
+                <CustomCardDescription>
+                  Set and track your wellness objectives
+                </CustomCardDescription>
+              </CustomCardHeader>
+              <CustomCardContent className="space-y-4">
                 <div>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium">Daily Steps</span>
-                    <span className="text-sm text-gray-600">6,847 / 10,000</span>
+                    <span className="text-sm text-gray-600">
+                      6,847 / 10,000
+                    </span>
                   </div>
-                  <Progress value={68} className="h-2" />
+                  <CustomProgress value={68} className="h-2" />
                 </div>
 
                 <div>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium">Sleep Goal</span>
-                    <span className="text-sm text-gray-600">6.5 / 8 hours</span>
+                    <span className="text-sm text-gray-600">
+                      6.5 / 8 hours
+                    </span>
                   </div>
-                  <Progress value={81} className="h-2" />
+                  <CustomProgress value={81} className="h-2" />
                 </div>
 
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium">Screen Time Limit</span>
-                    <span className="text-sm text-gray-600">8.2 / 6 hours</span>
+                    <span className="text-sm font-medium">
+                      Screen Time Limit
+                    </span>
+                    <span className="text-sm text-gray-600">
+                      8.2 / 6 hours
+                    </span>
                   </div>
-                  <Progress value={100} className="h-2 bg-red-100" />
+                  <CustomProgress value={100} className="h-2 bg-red-100" />
                 </div>
 
-                <Button variant="outline" className="w-full">
+                <CustomButton variant="outline" size="full">
                   <Settings className="mr-2 h-4 w-4" />
                   Adjust Goals
-                </Button>
-              </CardContent>
-            </Card>
+                </CustomButton>
+              </CustomCardContent>
+            </CustomCard>
           </div>
         </TabsContent>
 
         <TabsContent value="support" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Crisis Support</CardTitle>
-                <CardDescription>Immediate help when you need it most</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Button variant="destructive" className="w-full bg-red-500 text-white">
+            <CustomCard>
+              <CustomCardHeader>
+                <CustomCardTitle>Crisis Support</CustomCardTitle>
+                <CustomCardDescription>
+                  Immediate help when you need it most
+                </CustomCardDescription>
+              </CustomCardHeader>
+              <CustomCardContent className="space-y-4">
+                <CustomButton variant="destructive" size="full">
                   <Bell className="mr-2 h-4 w-4" />
                   Emergency Mental Health Support
-                </Button>
+                </CustomButton>
                 <div className="text-sm text-gray-600 space-y-2">
-                  <p><strong>National Helpline:</strong> 1800-123-4567</p>
-                  <p><strong>Campus Counselor:</strong> Available 24/7</p>
-                  <p><strong>Peer Support:</strong> Student volunteers</p>
+                  <p>
+                    <strong>National Helpline:</strong> 1800-123-4567
+                  </p>
+                  <p>
+                    <strong>Campus Counselor:</strong> Available 24/7
+                  </p>
+                  <p>
+                    <strong>Peer Support:</strong> Student volunteers
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
+              </CustomCardContent>
+            </CustomCard>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Wellness Mentors</CardTitle>
-                <CardDescription>Professional counselors and life coaches</CardDescription>
-              </CardHeader>
-              <CardContent>
+            <CustomCard>
+              <CustomCardHeader>
+                <CustomCardTitle>Wellness Mentors</CustomCardTitle>
+                <CustomCardDescription>
+                  Professional counselors and life coaches
+                </CustomCardDescription>
+              </CustomCardHeader>
+              <CustomCardContent>
                 <div className="space-y-3">
                   {mentors.map((mentor) => (
-                    <div key={mentor.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                    <div
+                      key={mentor.id}
+                      className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+                    >
                       <div className="flex-1">
                         <h4 className="font-medium">{mentor.name}</h4>
-                        <p className="text-sm text-gray-600">{mentor.specialization}</p>
+                        <p className="text-sm text-gray-600">
+                          {mentor.specialization}
+                        </p>
                         <div className="flex items-center mt-1">
                           <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                          <span className="text-sm">{mentor.rating} • {mentor.sessions} sessions</span>
+                          <span className="text-sm">
+                            {mentor.rating} • {mentor.sessions} sessions
+                          </span>
                         </div>
                       </div>
-                      <Button 
-                        size="sm" 
-                        variant={mentor.status === "Available" ? "default" : "secondary"}
-                        className="bg-black text-white"
+                      <CustomButton
+                        size="sm"
+                        variant={
+                          mentor.status === "Available" ? "default" : "secondary"
+                        }
                         onClick={() => handleMentorConnect(mentor.name)}
                         disabled={mentor.status !== "Available"}
                       >
                         {mentor.status === "Available" ? "Connect" : "Busy"}
-                      </Button>
+                      </CustomButton>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </CustomCardContent>
+            </CustomCard>
           </div>
         </TabsContent>
       </Tabs>
+      <MessageBox
+        message={message ? message.text : null}
+        type={message ? message.type : null}
+        onClose={() => setMessage(null)}
+      />
     </div>
   );
 };

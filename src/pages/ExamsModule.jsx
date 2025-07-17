@@ -1,14 +1,5 @@
 import React from "react";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
-import {
   FileText,
   Download,
   Clock,
@@ -59,7 +50,10 @@ const ExamsModule = ({ user }) => {
     { semester: "Semester 7", sgpa: 8.5, cgpa: 8.2, status: "Published", year: "2023-24" },
     { semester: "Semester 6", sgpa: 8.8, cgpa: 8.1, status: "Published", year: "2023-24" },
     { semester: "Semester 5", sgpa: 7.9, cgpa: 7.8, status: "Published", year: "2022-23" },
-    { semester: "Semester 4", sgpa: 8.3, cgpa: 7.7, status: "Published", year: "2022-23" }
+    { semester: "Semester 4", sgpa: 8.3, cgpa: 7.7, status: "Published", year: "2022-23" },
+    // Removed Semester 3 from 2022-23 to ensure only 2 semesters per year as requested
+    { semester: "Semester 2", sgpa: 7.5, cgpa: 7.2, status: "Published", year: "2021-22" },
+    { semester: "Semester 1", sgpa: 7.0, cgpa: 7.0, status: "Published", year: "2021-22" }
   ];
 
   const subjectGrades = [
@@ -70,6 +64,7 @@ const ExamsModule = ({ user }) => {
     { subject: "Technical Communication", credits: 2, grade: "A+", points: 10, marks: 95 }
   ];
 
+  // Function to determine status badge color
   const getStatusColor = (status) => {
     switch (status) {
       case "Registered":
@@ -85,6 +80,7 @@ const ExamsModule = ({ user }) => {
     }
   };
 
+  // Function to determine grade badge color
   const getGradeColor = (grade) => {
     if (grade.includes("A")) return "bg-green-100 text-green-800";
     if (grade.includes("B")) return "bg-blue-100 text-blue-800";
@@ -92,8 +88,28 @@ const ExamsModule = ({ user }) => {
     return "bg-red-100 text-red-800";
   };
 
+  // Group semester results by year
+  const groupedSemesterResults = semesterResults.reduce((acc, result) => {
+    if (!acc[result.year]) {
+      acc[result.year] = {
+        latestSGPA: result.sgpa, // Assuming the first encounter for a year is the latest (if sorted descending)
+        semesters: []
+      };
+    }
+    // Update latest SGPA if a newer semester (higher semester number) is found for the same year
+    // This assumes semesterResults are not strictly sorted by semester number within a year
+    // For simplicity, we'll just take the SGPA of the first semester encountered for that year.
+    // If you need the *absolute latest* SGPA for a year, you'd need to sort `semesterResults` by date/semester number first.
+    acc[result.year].semesters.push(result);
+    return acc;
+  }, {});
+
+  // Sort years in descending order (e.g., "2023-24" before "2022-23")
+  const sortedYears = Object.keys(groupedSemesterResults).sort().reverse();
+
   return (
-    <div className="space-y-6 px-4 md:px-6 lg:px-8 py-6">
+    <div className="space-y-6 px-4 md:px-6 lg:px-8 py-6 font-sans">
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Exams & Results</h1>
@@ -101,28 +117,72 @@ const ExamsModule = ({ user }) => {
             Manage exam registration and view academic results
           </p>
         </div>
-        <Button variant="outline" className="flex items-center w-full sm:w-auto justify-center">
+        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full sm:w-auto
+          hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md">
           <Download className="mr-2 h-4 w-4" />
           Download Transcript
-        </Button>
+        </button>
       </div>
 
+      {/* Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card><CardContent className="p-4"><div className="flex justify-between items-center"><div><p className="text-sm text-gray-600">Current CGPA</p><p className="text-2xl font-bold text-blue-600">8.2</p></div><Award className="h-8 w-8 text-blue-500" /></div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="flex justify-between items-center"><div><p className="text-sm text-gray-600">Last SGPA</p><p className="text-2xl font-bold text-green-600">8.5</p></div><TrendingUp className="h-8 w-8 text-green-500" /></div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="flex justify-between items-center"><div><p className="text-sm text-gray-600">Registered Exams</p><p className="text-2xl font-bold text-purple-600">2</p></div><FileText className="h-8 w-8 text-purple-500" /></div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="flex justify-between items-center"><div><p className="text-sm text-gray-600">Pending Exams</p><p className="text-2xl font-bold text-orange-600">2</p></div><Clock className="h-8 w-8 text-orange-500" /></div></CardContent></Card>
+        <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
+          <div className="p-4 flex justify-between items-center">
+            <div>
+              <p className="text-sm text-gray-600">Current CGPA</p>
+              <p className="text-2xl font-bold text-blue-600">8.2</p>
+            </div>
+            <Award className="h-8 w-8 text-blue-500" />
+          </div>
+        </div>
+        <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
+          <div className="p-4 flex justify-between items-center">
+            <div>
+              <p className="text-sm text-gray-600">Last SGPA</p>
+              <p className="text-2xl font-bold text-green-600">8.5</p>
+            </div>
+            <TrendingUp className="h-8 w-8 text-green-500" />
+          </div>
+        </div>
+        <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
+          <div className="p-4 flex justify-between items-center">
+            <div>
+              <p className="text-sm text-gray-600">Registered Exams</p>
+              <p className="text-2xl font-bold text-purple-600">2</p>
+            </div>
+            <FileText className="h-8 w-8 text-purple-500" />
+          </div>
+        </div>
+        <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
+          <div className="p-4 flex justify-between items-center">
+            <div>
+              <p className="text-sm text-gray-600">Pending Exams</p>
+              <p className="text-2xl font-bold text-orange-600">2</p>
+            </div>
+            <Clock className="h-8 w-8 text-orange-500" />
+          </div>
+        </div>
       </div>
 
+      {/* Upcoming Exams & Latest Results */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader><CardTitle className="flex items-center text-base sm:text-lg"><Calendar className="mr-2 h-5 w-5 text-blue-500" />Upcoming Exams</CardTitle><CardDescription>Register for exams and download admit cards</CardDescription></CardHeader>
-          <CardContent className="space-y-4">
+        {/* Upcoming Exams Card */}
+        <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
+          <div className="flex flex-col space-y-1.5 p-6">
+            <div className="flex items-center text-lg font-semibold leading-none tracking-tight">
+              <Calendar className="mr-2 h-5 w-5 text-blue-500" />
+              Upcoming Exams
+            </div>
+            <p className="text-sm text-muted-foreground">Register for exams and download admit cards</p>
+          </div>
+          <div className="p-6 space-y-4">
             {upcomingExams.map((exam, i) => (
-              <div key={i} className="border border-gray-200 rounded-lg p-4 space-y-3">
+              <div key={i} className="border border-gray-200 rounded-lg p-4 space-y-3 shadow-sm">
                 <div className="flex flex-wrap justify-between items-center gap-2">
                   <h3 className="font-medium">{exam.subject}</h3>
-                  <Badge className={getStatusColor(exam.status)}>{exam.status}</Badge>
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getStatusColor(exam.status)}`}>
+                    {exam.status}
+                  </span>
                 </div>
                 <div className="text-sm text-gray-600 space-y-1">
                   <p>📅 {exam.date} at {exam.time}</p>
@@ -130,102 +190,146 @@ const ExamsModule = ({ user }) => {
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2">
                   {exam.status === "Not Registered" && (
-                    <Button size="sm" disabled={!exam.eligible} className="flex-1">
+                    <button
+                      disabled={!exam.eligible}
+                      className={`inline-flex items-center bg-gray-800 text-white justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3 flex-1
+                      hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md ${!exam.eligible ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
                       {exam.eligible ? "Register" : "Ineligible"}
-                    </Button>
+                    </button>
                   )}
                   {exam.status === "Registered" && (
-                    <Button size="sm" variant="outline" className="flex items-center flex-1 sm:flex-none">
+                    <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 flex-1 sm:flex-none
+                      hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md">
                       <QrCode className="mr-1 h-4 w-4" />
                       Admit Card
-                    </Button>
+                    </button>
                   )}
                   {exam.status === "Pending" && (
-                    <Button size="sm" variant="secondary" disabled className="flex-1">
+                    <button disabled className="inline-flex bg-gray-800 text-white items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-9 px-3 flex-1
+                      opacity-50 cursor-not-allowed">
                       Clear Dues
-                    </Button>
+                    </button>
                   )}
                 </div>
               </div>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader><CardTitle className="flex items-center text-base sm:text-lg"><Award className="mr-2 h-5 w-5 text-green-500" />Latest Results - Semester 7</CardTitle><CardDescription>Subject-wise grades and performance</CardDescription></CardHeader>
-          <CardContent className="space-y-3">
+        {/* Latest Results Card */}
+        <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
+          <div className="flex flex-col space-y-1.5 p-6">
+            <div className="flex items-center text-lg font-semibold leading-none tracking-tight">
+              <Award className="mr-2 h-5 w-5 text-green-500" />
+              Latest Results - Semester 7
+            </div>
+            <p className="text-sm text-muted-foreground">Subject-wise grades and performance</p>
+          </div>
+          <div className="p-6 space-y-3">
             {subjectGrades.map((subj, i) => (
-              <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 border border-gray-200 rounded-lg gap-2">
+              <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 border border-gray-200 rounded-lg gap-2 shadow-sm">
                 <div>
                   <p className="font-medium">{subj.subject}</p>
                   <p className="text-sm text-gray-600">{subj.credits} Credits • {subj.marks} Marks</p>
                 </div>
                 <div className="text-right">
-                  <Badge className={getGradeColor(subj.grade)}>{subj.grade}</Badge>
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getGradeColor(subj.grade)}`}>
+                    {subj.grade}
+                  </span>
                   <p className="text-xs text-gray-500 mt-1 text-right">{subj.points} Points</p>
                 </div>
               </div>
             ))}
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg flex justify-between items-center">
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg flex justify-between items-center shadow-inner">
               <span className="font-medium">Semester GPA:</span>
               <span className="text-xl font-bold text-blue-600">8.5</span>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader><CardTitle>Academic Progress</CardTitle><CardDescription>Semester-wise performance and CGPA trend</CardDescription></CardHeader>
-        <CardContent className="space-y-4">
-          {semesterResults.map((res, i) => (
-            <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-200 rounded-lg gap-4">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <div className="text-center sm:text-left">
-                  <p className="font-medium">{res.semester}</p>
-                  <p className="text-sm text-gray-600">{res.year}</p>
+      {/* Academic Progress Card (Restructured) */}
+      <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
+        <div className="flex flex-col space-y-1.5 p-6">
+          <h3 className="text-lg font-semibold leading-none tracking-tight">Academic Progress</h3>
+          <p className="text-sm text-muted-foreground">Semester-wise performance and CGPA trend</p>
+        </div>
+        <div className="p-6 space-y-6">
+          {sortedYears.map((year, yearIndex) => (
+            <div key={yearIndex} className="border border-gray-200 rounded-lg p-4 shadow-md bg-gray-50">
+              <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-200">
+                <h4 className="font-semibold text-lg text-gray-800">{year}</h4>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">Latest SGPA:</span>
+                  <span className="font-bold text-xl text-blue-600">{groupedSemesterResults[year].latestSGPA}</span>
                 </div>
-                <Badge className={getStatusColor(res.status)}>{res.status}</Badge>
               </div>
-              <div className="flex justify-between gap-6 w-full sm:w-auto text-sm text-gray-600">
-                <div className="text-center">
-                  <p>SGPA</p>
-                  <p className="font-bold text-lg">{res.sgpa}</p>
-                </div>
-                <div className="text-center">
-                  <p>CGPA</p>
-                  <p className="font-bold text-lg">{res.cgpa}</p>
-                </div>
-                <Button variant="ghost" size="sm">
-                  <Download className="h-4 w-4" />
-                </Button>
+              <div className="space-y-3">
+                {groupedSemesterResults[year].semesters
+                  .sort((a, b) => {
+                    // Sort semesters in descending order (e.g., Semester 7 before Semester 6)
+                    const semA = parseInt(a.semester.match(/\d+/)[0]);
+                    const semB = parseInt(b.semester.match(/\d+/)[0]);
+                    return semB - semA;
+                  })
+                  .map((res, i) => (
+                  <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 border border-gray-100 rounded-lg gap-4 bg-white shadow-sm">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      <div className="text-center sm:text-left">
+                        <p className="font-medium">{res.semester}</p>
+                      </div>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getStatusColor(res.status)}`}>
+                        {res.status}
+                      </span>
+                    </div>
+                    <div className="flex justify-between gap-6 w-full sm:w-auto text-sm text-gray-600">
+                      <div className="text-center">
+                        <p>CGPA</p>
+                        <p className="font-bold text-lg">{res.cgpa}</p>
+                      </div>
+                      <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3
+                        hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md">
+                        <Download className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader><CardTitle>Quick Actions</CardTitle><CardDescription>Exam-related services and requests</CardDescription></CardHeader>
-        <CardContent>
+      {/* Quick Actions Card */}
+      <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
+        <div className="flex flex-col space-y-1.5 p-6">
+          <h3 className="text-lg font-semibold leading-none tracking-tight">Quick Actions</h3>
+          <p className="text-sm text-muted-foreground">Exam-related services and requests</p>
+        </div>
+        <div className="p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <Button variant="outline" className="flex flex-col items-center justify-center p-4 h-auto text-center">
+            <button className="inline-flex flex-col items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground p-4 h-auto text-center
+              hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md">
               <FileText className="h-6 w-6 mb-2 text-blue-500" />
               <p className="font-medium">Apply for Revaluation</p>
               <p className="text-sm text-gray-600">Request grade review</p>
-            </Button>
-            <Button variant="outline" className="flex flex-col items-center justify-center p-4 h-auto text-center">
+            </button>
+            <button className="inline-flex flex-col items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground p-4 h-auto text-center
+              hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md">
               <AlertTriangle className="h-6 w-6 mb-2 text-orange-500" />
               <p className="font-medium">Backlog Registration</p>
               <p className="text-sm text-gray-600">Register for failed subjects</p>
-            </Button>
-            <Button variant="outline" className="flex flex-col items-center justify-center p-4 h-auto text-center">
+            </button>
+            <button className="inline-flex flex-col items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground p-4 h-auto text-center
+              hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md">
               <Award className="h-6 w-6 mb-2 text-green-500" />
               <p className="font-medium">Grade Card</p>
               <p className="text-sm text-gray-600">Download official transcript</p>
-            </Button>
+            </button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

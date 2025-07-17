@@ -1,6 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import {
   User,
   FileText,
@@ -24,6 +22,45 @@ import {
   FolderOpen,
   MessageSquare,
 } from "lucide-react";
+
+// Inline Button component
+const Button = ({ 
+  children, 
+  variant = "default", 
+  size = "default", 
+  onClick, 
+  className = "", 
+  ...props 
+}) => {
+  const baseStyles = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background";
+  
+  const variants = {
+    default: "bg-blue-600 text-white hover:bg-blue-700",
+    ghost: " hover:text-white",
+    outline: "border border-gray-300 bg-white hover:bg-gray-50",
+    secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200"
+  };
+  
+  const sizes = {
+    default: "h-10 py-2 px-4",
+    sm: "h-8 px-3 text-sm",
+    lg: "h-11 px-8",
+    icon: "h-10 w-10"
+  };
+  
+  const variantStyles = variants[variant] || variants.default;
+  const sizeStyles = sizes[size] || sizes.default;
+  
+  return (
+    <button
+      className={`${baseStyles} ${variantStyles} ${sizeStyles} ${className}`}
+      onClick={onClick}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
 
 const menuItems = [
   { id: "dashboard", label: "Dashboard", icon: Home },
@@ -71,7 +108,7 @@ const Sidebar = ({
     <div
       className={`${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-md transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
+      } fixed inset-y-0 left-0 z-30 w-56 bg-white shadow-md transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
     >
       <div className="flex flex-col h-full">
         {/* Header */}
@@ -98,26 +135,22 @@ const Sidebar = ({
           </div>
         </div>
 
-       {/* User Info */}
-<div className="p-4 border-b border-gray-200">
-  <div className="flex items-center space-x-3">
-    <Avatar className="h-10 w-10 bg-blue-100 text-blue-900 font-semibold">
-      <AvatarImage src={displayUser.photo} />
-      <AvatarFallback>
-        {displayUser.name?.charAt(0) || "S"}
-      </AvatarFallback>
-    </Avatar>
-    <div className="flex-1 min-w-0">
-      <p className="text-sm font-medium text-gray-900 truncate">
-        {displayUser.name}
-      </p>
-      <p className="text-xs text-gray-500 truncate">
-        {displayUser.studentId}
-      </p>
-    </div>
-  </div>
-</div>
-
+        {/* User Info */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="h-10 w-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-600">
+              <User className="h-5 w-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {displayUser.name}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {displayUser.studentId}
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
@@ -130,10 +163,10 @@ const Sidebar = ({
                 <Button
                   key={item.id}
                   variant="ghost"
-                  className={`w-full justify-start rounded-lg px-4 py-2 text-sm font-medium ${
+                  className={`w-full justify-start rounded-lg px-3 py-2 text-sm font-medium ${
                     isActive
-                      ? "bg-blue-900 text-white hover:bg-blue-800"
-                      : "text-gray-800 hover:bg-gray-100"
+                      ? "bg-blue-900 text-white" // Removed hover effect by setting same bg color
+                      : "text-gray-800 hover:bg-gray-400"
                   }`}
                   onClick={() => {
                     setActiveModule(item.id);
@@ -152,7 +185,7 @@ const Sidebar = ({
         <div className="p-4 border-t border-gray-200">
           <Button
             variant="ghost"
-            className="w-full justify-start text-gray-700 hover:bg-gray-100"
+            className="w-full justify-start text-gray-700"
             onClick={handleLogout}
           >
             <LogOut className="mr-3 h-4 w-4" />
