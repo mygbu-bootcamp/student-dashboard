@@ -1,29 +1,65 @@
 import { useState } from "react";
-import { Button } from "../components/ui/button";
 import Sidebar from "../components/Sidebar";
-import DashboardHome from "../components/modules/Dashboard";
-import ProfileModule from "../components/modules/ProfileModule";
-import AcademicModule from "../components/modules/AcademicModule";
-import AttendanceModule from "../components/modules/AttendanceModule";
-import AssignmentsModule from "../components/modules/AssignmentsModule";
-import ExamsModule from "../components/modules/ExamsModule";
-import FeesModule from "../components/modules/FeesModule";
-import LibraryModule from "../components/modules/LibraryModule";
-import SkillsModule from "../components/modules/SkillsModule";
-import PlacementModule from "../components/modules/PlacementModule";
-import WellnessModule from "../components/modules/WellnessModule";
-import DocumentVaultModule from "../components/modules/DocumentVaultModule";
-import ClubsModule from "../components/modules/ClubsModule";
-import NotificationsModule from "../components/modules/NotificationsModule";
-import GBUStoreModule from "../components/modules/GBUStoreModule";
-import SocialImpactModule from "../components/modules/SocialImpactModule";
-import GoalTrackerModule from "../components/modules/GoalTrackerModule";
-import HostelMessModule from "../components/modules/HostelMessModule";
-import GrievanceModule from "../components/modules/GrievanceModule";
+import DashboardHome from "../pages/Dashboard";
+import ProfileModule from "../pages/ProfileModule";
+import AcademicModule from "../pages/AcademicModule";
+import AttendanceModule from "../pages/AttendanceModule";
+import AssignmentsModule from "../pages/AssignmentsModule";
+import ExamsModule from "../pages/ExamsModule";
+import FeesModule from "../pages/FeesModule";
+import LibraryModule from "../pages/LibraryModule";
+import SkillsModule from "../pages/SkillsModule";
+import PlacementModule from "../pages/PlacementModule";
+import WellnessModule from "../pages/WellnessModule";
+import DocumentVaultModule from "../pages/DocumentVaultModule";
+import ClubsModule from "../pages/ClubsModule";
+import NotificationsModule from "../pages/NotificationsModule";
+import GBUStoreModule from "../pages/GBUStoreModule";
+import SocialImpactModule from "../pages/SocialImpactModule";
+import GoalTrackerModule from "../pages/GoalTrackerModule";
+import HostelMessModule from "../pages/HostelMessModule";
+import GrievanceModule from "../pages/GrievanceModule";
 import SOSAlert from "../components/emergency/SOSAlert";
 import { Menu } from "lucide-react";
 
-// Removed TypeScript interface; props are accepted dynamically
+// Inline Button component
+const Button = ({ 
+  children, 
+  variant = "default", 
+  size = "default", 
+  onClick, 
+  className = "", 
+  ...props 
+}) => {
+  const baseStyles = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background";
+  
+  const variants = {
+    default: "bg-blue-600 text-white hover:bg-blue-700",
+    ghost: "hover:bg-gray-100 hover:text-gray-900",
+    outline: "border border-gray-300 bg-white hover:bg-gray-50",
+    secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200"
+  };
+  
+  const sizes = {
+    default: "h-10 py-2 px-4",
+    sm: "h-8 px-3 text-sm",
+    lg: "h-11 px-8",
+    icon: "h-10 w-10"
+  };
+  
+  const variantStyles = variants[variant] || variants.default;
+  const sizeStyles = sizes[size] || sizes.default;
+  
+  return (
+    <button
+      className={`${baseStyles} ${variantStyles} ${sizeStyles} ${className}`}
+      onClick={onClick}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
 
 const MainDashboard = ({ user, onLogout }) => {
   const [activeModule, setActiveModule] = useState("dashboard");
