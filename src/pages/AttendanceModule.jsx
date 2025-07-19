@@ -1,5 +1,3 @@
-import { Button } from "../../components/ui/button";
-import { Alert, AlertDescription } from "../../components/ui/alert";
 import { AlertTriangle, Download } from "lucide-react";
 import AttendanceStatsCards from "./attendance/AttendanceStatsCards";
 import AttendanceChart from "./attendance/AttendanceChart";
@@ -7,7 +5,48 @@ import SubjectAttendanceList from "./attendance/SubjectAttendanceList";
 import AbsenceHistory from "./attendance/AbsenceHistory";
 import AttendanceActions from "./attendance/AttendanceActions";
 
-// Remove TypeScript interface and type annotations
+// Custom Button Component
+const Button = ({ children, variant = "default", className = "", ...props }) => {
+  const baseStyles = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background px-4 py-2";
+  
+  const variants = {
+    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+  };
+
+  return (
+    <button 
+      className={`${baseStyles} ${variants[variant]} ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+// Custom Alert Component
+const Alert = ({ children, className = "", ...props }) => {
+  return (
+    <div 
+      className={`relative w-full rounded-lg border p-4 ${className}`}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+// Custom AlertDescription Component
+const AlertDescription = ({ children, className = "", ...props }) => {
+  return (
+    <div 
+      className={`text-sm [&_p]:leading-relaxed ${className}`}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
 
 const AttendanceModule = ({ user }) => {
   const attendanceData = [
@@ -36,7 +75,7 @@ const AttendanceModule = ({ user }) => {
           <h1 className="text-3xl font-bold text-gray-900">Attendance Dashboard</h1>
           <p className="text-gray-600">Track your class attendance and maintain academic requirements</p>
         </div>
-        <Button variant="outline" className="flex items-center">
+        <Button variant="outline" className="flex items-center cursor-pointer hover:shadow-md">
           <Download className="mr-2 h-4 w-4" />
           Export Report
         </Button>
@@ -44,12 +83,14 @@ const AttendanceModule = ({ user }) => {
 
       {/* Alert for low attendance */}
       {criticalSubjects.length > 0 && (
-        <Alert className="border-red-200 bg-red-50">
-          <AlertTriangle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-800">
-            <strong>Attendance Alert:</strong> You have {criticalSubjects.length} subject(s) with attendance below 75%. 
-            Immediate action required to avoid academic penalties.
-          </AlertDescription>
+        <Alert className="border border-red-200 bg-red-50">
+          <div className="flex items-start">
+            <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
+            <AlertDescription className="text-red-800">
+              <strong>Attendance Alert:</strong> You have {criticalSubjects.length} subject(s) with attendance below 75%. 
+              Immediate action required to avoid academic penalties.
+            </AlertDescription>
+          </div>
         </Alert>
       )}
 

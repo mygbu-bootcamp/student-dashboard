@@ -1,2 +1,29 @@
 @import "tailwindcss";
 
+/* For Webkit browsers (Chrome, Safari, Edge, Opera) */
+::-webkit-scrollbar {
+    display: none; /* Hides the scrollbar */
+    width: 0px;    /* Ensures no space is reserved for the scrollbar */
+}
+
+/* For Firefox */
+html, body {
+    scrollbar-width: none; /* Hides the scrollbar */
+}
+
+/* For Internet Explorer and Edge (legacy) */
+html, body {
+    -ms-overflow-style: none; /* Hides the scrollbar */
+}
+
+/* Optional: If you want to apply this to a specific div, use its class or ID */
+.my-scrollable-div {
+    overflow: auto; /* Or scroll, auto makes it appear only when content overflows */
+    /* Apply the above scrollbar hiding properties here as well */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.my-scrollable-div::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+}
