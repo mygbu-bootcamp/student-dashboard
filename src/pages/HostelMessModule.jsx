@@ -15,8 +15,7 @@ import {
   Phone,
   Mail
 } from "lucide-react";
-
-// Custom Card Component (re-used from previous turn)
+import StatsCard from "../components/Statscard";
 const Card = ({ children, className }) => (
   <div className={`bg-white rounded-xl border border-gray-200 ${className}`}>
     {children}
@@ -72,21 +71,21 @@ const Badge = ({ children, className, variant = 'default' }) => {
   );
 };
 
-// Custom Button Component (re-used from previous turn)
+// Custom Button Component (updated with animations and cursor)
 const Button = ({ children, className, variant = 'default', size = 'default', ...props }) => {
-  const baseClasses = "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  const baseClasses = "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none cursor-pointer";
   let variantClasses = "";
   let sizeClasses = "";
 
   switch (variant) {
     case 'outline':
-      variantClasses = "border border-gray-300 bg-white text-gray-700 hover:bg-gray-100";
+      variantClasses = "border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:shadow-md";
       break;
     case 'black':
-      variantClasses = "bg-black text-white hover:bg-gray-800";
+      variantClasses = "bg-black text-white hover:bg-black/70 hover:shadow-md hover:scale-105";
       break;
     default:
-      variantClasses = "bg-black text-white hover:bg-black/80";
+      variantClasses = "bg-black text-white hover:bg-black/80 hover:shadow-md hover:scale-105";
       break;
   }
 
@@ -169,8 +168,8 @@ const TabsTrigger = React.forwardRef(({ className = "", children, value, ...prop
   return (
     <button
       ref={ref}
-      className={`inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 flex-1 h-full ${
-        isActive ? "bg-white text-gray-900 shadow" : "text-gray-500 hover:text-gray-900"
+      className={`inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 flex-1 h-full cursor-pointer ${
+        isActive ? "bg-white text-gray-900 shadow hover:scale-[1.02]" : "text-gray-500 hover:text-gray-900 hover:scale-[1.02]"
       } ${className}`}
       onClick={() => onValueChange(value)}
       role="tab"
@@ -325,7 +324,7 @@ const HostelMessModule = ({ user }) => {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6 lg:p-8 font-sans"> {/* Changed font-['Inter'] to font-sans */}
+    <div className="space-y-6 p-4 md:p-6 lg:p-8 font-sans">
       {/* Header */}
       <div className="bg-gradient-to-r from-orange-900 to-red-700 rounded-lg p-6 text-white">
         <div className="flex items-center justify-between">
@@ -345,36 +344,36 @@ const HostelMessModule = ({ user }) => {
         </div>
       </div>
 
-      {/* Quick Stats */}
+      {/* Quick Stats - Updated with StatsCard */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <Building className="h-6 w-6 text-blue-500 mx-auto mb-2" />
-            <div className="text-lg font-bold text-blue-600">{hostelInfo.block}</div>
-            <div className="text-sm text-gray-600">Block</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <Users className="h-6 w-6 text-green-500 mx-auto mb-2" />
-            <div className="text-lg font-bold">{hostelInfo.occupied}/{hostelInfo.block_capacity}</div>
-            <div className="text-sm text-gray-600">Occupancy</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <Star className="h-6 w-6 text-yellow-500 mx-auto mb-2" />
-            <div className="text-lg font-bold text-yellow-600">{messStats.monthlyRating}</div>
-            <div className="text-sm text-gray-600">Mess Rating</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <Utensils className="h-6 w-6 text-purple-500 mx-auto mb-2" />
-            <div className="text-lg font-bold text-purple-600">₹{messStats.avgMealCost}</div>
-            <div className="text-sm text-gray-600">Avg Meal Cost</div>
-          </CardContent>
-        </Card>
+        <StatsCard 
+          title="Block" 
+          value={hostelInfo.block} 
+          icon={Building} 
+          color="text-blue-600" 
+          bgColor="bg-blue-100"
+        />
+        <StatsCard 
+          title="Occupancy" 
+          value={`${hostelInfo.occupied}/${hostelInfo.block_capacity}`} 
+          icon={Users} 
+          color="text-green-600" 
+          bgColor="bg-green-100"
+        />
+        <StatsCard 
+          title="Mess Rating" 
+          value={`${messStats.monthlyRating}/5`} 
+          icon={Star} 
+          color="text-yellow-600" 
+          bgColor="bg-yellow-100"
+        />
+        <StatsCard 
+          title="Avg Meal Cost" 
+          value={`₹${messStats.avgMealCost}`} 
+          icon={Utensils} 
+          color="text-purple-600" 
+          bgColor="bg-purple-100"
+        />
       </div>
 
       <Tabs defaultValue="hostel" value={activeTab} onValueChange={setActiveTab}>
@@ -462,7 +461,7 @@ const HostelMessModule = ({ user }) => {
                   </div>
 
                   <div className="pt-4">
-                    <Button className="w-full bg-black text-white">
+                    <Button className="w-full bg-black text-white hover:scale-[1.02] transition-transform">
                       <Phone className="mr-2 h-4 w-4" />
                       Contact Warden
                     </Button>
@@ -480,7 +479,7 @@ const HostelMessModule = ({ user }) => {
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {hostelInfo.facilities.map((facility, index) => (
-                    <div key={index} className="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg">
+                    <div key={index} className="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
                       <CheckCircle className="h-5 w-5 text-green-500" />
                       <span>{facility}</span>
                     </div>
@@ -506,7 +505,7 @@ const HostelMessModule = ({ user }) => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-4 border border-gray-200 rounded-lg">
+                  <div className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium">Breakfast</h4>
                       <div className="flex items-center text-sm text-gray-600">
@@ -516,12 +515,12 @@ const HostelMessModule = ({ user }) => {
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {messMenu.today.breakfast.items.map((item, index) => (
-                        <Badge key={index} variant="outline">{item}</Badge>
+                        <Badge key={index} variant="outline" className="cursor-pointer hover:bg-gray-100">{item}</Badge>
                       ))}
                     </div>
                   </div>
 
-                  <div className="p-4 border border-gray-200 rounded-lg">
+                  <div className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium">Lunch</h4>
                       <div className="flex items-center text-sm text-gray-600">
@@ -531,12 +530,12 @@ const HostelMessModule = ({ user }) => {
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {messMenu.today.lunch.items.map((item, index) => (
-                        <Badge key={index} variant="outline">{item}</Badge>
+                        <Badge key={index} variant="outline" className="cursor-pointer hover:bg-gray-100">{item}</Badge>
                       ))}
                     </div>
                   </div>
 
-                  <div className="p-4 border border-gray-200 rounded-lg">
+                  <div className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium">Dinner</h4>
                       <div className="flex items-center text-sm text-gray-600">
@@ -546,7 +545,7 @@ const HostelMessModule = ({ user }) => {
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {messMenu.today.dinner.items.map((item, index) => (
-                        <Badge key={index} variant="outline">{item}</Badge>
+                        <Badge key={index} variant="outline" className="cursor-pointer hover:bg-gray-100">{item}</Badge>
                       ))}
                     </div>
                   </div>
@@ -563,9 +562,9 @@ const HostelMessModule = ({ user }) => {
               <CardContent>
                 <div className="space-y-3">
                   {messMenu.weekly.map((day, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
                       <span className="font-medium">{day.day}</span>
-                      <Badge variant="outline">{day.special}</Badge>
+                      <Badge variant="outline" className="hover:bg-gray-100">{day.special}</Badge>
                     </div>
                   ))}
                 </div>
@@ -580,26 +579,34 @@ const HostelMessModule = ({ user }) => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center p-4 border border-gray-200 rounded-lg">
-                    <Star className="h-6 w-6 text-yellow-500 mx-auto mb-2" />
-                    <div className="text-lg font-bold">{messStats.monthlyRating}/5</div>
-                    <div className="text-sm text-gray-600">Average Rating</div>
-                  </div>
-                  <div className="text-center p-4 border border-gray-200 rounded-lg">
-                    <Users className="h-6 w-6 text-blue-500 mx-auto mb-2" />
-                    <div className="text-lg font-bold">{messStats.totalFeedbacks}</div>
-                    <div className="text-sm text-gray-600">Total Feedbacks</div>
-                  </div>
-                  <div className="text-center p-4 border border-gray-200 rounded-lg">
-                    <Utensils className="h-6 w-6 text-green-500 mx-auto mb-2" />
-                    <div className="text-lg font-bold">₹{messStats.avgMealCost}</div>
-                    <div className="text-sm text-gray-600">Avg Meal Cost</div>
-                  </div>
-                  <div className="text-center p-4 border border-gray-200 rounded-lg">
-                    <CheckCircle className="h-6 w-6 text-purple-500 mx-auto mb-2" />
-                    <div className="text-lg font-bold">{messStats.satisfaction}%</div>
-                    <div className="text-sm text-gray-600">Satisfaction</div>
-                  </div>
+                  <StatsCard 
+                    title="Average Rating" 
+                    value={`${messStats.monthlyRating}/5`} 
+                    icon={Star} 
+                    color="text-yellow-600" 
+                    bgColor="bg-yellow-100"
+                  />
+                  <StatsCard 
+                    title="Total Feedbacks" 
+                    value={messStats.totalFeedbacks} 
+                    icon={Users} 
+                    color="text-blue-600" 
+                    bgColor="bg-blue-100"
+                  />
+                  <StatsCard 
+                    title="Avg Meal Cost" 
+                    value={`₹${messStats.avgMealCost}`} 
+                    icon={Utensils} 
+                    color="text-green-600" 
+                    bgColor="bg-green-100"
+                  />
+                  <StatsCard 
+                    title="Satisfaction" 
+                    value={`${messStats.satisfaction}%`} 
+                    icon={CheckCircle} 
+                    color="text-purple-600" 
+                    bgColor="bg-purple-100"
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -650,12 +657,12 @@ const HostelMessModule = ({ user }) => {
                       id="emergency"
                       checked={leaveRequest.emergency}
                       onChange={(e) => setLeaveRequest({...leaveRequest, emergency: e.target.checked})}
-                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-black"
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-black cursor-pointer"
                     />
-                    <label htmlFor="emergency" className="text-sm">Emergency Leave</label>
+                    <label htmlFor="emergency" className="text-sm cursor-pointer">Emergency Leave</label>
                   </div>
 
-                  <Button onClick={handleLeaveSubmit} className="w-full bg-black text-white">
+                  <Button onClick={handleLeaveSubmit} className="w-full bg-black text-white hover:scale-[1.02] transition-transform">
                     <Send className="mr-2 h-4 w-4" />
                     Submit Leave Request
                   </Button>
@@ -672,7 +679,7 @@ const HostelMessModule = ({ user }) => {
               <CardContent>
                 <div className="space-y-4">
                   {leaveHistory.map((leave) => (
-                    <Card key={leave.id}>
+                    <Card key={leave.id} className="hover:shadow-md transition-shadow cursor-pointer">
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between mb-3">
                           <div>
@@ -684,7 +691,7 @@ const HostelMessModule = ({ user }) => {
                               Applied: {leave.appliedDate}
                             </div>
                           </div>
-                          <Badge className={getStatusColor(leave.status)} variant="outline">
+                          <Badge className={`${getStatusColor(leave.status)} cursor-pointer`} variant="outline">
                             {leave.status}
                           </Badge>
                         </div>
@@ -719,7 +726,7 @@ const HostelMessModule = ({ user }) => {
                       {[1, 2, 3, 4, 5].map((star) => (
                         <Star
                           key={star}
-                          className={`h-6 w-6 cursor-pointer ${
+                          className={`h-6 w-6 cursor-pointer hover:scale-110 transition-transform ${
                             star <= feedback.rating
                               ? "text-yellow-400 fill-current"
                               : "text-gray-300"
@@ -740,7 +747,7 @@ const HostelMessModule = ({ user }) => {
                     />
                   </div>
 
-                  <Button onClick={handleFeedbackSubmit} className="w-full bg-black text-white">
+                  <Button onClick={handleFeedbackSubmit} className="w-full bg-black text-white hover:scale-[1.02] transition-transform">
                     <Send className="mr-2 h-4 w-4" />
                     Submit Feedback
                   </Button>
@@ -756,7 +763,7 @@ const HostelMessModule = ({ user }) => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-4 border border-gray-200 rounded-lg">
+                  <div className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
                     <div className="flex items-center justify-between mb-2">
                       <div className="font-medium">Default Student</div>
                       <div className="flex items-center">
@@ -770,7 +777,7 @@ const HostelMessModule = ({ user }) => {
                     <div className="text-xs text-gray-500 mt-2">March 24, 2024</div>
                   </div>
 
-                  <div className="p-4 border border-gray-200 rounded-lg">
+                  <div className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
                     <div className="flex items-center justify-between mb-2">
                       <div className="font-medium">Default Student</div>
                       <div className="flex items-center">
@@ -784,7 +791,7 @@ const HostelMessModule = ({ user }) => {
                     <div className="text-xs text-gray-500 mt-2">March 23, 2024</div>
                   </div>
 
-                  <div className="p-4 border border-gray-200 rounded-lg">
+                  <div className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
                     <div className="flex items-center justify-between mb-2">
                       <div className="font-medium">Default Student</div>
                       <div className="flex items-center">

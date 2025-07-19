@@ -75,7 +75,7 @@ const AttendanceModule = ({ user }) => {
           <h1 className="text-3xl font-bold text-gray-900">Attendance Dashboard</h1>
           <p className="text-gray-600">Track your class attendance and maintain academic requirements</p>
         </div>
-        <Button variant="outline" className="flex items-center">
+        <Button variant="outline" className="flex items-center cursor-pointer hover:shadow-md">
           <Download className="mr-2 h-4 w-4" />
           Export Report
         </Button>

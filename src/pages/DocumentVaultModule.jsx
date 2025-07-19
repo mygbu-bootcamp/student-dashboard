@@ -52,14 +52,14 @@ const Button = ({
   ...props
 }) => {
   const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 
   const variantClasses = {
-    default: "bg-black text-white active:bg-blue-800",
-    destructive: "bg-red-600 text-white hover:bg-red-700 active:bg-red-800",
-    outline: "border border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200",
-    secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-300",
-    ghost: "hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200",
+    default: "bg-black text-white active:bg-blue-800 hover:scale-105 hover:shadow-lg",
+    destructive: "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 hover:scale-105 hover:shadow-lg",
+    outline: "border border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 hover:scale-105 hover:shadow-lg",
+    secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-300 hover:scale-105 hover:shadow-lg",
+    ghost: "hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 hover:scale-105 hover:shadow-lg",
     link: "text-blue-600 underline-offset-4 hover:underline active:text-blue-800",
   };
 
@@ -295,7 +295,7 @@ const DocumentVaultModule = ({ user }) => {
           return (
             <Card
               key={doc.id}
-              className={`${
+              className={`flex flex-col ${
                 expiryWarning === "Expired"
                   ? "border-red-200 bg-red-50"
                   : expiryWarning
@@ -311,7 +311,7 @@ const DocumentVaultModule = ({ user }) => {
                 <CardTitle className="text-lg">{doc.name}</CardTitle>
                 <CardDescription>{doc.type}</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="flex-grow space-y-3">
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>
                     <p className="text-gray-500">Format</p>
@@ -350,7 +350,8 @@ const DocumentVaultModule = ({ user }) => {
                     <span className="text-sm font-medium">{expiryWarning}</span>
                   </div>
                 )}
-
+              </CardContent>
+              <div className="p-6 pt-0 mt-auto"> {/* Added mt-auto here */}
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" className="flex-1">
                     <Eye className="mr-2 h-4 w-4" />
@@ -361,7 +362,7 @@ const DocumentVaultModule = ({ user }) => {
                     Download
                   </Button>
                 </div>
-              </CardContent>
+              </div>
             </Card>
           );
         })}

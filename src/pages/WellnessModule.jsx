@@ -1,4 +1,5 @@
-import { useState } from "react";
+// WellnessModule.jsx
+import { useState, useEffect, useRef } from "react"; // Import useEffect and useRef
 import * as React from "react"; // Import React for the Tabs components
 import {
   Heart,
@@ -16,21 +17,40 @@ import {
   SmilePlus,
   Laugh,
 } from "lucide-react";
+import StatsCard from "../components/Statscard";
 
-// Helper component for a simple message box instead of shadcn/ui toast
 const MessageBox = ({ message, type, onClose }) => {
   if (!message) return null;
+
+  const messageBoxRef = useRef(null); // Create a ref for the message box
 
   const bgColor = type === "destructive" ? "bg-red-500" : "bg-green-500";
   const textColor = "text-white";
 
+  // Effect to handle clicks outside the message box
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (messageBoxRef.current && !messageBoxRef.current.contains(event.target)) {
+        onClose(); // Close the message box if click is outside
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]); // Re-run if onClose changes
+
   return (
     <div
-      className={`fixed bottom-4 right-4 p-4 rounded-lg shadow-lg flex items-center justify-between z-50 ${bgColor} ${textColor}`}
+      ref={messageBoxRef} // Attach the ref to the message box div
+      // Changed position to top-middle, added transform for centering
+      className={`fixed top-4 left-1/2 -translate-x-1/2 p-4 rounded-lg shadow-lg flex items-center justify-between z-50 ${bgColor} ${textColor}`}
       role="alert"
     >
       <span>{message}</span>
-      <button onClick={onClose} className="ml-4 font-bold">
+      <button onClick={onClose} className="ml-4 font-bold text-white opacity-90 hover:opacity-100">
         &times;
       </button>
     </div>
@@ -92,7 +112,7 @@ const TabsTrigger = React.forwardRef(
         role="tab"
         aria-selected={isActive}
         onClick={handleClick}
-        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
+        className={`flex-1 h-8px inline-flex items-center cursor-pointer justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
           isActive
             ? "bg-white text-black"
             : "text-muted-foreground hover:text-foreground"
@@ -195,7 +215,9 @@ const WellnessModule = ({ user }) => {
 
   const showMessage = (msg, type = "default") => {
     setMessage({ text: msg, type });
-    setTimeout(() => setMessage(null), 3000); // Hide after 3 seconds
+    // The auto-close after 3 seconds is handled by the useEffect for outside click now
+    // If you want a fallback auto-close even if no click, you can re-add the setTimeout here
+    // setTimeout(() => setMessage(null), 3000);
   };
 
   const handleMoodSubmit = () => {
@@ -210,15 +232,16 @@ const WellnessModule = ({ user }) => {
     // In a real app, you would send selectedMood and moodNote to a backend
     console.log("Mood Logged:", { mood: selectedMood, note: moodNote });
 
-    showMessage("Your daily mood check-in has been recorded successfully!");
+    showMessage("Your daily mood check-in has been recorded successfully!", "success"); // Changed type to "success" for consistency
+  
     setSelectedMood("");
     setMoodNote("");
   };
 
   const handleMentorConnect = (mentorName) => {
     showMessage(
-      `Your wellness consultation request has been sent to ${mentorName}!`
-    );
+      `Your wellness consultation request has been sent to ${mentorName}!`, "success"
+    ); // Changed type to "success"
   };
 
   // Generic Card Component (replaces shadcn/ui Card)
@@ -271,16 +294,16 @@ const WellnessModule = ({ user }) => {
 
     switch (variant) {
       case "default":
-        variantStyle = "bg-black text-white hover:bg-gray-800";
+        variantStyle = "bg-black text-white hover:bg-black/70 shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200";
         break;
       case "destructive":
-        variantStyle = "bg-red-500 text-white hover:bg-red-600";
+        variantStyle = "bg-red-500 text-white hover:bg-red-600 shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200";
         break;
       case "outline":
-        variantStyle = "border border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-900";
+        variantStyle = "border border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-900 shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200";
         break;
       case "secondary":
-        variantStyle = "bg-gray-100 text-gray-900 hover:bg-gray-200";
+        variantStyle = "bg-gray-100 text-gray-900 hover:bg-gray-200 shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200";
         break;
       case "ghost":
         variantStyle = "hover:bg-gray-100 hover:text-gray-900";
@@ -292,7 +315,7 @@ const WellnessModule = ({ user }) => {
         variantStyle = "bg-purple-100 text-purple-700";
         break;
       default:
-        variantStyle = "bg-black text-white hover:bg-gray-800";
+        variantStyle = "bg-black text-white hover:bg-black/70 shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200";
     }
 
     switch (size) {
@@ -410,69 +433,55 @@ const WellnessModule = ({ user }) => {
         </TabsList>
 
         <TabsContent value="dashboard" className="space-y-6">
-        {/* Stats Cards */}
-<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-  <CustomCard className="h-36">
-    <CustomCardContent className="h-full flex flex-col items-center justify-center text-center">
-      <Heart className="h-8 w-8 text-pink-500 mb-2" />
-      <div className="text-2xl font-bold text-pink-600">
-        {wellnessStats.weeklyMoodAverage}
-      </div>
-      <div className="text-sm text-gray-600">Mood Average</div>
-    </CustomCardContent>
-  </CustomCard>
-
-  <CustomCard className="h-36">
-    <CustomCardContent className="h-full flex flex-col items-center justify-center text-center">
-      <Clock className="h-8 w-8 text-blue-500 mb-2" />
-      <div className="text-2xl font-bold text-blue-600">
-        {wellnessStats.sleepAverage}h
-      </div>
-      <div className="text-sm text-gray-600">Sleep Average</div>
-    </CustomCardContent>
-  </CustomCard>
-
-  <CustomCard className="h-36">
-    <CustomCardContent className="h-full flex flex-col items-center justify-center text-center">
-      <Settings className="h-8 w-8 text-orange-500 mb-2" />
-      <div className="text-2xl font-bold text-orange-600">
-        {wellnessStats.screenTimeDaily}h
-      </div>
-      <div className="text-sm text-gray-600">Screen Time</div>
-    </CustomCardContent>
-  </CustomCard>
-
-  <CustomCard className="h-36">
-    <CustomCardContent className="h-full flex flex-col items-center justify-center text-center">
-      <CheckCircle className="h-8 w-8 text-green-500 mb-2" />
-      <div className="text-2xl font-bold text-green-600">
-        {wellnessStats.stepsToday}
-      </div>
-      <div className="text-sm text-gray-600">Steps Today</div>
-    </CustomCardContent>
-  </CustomCard>
-
-  <CustomCard className="h-36">
-    <CustomCardContent className="h-full flex flex-col items-center justify-center text-center">
-      <Star className="h-8 w-8 text-purple-500 mb-2" />
-      <div className="text-2xl font-bold text-purple-600">
-        {wellnessStats.checkInStreak}
-      </div>
-      <div className="text-sm text-gray-600">Check-in Streak</div>
-    </CustomCardContent>
-  </CustomCard>
-</div>
-
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <StatsCard
+              title="Mood Average"
+              value={wellnessStats.weeklyMoodAverage}
+              icon={Heart}
+              color="text-pink-600"
+              bgColor="bg-pink-100"
+            />
+            <StatsCard
+              title="Sleep Average"
+              value={`${wellnessStats.sleepAverage}h`}
+              icon={Clock}
+              color="text-blue-600"
+              bgColor="bg-blue-100"
+            />
+            <StatsCard
+              title="Screen Time"
+              value={`${wellnessStats.screenTimeDaily}h`}
+              icon={Settings}
+              color="text-orange-600"
+              bgColor="bg-orange-100"
+            />
+            <StatsCard
+              title="Steps Today"
+              value={wellnessStats.stepsToday}
+              icon={CheckCircle}
+              color="text-green-600"
+              bgColor="bg-green-100"
+            />
+            <StatsCard
+              title="Check-in Streak"
+              value={wellnessStats.checkInStreak}
+              icon={Star}
+              color="text-purple-600"
+              bgColor="bg-purple-100"
+            />
+          </div>
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 rounded-lg">
             <CustomButton
               variant="outline"
               size="auto"
+              className="group hover:border-pink-500" // Add group and hover class
               onClick={() => setActiveTab("mood")}
             >
               <div className="text-center">
-                <Heart className="h-6 w-6 mx-auto mb-2 text-pink-500" />
+                <Heart className="h-6 w-6 mx-auto mb-2 text-pink-500 group-hover:scale-110 transition-transform duration-200" />
                 <p className="font-medium">Daily Mood Check-in</p>
                 <p className="text-sm text-gray-600">Log how you're feeling</p>
               </div>
@@ -480,10 +489,11 @@ const WellnessModule = ({ user }) => {
             <CustomButton
               variant="outline"
               size="auto"
+              className="group hover:border-blue-500" // Add group and hover class
               onClick={() => setActiveTab("health")}
             >
               <div className="text-center">
-                <Settings className="h-6 w-6 mx-auto mb-2 text-blue-500" />
+                <Settings className="h-6 w-6 mx-auto mb-2 text-blue-500 group-hover:scale-110 transition-transform duration-200" />
                 <p className="font-medium">Sync Health Data</p>
                 <p className="text-sm text-gray-600">Connect fitness apps</p>
               </div>
@@ -491,10 +501,11 @@ const WellnessModule = ({ user }) => {
             <CustomButton
               variant="outline"
               size="auto"
+              className="group hover:border-green-500" // Add group and hover class
               onClick={() => setActiveTab("support")}
             >
               <div className="text-center">
-                <Users className="h-6 w-6 mx-auto mb-2 text-green-500" />
+                <Users className="h-6 w-6 mx-auto mb-2 text-green-500 group-hover:scale-110 transition-transform duration-200" />
                 <p className="font-medium">Get Support</p>
                 <p className="text-sm text-gray-600">Talk to a counselor</p>
               </div>

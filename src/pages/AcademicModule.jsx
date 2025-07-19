@@ -51,13 +51,14 @@ const Button = ({
   disabled = false,
   ...props
 }) => {
-  const baseStyles = "inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"; // Added transition-all duration-200
+  // Added shadow-sm to baseStyles and hover:shadow-md for animation
+  const baseStyles = "inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-sm";
 
   const variants = {
-    default: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 active:scale-95", // Added active:scale-95
-    outline: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500 active:scale-95", // Added active:scale-95
-    secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 active:scale-95", // Added active:scale-95
-    ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500 active:scale-95" // Added active:scale-95
+    default: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 active:scale-95 hover:shadow-md",
+    outline: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500 active:scale-95 hover:shadow-md",
+    secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 active:scale-95 hover:shadow-md",
+    ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500 active:scale-95" // Ghost usually doesn't have shadow
   };
 
   const sizes = {
@@ -87,7 +88,7 @@ const Input = ({ className = "", disabled = false, ...props }) => (
 // Added Select component
 const Select = ({ children, className = "", ...props }) => (
   <select
-    className={`w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${className}`} // Added border and transition
+    className={`w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 cursor-pointer ${className}`} // Added cursor-pointer
     {...props}
   >
     {children}
@@ -171,7 +172,7 @@ const TabsTrigger = React.forwardRef(
         role="tab"
         aria-selected={isActive}
         onClick={handleClick}
-        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none transition-all duration-200 ${ // Added transition
+        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none transition-all duration-200 cursor-pointer ${ // Added cursor-pointer
           isActive
             ? "bg-white text-black shadow-sm"
             : "text-muted-foreground hover:text-foreground"
@@ -205,15 +206,16 @@ const TabsContent = React.forwardRef(
 TabsContent.displayName = "TabsContent";
 
 const AcademicModule = ({ user = {
-  studentId: "2021BCS001",
-  name: "Aarav Sharma",
-  programme: "B.Tech",
-  branch: "Computer Science & Engineering",
-  semester: "6"
+  studentId: "2022BCE045", // Changed student ID
+  name: "Priya Singh", // Changed name
+  programme: "B.E.", // Changed programme
+  branch: "Electronics & Communication Engineering", // Changed branch
+  semester: "4" // Changed semester
 } }) => {
-  const [selectedSemester, setSelectedSemester] = useState("6");
+  const [selectedSemester, setSelectedSemester] = useState("6"); // This state is not currently used in the provided JSX.
   const [activeTab, setActiveTab] = useState("registration");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [selectedPrerequisite, setSelectedPrerequisite] = useState("");
 
   const subjects = [
     { code: "CSE301", name: "Data Structures & Algorithms", credits: 4, type: "Core", grade: "A", gpa: 9 },
@@ -230,6 +232,14 @@ const AcademicModule = ({ user = {
     { code: "CSE403", name: "Cloud Computing", credits: 3, prerequisite: "CGPA > 7.0" },
     { code: "CSE404", name: "Cybersecurity", credits: 3, prerequisite: "CGPA > 8.0" }
   ];
+
+  const filteredElectives = electiveOptions.filter(elective => {
+    if (selectedPrerequisite === "") return true;
+    if (selectedPrerequisite === "cgpa8" && elective.prerequisite === "CGPA > 8.0") return true;
+    if (selectedPrerequisite === "cgpa7.5" && elective.prerequisite === "CGPA > 7.5") return true;
+    if (selectedPrerequisite === "cgpa7" && elective.prerequisite === "CGPA > 7.0") return true;
+    return false;
+  });
 
   const timetable = [
     { day: "Monday", slots: [
@@ -471,28 +481,31 @@ const AcademicModule = ({ user = {
                 <CardTitle>Available Electives</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {/* Replaced <select> with custom Select component */}
-                <Select>
+                <Select value={selectedPrerequisite} onChange={(e) => setSelectedPrerequisite(e.target.value)}>
                   <option value="">Filter by prerequisite</option>
                   <option value="cgpa8">CGPA &gt; 8.0</option>
                   <option value="cgpa7.5">CGPA &gt; 7.5</option>
                   <option value="cgpa7">CGPA &gt; 7.0</option>
                 </Select>
-                {electiveOptions.map(elective => (
-                  <div key={elective.code} className="p-3 border border-gray-200 rounded-lg space-y-1">
-                    <div className="flex justify-between">
-                      <div>
-                        <p className="font-medium">{elective.name}</p>
-                        <p className="text-sm text-gray-600">{elective.code}</p>
+                {filteredElectives.length > 0 ? (
+                  filteredElectives.map(elective => (
+                    <div key={elective.code} className="p-3 border border-gray-200 rounded-lg space-y-1">
+                      <div className="flex justify-between">
+                        <div>
+                          <p className="font-medium">{elective.name}</p>
+                          <p className="text-sm text-gray-600">{elective.code}</p>
+                        </div>
+                        <p className="font-medium">{elective.credits} Credits</p>
                       </div>
-                      <p className="font-medium">{elective.credits} Credits</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-500">{elective.prerequisite}</span>
+                        <Button size="sm" variant="outline">Select</Button>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500">{elective.prerequisite}</span>
-                      <Button size="sm" variant="outline">Select</Button>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-gray-600 text-sm">No electives match the selected prerequisite.</p>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -516,12 +529,13 @@ const AcademicModule = ({ user = {
                     <h3 className="font-semibold text-lg mb-4">{day.day}</h3>
                     <div className="space-y-2">
                       {day.slots.map((slot, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg ">
-                          <div className="flex items-center space-x-4">
+                        <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-gray-50 rounded-lg ">
+                          {/* Adjusted structure to center subject name */}
+                          <div className="flex items-center space-x-2 mb-2 sm:mb-0">
                             <Clock className="h-4 w-4 text-gray-500" />
                             <span className="text-sm font-medium">{slot.time}</span>
-                            <span className="text-sm font-medium">{slot.subject}</span>
                           </div>
+                          <span className="text-sm font-medium flex-grow text-center  sm:px-4">{slot.subject}</span> {/* Subject in middle */}
                           <div className="flex items-center space-x-3">
                             <Badge variant={slot.type === "Lab" ? "secondary" : "outline"}>
                               {slot.type}

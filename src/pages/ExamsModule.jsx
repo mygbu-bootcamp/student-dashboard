@@ -7,8 +7,11 @@ import {
   Calendar,
   QrCode,
   Award,
-  TrendingUp
+  TrendingUp,
+  ClipboardList, 
+  Star 
 } from "lucide-react";
+import StatsCard from '../components/Statscard'; 
 
 const ExamsModule = ({ user }) => {
   const upcomingExams = [
@@ -18,7 +21,7 @@ const ExamsModule = ({ user }) => {
       time: "10:00 AM",
       venue: "Block A-101",
       status: "Registered",
-      eligible: true
+      eligible: true,
     },
     {
       subject: "Machine Learning",
@@ -26,7 +29,7 @@ const ExamsModule = ({ user }) => {
       time: "2:00 PM",
       venue: "Block B-205",
       status: "Registered",
-      eligible: true
+      eligible: true,
     },
     {
       subject: "Software Engineering",
@@ -34,7 +37,7 @@ const ExamsModule = ({ user }) => {
       time: "10:00 AM",
       venue: "Block C-301",
       status: "Pending",
-      eligible: false
+      eligible: false,
     },
     {
       subject: "Computer Networks",
@@ -42,8 +45,8 @@ const ExamsModule = ({ user }) => {
       time: "2:00 PM",
       venue: "Block A-102",
       status: "Not Registered",
-      eligible: false
-    }
+      eligible: false,
+    },
   ];
 
   const semesterResults = [
@@ -51,9 +54,8 @@ const ExamsModule = ({ user }) => {
     { semester: "Semester 6", sgpa: 8.8, cgpa: 8.1, status: "Published", year: "2023-24" },
     { semester: "Semester 5", sgpa: 7.9, cgpa: 7.8, status: "Published", year: "2022-23" },
     { semester: "Semester 4", sgpa: 8.3, cgpa: 7.7, status: "Published", year: "2022-23" },
-    // Removed Semester 3 from 2022-23 to ensure only 2 semesters per year as requested
     { semester: "Semester 2", sgpa: 7.5, cgpa: 7.2, status: "Published", year: "2021-22" },
-    { semester: "Semester 1", sgpa: 7.0, cgpa: 7.0, status: "Published", year: "2021-22" }
+    { semester: "Semester 1", sgpa: 7.0, cgpa: 7.0, status: "Published", year: "2021-22" },
   ];
 
   const subjectGrades = [
@@ -96,16 +98,19 @@ const ExamsModule = ({ user }) => {
         semesters: []
       };
     }
-    // Update latest SGPA if a newer semester (higher semester number) is found for the same year
-    // This assumes semesterResults are not strictly sorted by semester number within a year
-    // For simplicity, we'll just take the SGPA of the first semester encountered for that year.
-    // If you need the *absolute latest* SGPA for a year, you'd need to sort `semesterResults` by date/semester number first.
     acc[result.year].semesters.push(result);
     return acc;
   }, {});
 
   // Sort years in descending order (e.g., "2023-24" before "2022-23")
   const sortedYears = Object.keys(groupedSemesterResults).sort().reverse();
+
+  // Calculate stats for the StatsCard
+  const currentCGPA = semesterResults.length > 0 ? semesterResults[0].cgpa : 'N/A';
+  const lastSGPA = semesterResults.length > 0 ? semesterResults[0].sgpa : 'N/A';
+  const registeredExams = upcomingExams.filter(exam => exam.status === "Registered").length;
+  const pendingExams = upcomingExams.filter(exam => exam.status === "Pending" || exam.status === "Not Registered").length;
+
 
   return (
     <div className="space-y-6 px-4 md:px-6 lg:px-8 py-6 font-sans">
@@ -117,51 +122,43 @@ const ExamsModule = ({ user }) => {
             Manage exam registration and view academic results
           </p>
         </div>
-        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full sm:w-auto
-          hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md">
+        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent h-10 px-4 py-2 w-full sm:w-auto
+          hover:scale-105 duration-200 cursor-pointer shadow-sm hover:shadow-md">
           <Download className="mr-2 h-4 w-4" />
           Download Transcript
         </button>
       </div>
 
-      {/* Overview Cards */}
+      {/* Overview Cards using StatsCard */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
-          <div className="p-4 flex justify-between items-center">
-            <div>
-              <p className="text-sm text-gray-600">Current CGPA</p>
-              <p className="text-2xl font-bold text-blue-600">8.2</p>
-            </div>
-            <Award className="h-8 w-8 text-blue-500" />
-          </div>
-        </div>
-        <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
-          <div className="p-4 flex justify-between items-center">
-            <div>
-              <p className="text-sm text-gray-600">Last SGPA</p>
-              <p className="text-2xl font-bold text-green-600">8.5</p>
-            </div>
-            <TrendingUp className="h-8 w-8 text-green-500" />
-          </div>
-        </div>
-        <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
-          <div className="p-4 flex justify-between items-center">
-            <div>
-              <p className="text-sm text-gray-600">Registered Exams</p>
-              <p className="text-2xl font-bold text-purple-600">2</p>
-            </div>
-            <FileText className="h-8 w-8 text-purple-500" />
-          </div>
-        </div>
-        <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
-          <div className="p-4 flex justify-between items-center">
-            <div>
-              <p className="text-sm text-gray-600">Pending Exams</p>
-              <p className="text-2xl font-bold text-orange-600">2</p>
-            </div>
-            <Clock className="h-8 w-8 text-orange-500" />
-          </div>
-        </div>
+        <StatsCard
+          title="Current CGPA"
+          value={currentCGPA}
+          icon={Award}
+          color="text-blue-600"
+          bgColor="bg-blue-100"
+        />
+        <StatsCard
+          title="Last SGPA"
+          value={lastSGPA}
+          icon={TrendingUp}
+          color="text-green-600"
+          bgColor="bg-green-100"
+        />
+        <StatsCard
+          title="Registered Exams"
+          value={registeredExams}
+          icon={FileText}
+          color="text-purple-600"
+          bgColor="bg-purple-100"
+        />
+        <StatsCard
+          title="Pending Exams"
+          value={pendingExams}
+          icon={Clock}
+          color="text-orange-600"
+          bgColor="bg-orange-100"
+        />
       </div>
 
       {/* Upcoming Exams & Latest Results */}
@@ -192,21 +189,21 @@ const ExamsModule = ({ user }) => {
                   {exam.status === "Not Registered" && (
                     <button
                       disabled={!exam.eligible}
-                      className={`inline-flex items-center bg-gray-800 text-white justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3 flex-1
-                      hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md ${!exam.eligible ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`inline-flex items-center bg-gray-800 text-white justify-center rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3 flex-1
+                      hover:scale-105 duration-200 cursor-pointer shadow-sm hover:shadow-md ${!exam.eligible ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       {exam.eligible ? "Register" : "Ineligible"}
                     </button>
                   )}
                   {exam.status === "Registered" && (
-                    <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 flex-1 sm:flex-none
-                      hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md">
+                    <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 flex-1 sm:flex-none
+                      hover:scale-105 duration-200 cursor-pointer shadow-sm hover:shadow-md">
                       <QrCode className="mr-1 h-4 w-4" />
                       Admit Card
                     </button>
                   )}
                   {exam.status === "Pending" && (
-                    <button disabled className="inline-flex bg-gray-800 text-white items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-9 px-3 flex-1
+                    <button disabled className="inline-flex bg-gray-800 text-white items-center justify-center rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-9 px-3 flex-1
                       opacity-50 cursor-not-allowed">
                       Clear Dues
                     </button>
@@ -261,40 +258,39 @@ const ExamsModule = ({ user }) => {
               <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-200">
                 <h4 className="font-semibold text-lg text-gray-800">{year}</h4>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">Latest SGPA:</span>
-                  <span className="font-bold text-xl text-blue-600">{groupedSemesterResults[year].latestSGPA}</span>
+                  <span className="text-sm text-gray-600">Latest CGPA:</span>
+                  <span className="font-bold text-xl text-blue-600">{groupedSemesterResults[year].semesters[0]?.cgpa || 'N/A'}</span>
                 </div>
               </div>
               <div className="space-y-3">
                 {groupedSemesterResults[year].semesters
                   .sort((a, b) => {
-                    // Sort semesters in descending order (e.g., Semester 7 before Semester 6)
                     const semA = parseInt(a.semester.match(/\d+/)[0]);
                     const semB = parseInt(b.semester.match(/\d+/)[0]);
                     return semB - semA;
                   })
                   .map((res, i) => (
-                  <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 border border-gray-100 rounded-lg gap-4 bg-white shadow-sm">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                      <div className="text-center sm:text-left">
-                        <p className="font-medium">{res.semester}</p>
+                    <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 border border-gray-100 rounded-lg gap-4 bg-white shadow-sm">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        <div className="text-center sm:text-left">
+                          <p className="font-medium">{res.semester}</p>
+                        </div>
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getStatusColor(res.status)}`}>
+                          {res.status}
+                        </span>
                       </div>
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getStatusColor(res.status)}`}>
-                        {res.status}
-                      </span>
-                    </div>
-                    <div className="flex justify-between gap-6 w-full sm:w-auto text-sm text-gray-600">
-                      <div className="text-center">
-                        <p>CGPA</p>
-                        <p className="font-bold text-lg">{res.cgpa}</p>
+                      <div className="flex justify-between gap-6 w-full sm:w-auto text-sm text-gray-600">
+                        <div className="text-center">
+                          <p>SGPA</p>
+                          <p className="font-bold text-lg">{res.sgpa}</p>
+                        </div>
+                        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3
+                          hover:scale-105 duration-200 cursor-pointer shadow-sm hover:shadow-md">
+                          <Download className="h-4 w-4" />
+                        </button>
                       </div>
-                      <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3
-                        hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md">
-                        <Download className="h-4 w-4" />
-                      </button>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
           ))}
@@ -309,20 +305,23 @@ const ExamsModule = ({ user }) => {
         </div>
         <div className="p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <button className="inline-flex flex-col items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground p-4 h-auto text-center
-              hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md">
+            {/* Apply for Revaluation Button */}
+            <button className="inline-flex flex-col items-center justify-center rounded-md text-sm font-medium ring-offset-background duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground p-4 h-auto text-center
+              hover:-translate-y-1 hover:border-blue-500 shadow-sm cursor-pointer">
               <FileText className="h-6 w-6 mb-2 text-blue-500" />
               <p className="font-medium">Apply for Revaluation</p>
               <p className="text-sm text-gray-600">Request grade review</p>
             </button>
-            <button className="inline-flex flex-col items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground p-4 h-auto text-center
-              hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md">
+            {/* Backlog Registration Button */}
+            <button className="inline-flex flex-col items-center justify-center rounded-md text-sm font-medium ring-offset-background duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground p-4 h-auto text-center
+              hover:-translate-y-1 hover:border-orange-500 shadow-sm cursor-pointer">
               <AlertTriangle className="h-6 w-6 mb-2 text-orange-500" />
               <p className="font-medium">Backlog Registration</p>
               <p className="text-sm text-gray-600">Register for failed subjects</p>
             </button>
-            <button className="inline-flex flex-col items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground p-4 h-auto text-center
-              hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md">
+            {/* Grade Card Button */}
+            <button className="inline-flex flex-col items-center justify-center rounded-md text-sm font-medium ring-offset-background duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground p-4 h-auto text-center
+              hover:-translate-y-1 hover:border-green-500 shadow-sm cursor-pointer">
               <Award className="h-6 w-6 mb-2 text-green-500" />
               <p className="font-medium">Grade Card</p>
               <p className="text-sm text-gray-600">Download official transcript</p>

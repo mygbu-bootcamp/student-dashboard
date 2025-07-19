@@ -10,9 +10,12 @@ import {
   Star,
   TrendingUp,
   Edit,
-  Trash2
+  Trash2,
+  Heart,
+  Bell,
 } from "lucide-react";
 import * as React from "react";
+import StatsCard from "../components/Statscard"; 
 
 const TabsContext = React.createContext();
 
@@ -67,11 +70,11 @@ const TabsTrigger = React.forwardRef(
         role="tab"
         aria-selected={isActive}
         onClick={handleClick}
-        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
-          isActive
-            ? "bg-white text-black "
-            : "text-muted-foreground hover:text-foreground"
-        } ${className}`}
+        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none transition-all duration-200 ease-in-out cursor-pointer
+         ${isActive
+            ? "bg-white text-black shadow-sm" // Active tabs retain shadow but no scale on hover
+            : "text-muted-foreground hover:text-foreground " // Inactive tabs get hover effects
+          } ${className}`}
         {...props}
       >
         {children}
@@ -255,7 +258,8 @@ const GoalTrackerModule = ({ user }) => {
   };
 
   const TaskCard = ({ task }) => (
-    <div className="mb-4 bg-white rounded-lg border border-gray-200 overflow-hidden">
+    // Added fixed height and flex properties for equal length cards
+    <div className="mb-4 bg-white rounded-lg border border-gray-200 overflow-hidden h-[200px] flex flex-col justify-between">
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
           <h4 className="font-medium text-sm">{task.title}</h4>
@@ -296,22 +300,22 @@ const GoalTrackerModule = ({ user }) => {
             </span>
           ))}
         </div>
+      </div>
 
-        <div className="flex justify-between items-center">
-          <div className="flex space-x-1">
-            <button className="p-1 rounded-md hover:bg-gray-100">
-              <Edit className="h-3 w-3" />
-            </button>
-            <button className="p-1 rounded-md hover:bg-gray-100">
-              <Trash2 className="h-3 w-3" />
-            </button>
-          </div>
-          {task.linkedTo && (
-            <span className="text-xs px-2 py-1 rounded-full border border-gray-200">
-              Linked: {task.linkedTo}
-            </span>
-          )}
+      <div className="p-4 pt-0 flex justify-between items-center"> {/* Adjusted padding */}
+        <div className="flex space-x-1">
+          <button className="p-1 rounded-md transition-all duration-200 ease-in-out cursor-pointer hover:bg-gray-100 hover:shadow-sm hover:scale-[1.05]">
+            <Edit className="h-3 w-3" />
+          </button>
+          <button className="p-1 rounded-md transition-all duration-200 ease-in-out cursor-pointer hover:bg-gray-100 hover:shadow-sm hover:scale-[1.05]">
+            <Trash2 className="h-3 w-3" />
+          </button>
         </div>
+        {task.linkedTo && (
+          <span className="text-xs px-2 py-1 rounded-full border border-gray-200">
+            Linked: {task.linkedTo}
+          </span>
+        )}
       </div>
     </div>
   );
@@ -339,36 +343,36 @@ const GoalTrackerModule = ({ user }) => {
         </div>
       </div>
 
-      {/* Quick Stats */}
+      {/* Quick Stats using StatsCard component */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg border border-gray-200 ">
-          <div className="p-4 text-center">
-            <Circle className="h-6 w-6 text-blue-500 mx-auto mb-2" />
-            <div className="text-lg font-bold text-blue-600">{tasks.todo.length}</div>
-            <div className="text-sm text-gray-600">To Do</div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg border border-gray-200">
-          <div className="p-4 text-center">
-            <PlayCircle className="h-6 w-6 text-yellow-500 mx-auto mb-2" />
-            <div className="text-lg font-bold text-yellow-600">{tasks.inProgress.length}</div>
-            <div className="text-sm text-gray-600">In Progress</div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg border border-gray-200">
-          <div className="p-4 text-center">
-            <CheckCircle className="h-6 w-6 text-green-500 mx-auto mb-2" />
-            <div className="text-lg font-bold text-green-600">{tasks.done.length}</div>
-            <div className="text-sm text-gray-600">Completed</div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg border border-gray-200">
-          <div className="p-4 text-center">
-            <Star className="h-6 w-6 text-purple-500 mx-auto mb-2" />
-            <div className="text-lg font-bold text-purple-600">{goals.length}</div>
-            <div className="text-sm text-gray-600">Active Goals</div>
-          </div>
-        </div>
+        <StatsCard
+          title="To Do"
+          value={tasks.todo.length}
+          icon={Circle}
+          color="text-blue-600"
+          bgColor="bg-blue-100"
+        />
+        <StatsCard
+          title="In Progress"
+          value={tasks.inProgress.length}
+          icon={PlayCircle}
+          color="text-yellow-600"
+          bgColor="bg-yellow-100"
+        />
+        <StatsCard
+          title="Completed"
+          value={tasks.done.length}
+          icon={CheckCircle}
+          color="text-green-600"
+          bgColor="bg-green-100"
+        />
+        <StatsCard
+          title="Active Goals"
+          value={goals.length}
+          icon={Star}
+          color="text-purple-600"
+          bgColor="bg-purple-100"
+        />
       </div>
 
       <div className="space-y-6">
@@ -452,12 +456,12 @@ const GoalTrackerModule = ({ user }) => {
                         <div>
                           <div className="flex justify-between text-sm mb-2">
                             <span>Progress</span>
-                            <span>{goal.current}/{goal.target} ({Math.round((goal.current/goal.target)*100)}%)</span>
+                            <span>{goal.current}/{goal.target} ({Math.round((goal.current / goal.target) * 100)}%)</span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2">
                             <div
                               className="bg-black h-2 rounded-full"
-                              style={{ width: `${(goal.current/goal.target)*100}%` }}
+                              style={{ width: `${(goal.current / goal.target) * 100}%` }}
                             ></div>
                           </div>
                         </div>
@@ -482,11 +486,11 @@ const GoalTrackerModule = ({ user }) => {
                         </div>
 
                         <div className="flex space-x-2 pt-2">
-                          <button className="px-3 py-1 text-sm border border-gray-200 rounded-md flex items-center">
+                          <button className="px-3 py-1 text-sm border border-gray-200 rounded-md flex items-center transition-all duration-200 ease-in-out cursor-pointer hover:shadow-sm hover:scale-[1.02]">
                             <Edit className="mr-2 h-4 w-4" />
                             Edit Goal
                           </button>
-                          <button className="px-3 py-1 text-sm border border-gray-200 rounded-md flex items-center">
+                          <button className="px-3 py-1 text-sm border border-gray-200 rounded-md flex items-center transition-all duration-200 ease-in-out cursor-pointer hover:shadow-sm hover:scale-[1.02]">
                             <TrendingUp className="mr-2 h-4 w-4" />
                             Update Progress
                           </button>
@@ -517,7 +521,7 @@ const GoalTrackerModule = ({ user }) => {
                           className="w-full p-2 border border-gray-200 rounded-md"
                           placeholder="Enter task title..."
                           value={newTask.title}
-                          onChange={(e) => setNewTask({...newTask, title: e.target.value})}
+                          onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
                         />
                       </div>
 
@@ -527,7 +531,7 @@ const GoalTrackerModule = ({ user }) => {
                           className="w-full p-2 border border-gray-200 rounded-md"
                           placeholder="Describe your task..."
                           value={newTask.description}
-                          onChange={(e) => setNewTask({...newTask, description: e.target.value})}
+                          onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
                         />
                       </div>
 
@@ -537,7 +541,7 @@ const GoalTrackerModule = ({ user }) => {
                           <select
                             className="w-full p-2 border border-gray-200 rounded-md"
                             value={newTask.priority}
-                            onChange={(e) => setNewTask({...newTask, priority: e.target.value})}
+                            onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
                           >
                             {priorities.map((priority) => (
                               <option key={priority} value={priority}>{priority}</option>
@@ -550,7 +554,7 @@ const GoalTrackerModule = ({ user }) => {
                           <select
                             className="w-full p-2 border border-gray-200 rounded-md"
                             value={newTask.category}
-                            onChange={(e) => setNewTask({...newTask, category: e.target.value})}
+                            onChange={(e) => setNewTask({ ...newTask, category: e.target.value })}
                           >
                             {categories.filter(c => c !== "All").map((category) => (
                               <option key={category} value={category}>{category}</option>
@@ -565,13 +569,13 @@ const GoalTrackerModule = ({ user }) => {
                           type="date"
                           className="w-full p-2 border border-gray-200 rounded-md"
                           value={newTask.dueDate}
-                          onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}
+                          onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
                         />
                       </div>
 
                       <button
                         onClick={addNewTask}
-                        className="w-full p-2 bg-black text-white rounded-md flex items-center justify-center"
+                        className="w-full p-2 bg-black text-white rounded-md flex items-center justify-center transition-all duration-200 ease-in-out cursor-pointer hover:bg-black/70 hover:shadow-md hover:scale-[1.01]"
                       >
                         <Plus className="mr-2 h-4 w-4" />
                         Add Task
@@ -635,7 +639,7 @@ const GoalTrackerModule = ({ user }) => {
                         />
                       </div>
 
-                      <button className="w-full p-2 bg-black text-white rounded-md flex items-center justify-center">
+                      <button className="w-full p-2 bg-black text-white rounded-md flex items-center justify-center transition-all duration-200 ease-in-out cursor-pointer hover:bg-black/70 hover:shadow-md hover:scale-[1.01]">
                         <Plus className="mr-2 h-4 w-4" />
                         Create Goal
                       </button>

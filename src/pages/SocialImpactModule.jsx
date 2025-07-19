@@ -1,4 +1,4 @@
-import React,{ useState } from "react";
+import React, { useState } from "react";
 import {
   Heart,
   Award,
@@ -16,9 +16,10 @@ import {
   Users,
   Leaf,
   Hospital,
-  BookOpen
+  BookOpen,
+  Bell
 } from "lucide-react";
-
+import StatsCard from "../components/Statscard"; 
 
 const TabsContext = React.createContext();
 
@@ -191,7 +192,6 @@ const SocialImpactModule = () => {
   { id: 5, name: "Impact Maker", description: "1000+ impact score", earned: false, icon: <Star className="w-6 h-6 text-yellow-500" /> },
 ];
 
-
   const programs = [
     {
       id: 1,
@@ -272,7 +272,7 @@ const SocialImpactModule = () => {
   );
 
   const Button = ({ children, onClick, variant = "default", size = "default", className = "" }) => {
-    let baseClasses = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
+    let baseClasses = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 cursor-pointer transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]";
     let variantClasses = "";
     let sizeClasses = "";
 
@@ -305,7 +305,7 @@ const SocialImpactModule = () => {
   };
 
   const Badge = ({ children, variant = "default", className = "" }) => {
-    let baseClasses = "inline-flex items-center rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
+    let baseClasses = "inline-flex items-center rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer";
     let variantClasses = "";
 
     switch (variant) {
@@ -348,7 +348,7 @@ const SocialImpactModule = () => {
     <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-900 to-blue-700 rounded-lg p-4 sm:p-6 text-white">
+        <div className="bg-gradient-to-r from-green-900 to-blue-700 rounded-lg p-4 sm:p-6 text-white shadow-lg">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex-1">
               <h1 className="text-xl sm:text-2xl font-bold mb-2">Social Impact & Community Service</h1>
@@ -358,7 +358,7 @@ const SocialImpactModule = () => {
             </div>
 
             <div className="flex sm:flex-col items-center sm:items-center sm:text-center gap-2 sm:gap-0">
-              <div className="bg-white/20 rounded-lg p-2 sm:p-3 flex flex-col items-center text-center">
+              <div className="bg-white/20 rounded-lg p-2 sm:p-3 flex flex-col items-center text-center shadow-md hover:shadow-lg transition-shadow">
                 <Heart className="h-8 w-8 sm:h-8 sm:w-8 text-white mb-1" />
                 <div className="text-xs sm:text-sm text-green-100">Impact Score</div>
                 <div className="text-lg sm:text-xl font-bold">{userStats.impactScore}</div>
@@ -367,43 +367,44 @@ const SocialImpactModule = () => {
           </div>
         </div>
 
-        {/* Quick Stats */}
+        {/* Quick Stats - Updated with StatsCard */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
-          <Card className="col-span-1">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <Clock className="h-4 w-4 sm:h-6 sm:w-6 text-blue-500 mx-auto mb-1 sm:mb-2" />
-              <div className="text-base sm:text-lg font-bold text-blue-600">{userStats.totalHours}</div>
-              <div className="text-xs sm:text-sm text-gray-600">Total Hours</div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-1">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-green-500 mx-auto mb-1 sm:mb-2" />
-              <div className="text-base sm:text-lg font-bold text-green-600">{userStats.activitiesCompleted}</div>
-              <div className="text-xs sm:text-sm text-gray-600">Activities</div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-1">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <Trophy className="h-4 w-4 sm:h-6 sm:w-6 text-yellow-500 mx-auto mb-1 sm:mb-2" />
-              <div className="text-base sm:text-lg font-bold text-yellow-600">#{userStats.rank}</div>
-              <div className="text-xs sm:text-sm text-gray-600">Rank</div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-1">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <Award className="h-4 w-4 sm:h-6 sm:w-6 text-purple-500 mx-auto mb-1 sm:mb-2" />
-              <div className="text-base sm:text-lg font-bold text-purple-600">{userStats.badgesEarned}</div>
-              <div className="text-xs sm:text-sm text-gray-600">Badges</div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-2 sm:col-span-3 lg:col-span-1">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <Star className="h-4 w-4 sm:h-6 sm:w-6 text-orange-500 mx-auto mb-1 sm:mb-2" />
-              <div className="text-base sm:text-lg font-bold text-orange-600">{userStats.impactScore}</div>
-              <div className="text-xs sm:text-sm text-gray-600">Impact Score</div>
-            </CardContent>
-          </Card>
+          <StatsCard
+            title="Total Hours"
+            value={userStats.totalHours}
+            icon={Clock}
+            color="text-blue-600"
+            bgColor="bg-blue-100"
+          />
+          <StatsCard
+            title="Activities"
+            value={userStats.activitiesCompleted}
+            icon={CheckCircle}
+            color="text-green-600"
+            bgColor="bg-green-100"
+          />
+          <StatsCard
+            title="Rank"
+            value={`#${userStats.rank}`}
+            icon={Trophy}
+            color="text-yellow-600"
+            bgColor="bg-yellow-100"
+          />
+          <StatsCard
+            title="Badges"
+            value={userStats.badgesEarned}
+            icon={Award}
+            color="text-purple-600"
+            bgColor="bg-purple-100"
+          />
+          <StatsCard
+            title="Impact Score"
+            value={userStats.impactScore}
+            icon={Star}
+            color="text-orange-600"
+            bgColor="bg-orange-100"
+            className="col-span-2 sm:col-span-3 lg:col-span-1"
+          />
         </div>
 
         <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
@@ -430,13 +431,14 @@ const SocialImpactModule = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setIsMobileMenuMenuOpen(!isMobileMenuOpen)}
+                className="hover:shadow-md"
               >
                 {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
               </Button>
             </div>
             
             {isMobileMenuOpen && (
-              <Card className="mb-4">
+              <Card className="mb-4 shadow-lg">
                 <CardContent className="p-2">
                   <div className="grid grid-cols-2 gap-2">
                     {tabs.map((tab) => (
@@ -444,7 +446,7 @@ const SocialImpactModule = () => {
                         key={tab.value}
                         variant={activeTab === tab.value ? "default" : "ghost"}
                         size="sm"
-                        className="w-full justify-start text-xs"
+                        className="w-full justify-start text-xs hover:shadow-md"
                         onClick={() => {
                           setActiveTab(tab.value);
                           setIsMobileMenuMenuOpen(false);
@@ -462,7 +464,7 @@ const SocialImpactModule = () => {
           <TabsContent value="overview">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Recent Activities */}
-              <Card>
+              <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3 sm:pb-6">
                   <CardTitle className="text-base sm:text-lg">Recent Activities</CardTitle>
                   <CardDescription className="text-sm">Your latest community service contributions</CardDescription>
@@ -470,7 +472,7 @@ const SocialImpactModule = () => {
                 <CardContent className="pt-0">
                   <div className="space-y-3 sm:space-y-4">
                     {activities.slice(0, 3).map((activity) => (
-                      <div key={activity.id} className="flex items-start space-x-3 p-2 sm:p-3 border border-gray-200 rounded-lg">
+                      <div key={activity.id} className="flex items-start space-x-3 p-2 sm:p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
                         <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-sm sm:text-base truncate">{activity.title}</h4>
@@ -486,7 +488,7 @@ const SocialImpactModule = () => {
               </Card>
 
               {/* Enrolled Programs */}
-              <Card>
+              <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3 sm:pb-6">
                   <CardTitle className="text-base sm:text-lg">Enrolled Programs</CardTitle>
                   <CardDescription className="text-sm">Your active service programs</CardDescription>
@@ -494,7 +496,7 @@ const SocialImpactModule = () => {
                 <CardContent className="pt-0">
                   <div className="space-y-3 sm:space-y-4">
                     {programs.filter(p => p.enrolled).map((program) => (
-                      <div key={program.id} className="p-3 sm:p-4 border border-gray-200 rounded-lg">
+                      <div key={program.id} className="p-3 sm:p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
                         <h4 className="font-medium mb-2 text-sm sm:text-base">{program.name}</h4>
                         <p className="text-xs sm:text-sm text-gray-600 mb-3">{program.description}</p>
                         <div className="space-y-2 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
@@ -508,7 +510,7 @@ const SocialImpactModule = () => {
                               <span className="sm:ml-1">{program.coordinator}</span>
                             </div>
                           </div>
-                          <Badge className="text-xs"><Users className="h-3 w-3 sm:h-4 sm:w-4 mr-1"/>{program.members} members</Badge>
+                          <Badge className="text-xs hover:shadow-sm"><Users className="h-3 w-3 sm:h-4 sm:w-4 mr-1"/>{program.members} members</Badge>
                         </div>
                       </div>
                     ))}
@@ -520,7 +522,7 @@ const SocialImpactModule = () => {
 
           <TabsContent value="activities">
             {/* Add New Activity */}
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="text-base sm:text-lg">Log New Activity</CardTitle>
                 <CardDescription className="text-sm">Record your community service activities for approval</CardDescription>
@@ -575,7 +577,10 @@ const SocialImpactModule = () => {
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <Button onClick={handleSubmitActivity} className="w-full sm:w-auto">
+                    <Button 
+                      onClick={handleSubmitActivity} 
+                      className="w-full sm:w-auto hover:shadow-lg"
+                    >
                       <Plus className="mr-2 h-4 w-4" />
                       Submit for Approval
                     </Button>
@@ -585,7 +590,7 @@ const SocialImpactModule = () => {
             </Card>
 
             {/* Activities List */}
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="text-base sm:text-lg">Your Activities</CardTitle>
                 <CardDescription className="text-sm">Track all your community service activities</CardDescription>
@@ -593,7 +598,7 @@ const SocialImpactModule = () => {
               <CardContent>
                 <div className="space-y-4">
                   {activities.map((activity) => (
-                    <Card key={activity.id}>
+                    <Card key={activity.id} className="hover:shadow-md transition-shadow cursor-pointer">
                       <CardContent className="p-3 sm:p-4">
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
                           <div className="flex-1">
@@ -615,7 +620,7 @@ const SocialImpactModule = () => {
                             </div>
                           </div>
                           <div className="flex sm:flex-col sm:text-right gap-2 sm:gap-0">
-                            <Badge className={`text-xs ${getStatusColorClasses(activity.status)}`} variant="outline">
+                            <Badge className={`text-xs ${getStatusColorClasses(activity.status)} hover:shadow-sm`} variant="outline">
                               {activity.status}
                             </Badge>
                             <div className="text-xs sm:text-sm text-gray-500 sm:mt-2">
@@ -627,7 +632,7 @@ const SocialImpactModule = () => {
                         
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-gray-200">
                           <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                            <Badge variant="outline" className="text-xs">{activity.impact}</Badge>
+                            <Badge variant="outline" className="text-xs hover:shadow-sm">{activity.impact}</Badge>
                             {activity.certificate && (
                               <div className="flex items-center text-green-600">
                                 <Award className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
@@ -636,12 +641,12 @@ const SocialImpactModule = () => {
                             )}
                           </div>
                           <div className="flex gap-2">
-                            <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
+                            <Button variant="outline" size="sm" className="flex-1 sm:flex-none hover:shadow-sm">
                               <Eye className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                               <span className="text-xs sm:text-sm">View</span>
                             </Button>
                             {activity.certificate && (
-                              <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
+                              <Button variant="outline" size="sm" className="flex-1 sm:flex-none hover:shadow-sm">
                                 <Upload className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                                 <span className="text-xs sm:text-sm">Download</span>
                               </Button>
@@ -659,7 +664,7 @@ const SocialImpactModule = () => {
           <TabsContent value="programs">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {programs.map((program) => (
-                <Card key={program.id}>
+                <Card key={program.id} className="hover:shadow-lg transition-shadow cursor-pointer">
                   <CardHeader>
                     <CardTitle className="text-base sm:text-lg">{program.name}</CardTitle>
                     <CardDescription className="text-sm">{program.description}</CardDescription>
@@ -676,13 +681,13 @@ const SocialImpactModule = () => {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="font-medium text-sm">Active Members:</span>
-                        <Badge className="text-xs"><Users className="h-3 w-3 sm:h-4 sm:w-4 mr-1"/>{program.members}</Badge>
+                        <Badge className="text-xs hover:shadow-sm"><Users className="h-3 w-3 sm:h-4 sm:w-4 mr-1"/>{program.members}</Badge>
                       </div>
                       <div className="pt-3">
                         {program.enrolled ? (
-                          <Badge className="text-green-600 bg-green-100 text-xs">Enrolled</Badge>
+                          <Badge className="text-green-600 bg-green-100 text-xs hover:shadow-sm">Enrolled</Badge>
                         ) : (
-                          <Button size="sm" className="w-full sm:w-auto">
+                          <Button size="sm" className="w-full sm:w-auto hover:shadow-lg">
                             <Plus className="mr-2 h-4 w-4" />
                             Join Program
                           </Button>
@@ -696,7 +701,7 @@ const SocialImpactModule = () => {
           </TabsContent>
 
           <TabsContent value="leaderboard">
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="text-base sm:text-lg">Community Impact Leaderboard</CardTitle>
                 <CardDescription className="text-sm">Top contributors in social service activities</CardDescription>
@@ -708,7 +713,7 @@ const SocialImpactModule = () => {
                       key={person.rank} 
                       className={`flex items-center justify-between p-3 sm:p-4 rounded-lg ${
                         person.name === "You" ? "bg-blue-50 border-2 border-blue-200" : "bg-gray-50"
-                      }`}
+                      } hover:shadow-md transition-shadow cursor-pointer`}
                     >
                       <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
                         <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm ${
@@ -737,7 +742,7 @@ const SocialImpactModule = () => {
           </TabsContent>
 
           <TabsContent value="badges">
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="text-base sm:text-lg">Achievement Badges</CardTitle>
                 <CardDescription className="text-sm">Unlock badges as you contribute to the community</CardDescription>
@@ -745,7 +750,7 @@ const SocialImpactModule = () => {
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {badges.map((badge) => (
-                    <Card key={badge.id} className={`${badge.earned ? "bg-yellow-50 border-yellow-200" : "bg-gray-50"}`}>
+                    <Card key={badge.id} className={`${badge.earned ? "bg-yellow-50 border-yellow-200" : "bg-gray-50"} hover:shadow-md transition-shadow cursor-pointer`}>
                       <CardContent className="p-4 sm:p-6 text-center">
                        <div className="mb-2 sm:mb-3 flex justify-center">{badge.icon}</div>
                         <h4 className={`font-medium mb-2 text-sm sm:text-base ${badge.earned ? "text-yellow-800" : "text-gray-500"}`}>
@@ -753,9 +758,9 @@ const SocialImpactModule = () => {
                         </h4>
                         <p className="text-xs sm:text-sm text-gray-600 mb-3">{badge.description}</p>
                         {badge.earned ? (
-                          <Badge className="text-yellow-600 bg-yellow-100 text-xs">Earned</Badge>
+                          <Badge className="text-yellow-600 bg-yellow-100 text-xs hover:shadow-sm">Earned</Badge>
                         ) : (
-                          <Badge variant="outline" className="text-xs">Not Earned</Badge>
+                          <Badge variant="outline" className="text-xs hover:shadow-sm">Not Earned</Badge>
                         )}
                       </CardContent>
                     </Card>

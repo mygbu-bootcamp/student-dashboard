@@ -1,23 +1,58 @@
-import React, { useState, useEffect } from "react";
-import { useToast } from "../hooks/use-toast";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Award,
   Upload,
-  Star,
   Trophy,
-  Users,
   Plus,
-  Calendar,
   CheckCircle,
-  Clock,
-  Settings,
-  BookOpen,
   Zap,
   Target,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  X
 } from "lucide-react";
 
+// Custom Toast Component
+const Toast = ({ title, description, onClose }) => {
+  const toastRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (toastRef.current && !toastRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (title || description) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [title, description, onClose]);
+
+  if (!title && !description) return null;
+
+  return (
+    <div ref={toastRef} className="fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-md z-[9999]">
+      <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative shadow-lg" role="alert">
+        <div className="flex items-center">
+          <CheckCircle className="h-5 w-5 mr-2" />
+          <div>
+            <strong className="font-bold">{title}</strong>
+            <span className="block sm:inline ml-2">{description}</span>
+          </div>
+        </div>
+        <span className="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onClick={onClose}>
+          <X className="h-4 w-4 text-green-500" />
+        </span>
+      </div>
+    </div>
+  );
+};
+
+// Tabs Context
 const TabsContext = React.createContext();
 
 const Tabs = ({ defaultValue, value: propValue, onValueChange, children, ...props }) => {
@@ -71,7 +106,7 @@ const TabsTrigger = React.forwardRef(
         role="tab"
         aria-selected={isActive}
         onClick={handleClick}
-        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
+        className={`flex-1 h-8px inline-flex items-center justify-center cursor-pointer rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
           isActive
             ? "bg-white text-black shadow-sm"
             : "text-muted-foreground hover:text-foreground"
@@ -107,12 +142,17 @@ TabsContent.displayName = "TabsContent";
 const SkillsModule = ({ user }) => {
   const [activeTab, setActiveTab] = useState("skills");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [labTypeFilter, setLabTypeFilter] = useState("All Labs");
   const [availabilityFilter, setAvailabilityFilter] = useState("All Statuses");
   const [filteredLabs, setFilteredLabs] = useState([]);
+  const [toastInfo, setToastInfo] = useState({ 
+    title: "", 
+    description: "", 
+    show: false 
+  });
 
+  // Sample data
   const userSkills = [
     { id: 1, name: "React Development", level: "Advanced", progress: 85, category: "Technical", verified: true },
     { id: 2, name: "Machine Learning", level: "Intermediate", progress: 65, category: "Technical", verified: false },
@@ -129,7 +169,7 @@ const SkillsModule = ({ user }) => {
       enrolled: 18,
       mentor: "Dr. Priya Sharma",
       schedule: "Mon, Wed, Fri - 2:00 PM",
-      status: "Enrolled",
+      status: "Available",
       type: "Technical"
     },
     {
@@ -167,7 +207,7 @@ const SkillsModule = ({ user }) => {
     }
   ];
 
-  const ruralInnovations = [
+  const projects = [
     {
       id: 1,
       title: "Smart Irrigation System",
@@ -212,25 +252,33 @@ const SkillsModule = ({ user }) => {
     setFilteredLabs(filtered);
   }, [searchTerm, labTypeFilter, availabilityFilter]);
 
-  const handleSkillAdd = () => {
-    toast({
-      title: "Skill Added",
-      description: "New skill has been added to your profile successfully!"
-    });
+  const showToast = (title, description) => {
+    setToastInfo({ title, description, show: true });
+    setTimeout(() => {
+      setToastInfo(prev => ({ ...prev, show: false }));
+    }, 5000);
   };
 
-  const handleLabRegistration = (labName) => {
-    toast({
-      title: "Registration Successful",
-      description: `You have been registered for ${labName}!`
-    });
+  const closeToast = () => {
+    setToastInfo(prev => ({ ...prev, show: false }));
+  };
+
+  const handleSkillAdd = () => {
+    showToast("Skill Added", "New skill has been added to your profile successfully!");
+  };
+
+  const handleLabRegistration = (labId) => {
+    const lab = innovationLabs.find(l => l.id === labId);
+    if (!lab) return;
+
+    showToast("Application Submitted", "Your lab application has been submitted successfully!");
+    setFilteredLabs(prevLabs => 
+      prevLabs.map(l => l.id === labId ? { ...l, status: "Attending" } : l)
+    );
   };
 
   const handleProjectSubmit = () => {
-    toast({
-      title: "Project Submitted",
-      description: "Your rural innovation project has been submitted for review!"
-    });
+    showToast("Project Submitted", "Your project has been submitted for review!");
   };
 
   const toggleMobileFilters = () => {
@@ -264,7 +312,16 @@ const SkillsModule = ({ user }) => {
   };
 
   return (
-    <div className="space-y-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="space-y-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative">
+      {/* Toast Container */}
+      {toastInfo.show && (
+        <Toast 
+          title={toastInfo.title} 
+          description={toastInfo.description} 
+          onClose={closeToast} 
+        />
+      )}
+
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-purple-900 to-blue-700 rounded-lg p-4 sm:p-6 text-white">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">
@@ -291,10 +348,10 @@ const SkillsModule = ({ user }) => {
                 <span>Labs</span>
               </div>
             </TabsTrigger>
-            <TabsTrigger value="rural">
+            <TabsTrigger value="projects">
               <div className="flex items-center justify-center space-x-2">
                 <Target className="h-4 w-4" />
-                <span>Rural</span>
+                <span>Projects</span>
               </div>
             </TabsTrigger>
             <TabsTrigger value="badges">
@@ -442,7 +499,7 @@ const SkillsModule = ({ user }) => {
                           <option>All Statuses</option>
                           <option>Available</option>
                           <option>Waitlist</option>
-                          <option>Enrolled</option>
+                          <option>Attending</option>
                         </select>
                       </div>
                     </div>
@@ -478,7 +535,7 @@ const SkillsModule = ({ user }) => {
                   <option>All Statuses</option>
                   <option>Available</option>
                   <option>Waitlist</option>
-                  <option>Enrolled</option>
+                  <option>Attending</option>
                 </select>
               </div>
 
@@ -497,7 +554,7 @@ const SkillsModule = ({ user }) => {
                           <h3 className="text-sm sm:text-base font-semibold">{lab.name}</h3>
                           <Badge
                             variant={
-                              lab.status === "Enrolled"
+                              lab.status === "Attending"
                                 ? "default"
                                 : lab.status === "Available"
                                 ? "secondary"
@@ -523,7 +580,7 @@ const SkillsModule = ({ user }) => {
                         
                         <div className="space-y-2 mb-4">
                           <div className="flex justify-between text-xs sm:text-sm">
-                            <span>Enrollment</span>
+                            <span>Attended</span>
                             <span>
                               {lab.enrolled}/{lab.capacity}
                             </span>
@@ -533,12 +590,12 @@ const SkillsModule = ({ user }) => {
                       </div>
                       <div className="p-4 border-t border-gray-200">
                         <button
-                          onClick={() => handleLabRegistration(lab.name)}
-                          disabled={lab.status === "Enrolled" || lab.status === "Waitlist"}
+                          onClick={() => handleLabRegistration(lab.id)}
+                          disabled={lab.status === "Attending" || lab.status === "Waitlist"}
                           className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs sm:text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-black text-white hover:bg-black/90 h-9 px-4 py-2 w-full disabled:bg-gray-300 disabled:text-gray-500 hover:scale-[1.02] active:scale-[0.98] transition-transform cursor-pointer"
                         >
-                          {lab.status === "Enrolled"
-                            ? "Already Enrolled"
+                          {lab.status === "Attending"
+                            ? "Already Attending"
                             : lab.status === "Waitlist"
                             ? "Join Waitlist"
                             : "Register Now"}
@@ -555,21 +612,21 @@ const SkillsModule = ({ user }) => {
             </div>
           </TabsContent>
 
-          {/* Rural Innovation Tab */}
-          <TabsContent value="rural">
+          {/* Projects Tab */}
+          <TabsContent value="projects">
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                {/* My Rural Innovation Projects */}
+                {/* My Projects */}
                 <div className="bg-white rounded-lg border border-gray-200 flex flex-col h-full">
                   <div className="p-6 flex-grow">
                     <div className="flex items-center space-x-2 mb-2">
                       <Target className="h-5 w-5 text-black" />
-                      <h2 className="text-lg font-semibold">My Rural Innovation Projects</h2>
+                      <h2 className="text-lg font-semibold">My Projects</h2>
                     </div>
-                    <p className="text-sm text-gray-500 mb-4">Track your social impact initiatives</p>
+                    <p className="text-sm text-gray-500 mb-4">Track your project initiatives</p>
                     
                     <div className="space-y-4">
-                      {ruralInnovations.map((project) => (
+                      {projects.map((project) => (
                         <div key={project.id} className="border border-gray-200 rounded-lg p-3 sm:p-4">
                           <div className="flex items-center justify-between mb-2">
                             <h4 className="font-medium text-sm sm:text-base">{project.title}</h4>
@@ -604,7 +661,7 @@ const SkillsModule = ({ user }) => {
                       <Upload className="h-5 w-5 text-black" />
                       <h2 className="text-lg font-semibold">Submit New Project</h2>
                     </div>
-                    <p className="text-sm text-gray-500 mb-4">Share your rural innovation solution</p>
+                    <p className="text-sm text-gray-500 mb-4">Share your innovation solution</p>
                     
                     <div className="space-y-4">
                       <div className="space-y-2">

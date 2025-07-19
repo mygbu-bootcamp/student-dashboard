@@ -14,6 +14,7 @@ import {
   Clock,
   User,
 } from "lucide-react";
+import StatsCard from "../components/Statscard"; 
 
 // Custom UI Components
 const Card = ({ children, className = "" }) => (
@@ -50,17 +51,17 @@ const Button = ({
   disabled = false,
   variant = "default",
   size = "default",
-  className = "",
+  className = "cursor-pointer",
 }) => {
   const baseClasses =
-    "inline-flex items-center justify-center font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2";
+    "inline-flex items-center justify-center font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"; // Added transition
 
   const variants = {
-    default: "bg-black text-white hover:bg-black/80 focus:ring-black",
+    default: "bg-black text-white hover:bg-black/80 focus:ring-black hover:shadow-md hover:scale-[1.02]", // Added shadow and scale
     outline:
-      "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-black",
-    ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500",
-    destructive: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+      "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-black hover:shadow-sm hover:scale-[1.02]", // Added shadow and scale
+    ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500 hover:scale-[1.02]", // Added scale
+    destructive: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 hover:shadow-md hover:scale-[1.02]", // Added shadow and scale
   };
 
   const sizes = {
@@ -167,11 +168,11 @@ const TabsTrigger = React.forwardRef(
         role="tab"
         aria-selected={isActive}
         onClick={handleClick}
-        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
-          isActive
-            ? "bg-white text-black border-border-gray-300"
+        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none cursor-pointer
+         ${isActive
+            ? "bg-white text-black shadow-sm"
             : "text-muted-foreground hover:text-foreground"
-        } ${className}`}
+          } ${className}`}
         {...props}
       >
         {children}
@@ -346,36 +347,36 @@ const GBUStoreModule = ({ user }) => {
         </div>
       </div>
 
-      {/* Quick Stats */}
+      {/* Quick Stats - Using StatsCard */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <Store className="h-6 w-6 text-blue-500 mx-auto mb-2" />
-            <div className="text-lg font-bold text-blue-600">12</div>
-            <div className="text-sm text-gray-600">Active Stores</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <ShoppingCart className="h-6 w-6 text-green-500 mx-auto mb-2" />
-            <div className="text-lg font-bold text-green-600">{cart.length}</div>
-            <div className="text-sm text-gray-600">Cart Items</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <CreditCard className="h-6 w-6 text-purple-500 mx-auto mb-2" />
-            <div className="text-lg font-bold text-purple-600">₹{getTotalAmount()}</div>
-            <div className="text-sm text-gray-600">Cart Total</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <Truck className="h-6 w-6 text-orange-500 mx-auto mb-2" />
-            <div className="text-lg font-bold text-orange-600">3</div>
-            <div className="text-sm text-gray-600">Available Riders</div>
-          </CardContent>
-        </Card>
+        <StatsCard
+          title="Active Stores"
+          value={12}
+          icon={Store}
+          color="text-blue-600"
+          bgColor="bg-blue-100"
+        />
+        <StatsCard
+          title="Cart Items"
+          value={cart.length}
+          icon={ShoppingCart}
+          color="text-green-600"
+          bgColor="bg-green-100"
+        />
+        <StatsCard
+          title="Cart Total"
+          value={`₹${getTotalAmount()}`}
+          icon={CreditCard}
+          color="text-purple-600"
+          bgColor="bg-purple-100"
+        />
+        <StatsCard
+          title="Available Riders"
+          value={riders.filter(rider => rider.available).length}
+          icon={Truck}
+          color="text-orange-600"
+          bgColor="bg-orange-100"
+        />
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
