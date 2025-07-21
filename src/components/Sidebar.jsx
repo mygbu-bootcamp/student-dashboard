@@ -36,7 +36,7 @@ const Button = ({
   
   const variants = {
     default: "bg-blue-600 text-white hover:bg-blue-700",
-    ghost: " hover:text-white",
+    ghost: " hover:text-white ",
     outline: "border border-gray-300 bg-white hover:bg-gray-50",
     secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200"
   };
@@ -185,7 +185,7 @@ const Sidebar = ({
         <div className="p-4 border-t border-gray-200">
           <Button
             variant="ghost"
-            className="w-full justify-start text-gray-700"
+            className="w-full justify-start text-red-500 hover:bg-red-500 hover:text-white"
             onClick={handleLogout}
           >
             <LogOut className="mr-3 h-4 w-4" />
