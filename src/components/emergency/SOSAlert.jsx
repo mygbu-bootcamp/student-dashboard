@@ -112,7 +112,7 @@ const SOSAlert = () => {
       {/* SOS Button - Fixed position */}
       <div className="fixed bottom-6 right-6 z-50">
         <button
-          className={`rounded-full w-16 h-16 shadow-lg flex items-center justify-center transition-all duration-200 cursor-pointer
+          className={`rounded-full w-12 h-12 shadow-lg flex items-center justify-center transition-all duration-200 cursor-pointer
             ${isSOSActive
               ? "bg-red-600 hover:bg-red-700 animate-ping-strong"
               : "bg-red-500 hover:bg-red-600 animate-pulse-slow"
@@ -120,7 +120,7 @@ const SOSAlert = () => {
             hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50`}
           onClick={() => setShowSOSDialog(true)}
         >
-          <AlertTriangle className="h-10 w-10 text-white" />
+          <AlertTriangle className="h-8 w-8 text-white " />
         </button>
       </div>
 
