@@ -1,6 +1,6 @@
 // src/components/DashboardHome.js
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// Removed: import { useNavigate } from "react-router-dom"; 
 import {
   Calendar,
   CheckCircle,
@@ -21,8 +21,8 @@ import {
 import NewsSection from "../pages/NewsSection";
 import StatsCard from "../components/Statscard";
 
-const DashboardHome = ({ user }) => {
-  const navigate = useNavigate();
+const DashboardHome = ({ user, onNavigate }) => { // Added onNavigate to props
+  // Removed: const navigate = useNavigate();
   const [currentThought] = useState(() => {
     const thoughts = [
       "Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill",
@@ -303,26 +303,25 @@ const DashboardHome = ({ user }) => {
               const Icon = action.icon;
               return (
                 <Button
-  key={index}
-  variant="outline"
-  className={`h-auto p-4 flex flex-col items-center justify-center
-              transform transition-all duration-200 hover:scale-105 cursor-pointer
-              hover:shadow-md border border-gray-200`}
-  style={{
-    '--hover-border-color': action.borderColor
-  }}
-  onMouseEnter={(e) => {
-    e.currentTarget.style.borderColor = action.borderColor;
-  }}
-  onMouseLeave={(e) => {
-    e.currentTarget.style.borderColor = ''; // reset to default
-  }}
-  onClick={() => navigate(`/${action.action}`)}
->
-  <Icon className={`h-6 w-6 mb-2 ${action.color}`} />
-  <span className="text-sm text-center">{action.title}</span>
-</Button>
-
+                  key={index}
+                  variant="outline"
+                  className={`h-auto p-4 flex flex-col items-center justify-center
+                              transform transition-all duration-200 hover:scale-105 cursor-pointer
+                              hover:shadow-md border border-gray-200`}
+                  style={{
+                    '--hover-border-color': action.borderColor
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = action.borderColor;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = ''; // reset to default
+                  }}
+                  onClick={() => onNavigate(action.action)} // Changed to use onNavigate prop
+                >
+                  <Icon className={`h-6 w-6 mb-2 ${action.color}`} />
+                  <span className="text-sm text-center">{action.title}</span>
+                </Button>
               );
             })}
           </div>

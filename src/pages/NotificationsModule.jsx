@@ -270,7 +270,7 @@ const NotificationsModule = ({ user }) => {
     };
 
     return (
-        <div className="space-y-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="space-y-6 px-4 sm:px-6 lg:px-1 max-w-7xl mx-auto">
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-900 to-blue-700 rounded-lg p-4 sm:p-6 text-white">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

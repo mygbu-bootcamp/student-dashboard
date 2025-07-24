@@ -68,7 +68,7 @@ const MainDashboard = ({ user, onLogout }) => {
   const renderActiveModule = () => {
     switch (activeModule) {
       case "dashboard":
-        return <DashboardHome user={user} />;
+        return <DashboardHome user={user} onNavigate={setActiveModule} />; // Passed setActiveModule as onNavigate
       case "profile":
         return <ProfileModule user={user} />;
       case "academic":
@@ -106,7 +106,7 @@ const MainDashboard = ({ user, onLogout }) => {
       case "grievance":
         return <GrievanceModule user={user} />;
       default:
-        return <DashboardHome user={user} />;
+        return <DashboardHome user={user} onNavigate={setActiveModule} />; // Passed setActiveModule as onNavigate
     }
   };
 

@@ -373,7 +373,7 @@ const ClubsModule = ({ user }) => {
   );
 
   return (
-    <div className="space-y-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="space-y-6 px-2 sm:px-2 lg:px-2 max-w-7xl mx-auto">
       {/* Header */}
       <div className="bg-gradient-to-r from-indigo-900 to-indigo-700 rounded-lg p-4 sm:p-6 text-white">
         <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">Clubs & Societies</h1>

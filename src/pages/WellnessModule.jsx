@@ -1,4 +1,3 @@
-// WellnessModule.jsx
 import { useState, useEffect, useRef } from "react"; // Import useEffect and useRef
 import * as React from "react"; // Import React for the Tabs components
 import {
@@ -145,8 +144,6 @@ const TabsContent = React.forwardRef(
 );
 TabsContent.displayName = "TabsContent";
 
-// --- End of New Tabs Components ---
-
 
 const WellnessModule = ({ user }) => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -214,10 +211,7 @@ const WellnessModule = ({ user }) => {
   ];
 
   const showMessage = (msg, type = "default") => {
-    setMessage({ text: msg, type });
-    // The auto-close after 3 seconds is handled by the useEffect for outside click now
-    // If you want a fallback auto-close even if no click, you can re-add the setTimeout here
-    // setTimeout(() => setMessage(null), 3000);
+    setMessage({ text: msg, type })
   };
 
   const handleMoodSubmit = () => {
@@ -388,10 +382,8 @@ const WellnessModule = ({ user }) => {
       </span>
     );
   };
-
-  // Generic Progress Component (replaces shadcn/ui Progress)
   const CustomProgress = ({ value, className }) => {
-    const progressValue = Math.max(0, Math.min(100, value)); // Ensure value is between 0 and 100
+    const progressValue = Math.max(0, Math.min(100, value)); 
     return (
       <div
         className={`relative h-2 w-full overflow-hidden rounded-full bg-gray-200 ${className}`}
@@ -405,7 +397,7 @@ const WellnessModule = ({ user }) => {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-8 font-inter">
+    <div className="space-y-6 p-1 md:p-0 font-inter">
       {/* Header */}
       <div className="bg-gradient-to-r from-pink-900 to-purple-700 rounded-lg p-6 text-white">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">
