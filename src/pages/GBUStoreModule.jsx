@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
-import { Input } from "../../components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Input } from "../components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { 
   Store, 
   ShoppingCart, 
@@ -405,7 +405,7 @@ const GBUStoreModule = ({ user }) => {
                 <CardContent>
                   <div className="space-y-3">
                     {riders.filter(rider => rider.available).map((rider) => (
-                      <div key={rider.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div key={rider.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                         <div className="flex items-center space-x-3">
                           <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                             <User className="h-5 w-5 text-gray-600" />
@@ -436,7 +436,7 @@ const GBUStoreModule = ({ user }) => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="p-4 border rounded-lg">
+                <div className="p-4 border border-gray-200 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-medium">Order #GBU001</div>
                     <Badge>Delivered</Badge>
@@ -448,7 +448,7 @@ const GBUStoreModule = ({ user }) => {
                   </div>
                 </div>
                 
-                <div className="p-4 border rounded-lg">
+                <div className="p-4 border border-gray-200 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-medium">Order #GBU002</div>
                     <Badge variant="secondary">In Progress</Badge>

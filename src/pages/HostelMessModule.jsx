@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
-import { Input } from "../../components/ui/input";
-import { Textarea } from "../../components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { 
   Building, 
   Utensils, 
@@ -294,7 +294,7 @@ const HostelMessModule = ({ user }) => {
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {hostelInfo.facilities.map((facility, index) => (
-                    <div key={index} className="flex items-center space-x-2 p-3 border rounded-lg">
+                    <div key={index} className="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg">
                       <CheckCircle className="h-5 w-5 text-green-500" />
                       <span>{facility}</span>
                     </div>
@@ -320,7 +320,7 @@ const HostelMessModule = ({ user }) => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-4 border rounded-lg">
+                  <div className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium">Breakfast</h4>
                       <div className="flex items-center text-sm text-gray-600">
@@ -335,7 +335,7 @@ const HostelMessModule = ({ user }) => {
                     </div>
                   </div>
                   
-                  <div className="p-4 border rounded-lg">
+                  <div className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium">Lunch</h4>
                       <div className="flex items-center text-sm text-gray-600">
@@ -350,7 +350,7 @@ const HostelMessModule = ({ user }) => {
                     </div>
                   </div>
                   
-                  <div className="p-4 border rounded-lg">
+                  <div className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium">Dinner</h4>
                       <div className="flex items-center text-sm text-gray-600">
@@ -377,7 +377,7 @@ const HostelMessModule = ({ user }) => {
               <CardContent>
                 <div className="space-y-3">
                   {messMenu.weekly.map((day, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                       <span className="font-medium">{day.day}</span>
                       <Badge variant="outline">{day.special}</Badge>
                     </div>
@@ -394,22 +394,22 @@ const HostelMessModule = ({ user }) => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center p-4 border rounded-lg">
+                  <div className="text-center p-4 border border-gray-200 rounded-lg">
                     <Star className="h-6 w-6 text-yellow-500 mx-auto mb-2" />
                     <div className="text-lg font-bold">{messStats.monthlyRating}/5</div>
                     <div className="text-sm text-gray-600">Average Rating</div>
                   </div>
-                  <div className="text-center p-4 border rounded-lg">
+                  <div className="text-center p-4 border border-gray-200 rounded-lg">
                     <Users className="h-6 w-6 text-blue-500 mx-auto mb-2" />
                     <div className="text-lg font-bold">{messStats.totalFeedbacks}</div>
                     <div className="text-sm text-gray-600">Total Feedbacks</div>
                   </div>
-                  <div className="text-center p-4 border rounded-lg">
+                  <div className="text-center p-4 border border-gray-200 rounded-lg">
                     <Utensils className="h-6 w-6 text-green-500 mx-auto mb-2" />
                     <div className="text-lg font-bold">₹{messStats.avgMealCost}</div>
                     <div className="text-sm text-gray-600">Avg Meal Cost</div>
                   </div>
-                  <div className="text-center p-4 border rounded-lg">
+                  <div className="text-center p-4 border border-gray-200 rounded-lg">
                     <CheckCircle className="h-6 w-6 text-purple-500 mx-auto mb-2" />
                     <div className="text-lg font-bold">{messStats.satisfaction}%</div>
                     <div className="text-sm text-gray-600">Satisfaction</div>
@@ -569,7 +569,7 @@ const HostelMessModule = ({ user }) => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-4 border rounded-lg">
+                  <div className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <div className="font-medium">Anonymous Student</div>
                       <div className="flex items-center">
@@ -583,7 +583,7 @@ const HostelMessModule = ({ user }) => {
                     <div className="text-xs text-gray-500 mt-2">March 24, 2024</div>
                   </div>
                   
-                  <div className="p-4 border rounded-lg">
+                  <div className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <div className="font-medium">Anonymous Student</div>
                       <div className="flex items-center">
@@ -597,7 +597,7 @@ const HostelMessModule = ({ user }) => {
                     <div className="text-xs text-gray-500 mt-2">March 23, 2024</div>
                   </div>
                   
-                  <div className="p-4 border rounded-lg">
+                  <div className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <div className="font-medium">Anonymous Student</div>
                       <div className="flex items-center">

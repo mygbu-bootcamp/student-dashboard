@@ -1,6 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
-import { Badge } from "../../../components/ui/badge";
-import { Button } from "../../../components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
+import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
 import { Clock, Eye } from "lucide-react";
 
 const AbsenceHistory = ({ absentHistory }) => {
@@ -16,7 +16,7 @@ const AbsenceHistory = ({ absentHistory }) => {
       <CardContent>
         <div className="space-y-3">
           {absentHistory.map((absence, index) => (
-            <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+            <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
               <div className="flex items-center space-x-4">
                 <div className="text-center">
                   <p className="text-sm font-medium">{new Date(absence.date).getDate()}</p>

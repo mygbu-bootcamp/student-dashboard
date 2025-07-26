@@ -1,8 +1,8 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
-import { Alert, AlertDescription } from "../../components/ui/alert";
-import { Progress } from "../../components/ui/progress";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Progress } from "../components/ui/progress";
 import {
   CreditCard,
   Download,
@@ -119,7 +119,7 @@ const FeesModule = ({ user }) => {
 
       {/* Payment Alert */}
       {pendingAmount > 0 && (
-        <Alert className="border-orange-200 bg-orange-50">
+        <Alert className="border border-orange-200 bg-orange-50">
           <AlertTriangle className="h-4 w-4 text-orange-600" />
           <AlertDescription className="text-orange-800">
             <strong>Payment Due:</strong> You have ₹{pendingAmount.toLocaleString()} pending. 
@@ -141,7 +141,7 @@ const FeesModule = ({ user }) => {
           <CardContent>
             <div className="space-y-4">
               {currentFees.map((fee, index) => (
-                <div key={index} className="border rounded-lg p-4">
+                <div key={index} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-medium">{fee.category}</h3>
                     <Badge className={getStatusColor(fee.status)}>
@@ -182,7 +182,7 @@ const FeesModule = ({ user }) => {
           <CardContent>
             <div className="space-y-3">
               {paymentHistory.map((payment, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                   <div className="flex-1">
                     <p className="font-medium text-sm">{payment.description}</p>
                     <p className="text-xs text-gray-600">{payment.date} • {payment.method}</p>
@@ -210,7 +210,7 @@ const FeesModule = ({ user }) => {
         <CardContent>
           <div className="space-y-3">
             {feeStructure.map((item, index) => (
-              <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+              <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                 <div className="flex-1">
                   <p className="font-medium">{item.item}</p>
                   <p className="text-sm text-gray-600">{item.description}</p>

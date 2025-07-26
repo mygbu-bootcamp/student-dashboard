@@ -5,18 +5,18 @@ import {
   CardDescription,
   CardHeader,
   CardTitle
-} from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
-import { Input } from "../../components/ui/input";
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Input } from "../components/ui/input";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger
-} from "../../components/ui/tabs";
-import { Progress } from "../../components/ui/progress";
-import { useToast } from "../../hooks/use-toast";
+} from "../components/ui/tabs";
+import { Progress } from "../components/ui/progress";
+import { useToast } from "../hooks/use-toast";
 import {
   Award,
   Upload,
@@ -224,7 +224,7 @@ const SkillsModule = ({ user }) => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs sm:text-sm font-medium">Category</label>
-                  <select className="w-full p-2 sm:p-3 border rounded-lg text-xs sm:text-sm">
+                  <select className="w-full p-2 sm:p-3 border border-gray-200 rounded-lg text-xs sm:text-sm">
                     <option>Technical</option>
                     <option>Soft Skills</option>
                     <option>Leadership</option>
@@ -233,7 +233,7 @@ const SkillsModule = ({ user }) => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs sm:text-sm font-medium">Current Level</label>
-                  <select className="w-full p-2 sm:p-3 border rounded-lg text-xs sm:text-sm">
+                  <select className="w-full p-2 sm:p-3 border border-gray-200 rounded-lg text-xs sm:text-sm">
                     <option>Beginner</option>
                     <option>Intermediate</option>
                     <option>Advanced</option>
@@ -246,9 +246,9 @@ const SkillsModule = ({ user }) => {
                 </div>
                 <Button 
                   onClick={handleSkillAdd} 
-                  className="w-full py-2 text-xs sm:text-sm"
+                  className="w-full py-2 text-xs sm:text-sm bg-black text-white"
                 >
-                  <Plus className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                  <Plus className="mr-2 h-3 w-3 sm:h-4 sm:w-4 text-white" />
                   Add Skill
                 </Button>
               </CardContent>
@@ -278,7 +278,7 @@ const SkillsModule = ({ user }) => {
                 <CardContent className="p-4 space-y-4">
                   <div className="space-y-2">
                     <label className="text-xs font-medium">Lab Type</label>
-                    <select className="w-full p-2 border rounded-lg text-xs">
+                    <select className="w-full p-2 border border-gray-200 rounded-lg text-xs">
                       <option>All Labs</option>
                       <option>Technical</option>
                       <option>Research</option>
@@ -287,7 +287,7 @@ const SkillsModule = ({ user }) => {
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-medium">Availability</label>
-                    <select className="w-full p-2 border rounded-lg text-xs">
+                    <select className="w-full p-2 border border-gray-200 rounded-lg text-xs">
                       <option>All Statuses</option>
                       <option>Available</option>
                       <option>Waitlist</option>
@@ -313,7 +313,7 @@ const SkillsModule = ({ user }) => {
               <option>Research</option>
               <option>Interdisciplinary</option>
             </select>
-            <select className="p-2 border rounded-lg text-sm">
+            <select className="p-2 border border-gray-200 rounded-lg text-sm">
               <option>All Statuses</option>
               <option>Available</option>
               <option>Waitlist</option>
@@ -368,7 +368,7 @@ const SkillsModule = ({ user }) => {
                   <Button
                     onClick={() => handleLabRegistration(lab.name)}
                     disabled={lab.status === "Enrolled" || lab.status === "Waitlist"}
-                    className="w-full py-2 text-xs sm:text-sm"
+                    className="w-full py-2 text-xs sm:text-sm bg-black text-white"
                     size="sm"
                   >
                     {lab.status === "Enrolled"
@@ -396,7 +396,7 @@ const SkillsModule = ({ user }) => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {ruralInnovations.map((project) => (
-                  <div key={project.id} className="border rounded-lg p-3 sm:p-4">
+                  <div key={project.id} className="border border-gray-200 rounded-lg p-3 sm:p-4">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium text-sm sm:text-base">{project.title}</h4>
                       <Badge 
@@ -437,7 +437,7 @@ const SkillsModule = ({ user }) => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs sm:text-sm font-medium">Impact Category</label>
-                  <select className="w-full p-2 sm:p-3 border rounded-lg text-xs sm:text-sm">
+                  <select className="w-full p-2 sm:p-3 border border-gray-200 rounded-lg text-xs sm:text-sm">
                     <option>Agriculture</option>
                     <option>Healthcare</option>
                     <option>Education</option>
@@ -448,7 +448,7 @@ const SkillsModule = ({ user }) => {
                 <div className="space-y-2">
                   <label className="text-xs sm:text-sm font-medium">Project Description</label>
                   <textarea 
-                    className="w-full p-2 sm:p-3 border rounded-lg text-xs sm:text-sm" 
+                    className="w-full p-2 sm:p-3 border border-gray-200 rounded-lg text-xs sm:text-sm" 
                     rows={3} 
                     placeholder="Describe your innovation..." 
                   />

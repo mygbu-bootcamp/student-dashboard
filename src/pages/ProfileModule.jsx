@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Textarea } from "../../components/ui/textarea";
-import { Badge } from "../../components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Separator } from "../../components/ui/separator";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import { Badge } from "../components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Separator } from "../components/ui/separator";
 import {
   User,
   Phone,
@@ -23,13 +23,13 @@ import {
   ChevronUp
 } from "lucide-react";
 
-const ProfileModule = ({ user }) => {
+const ProfileModule = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [profileData, setProfileData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
+    name: "Aarav Sharma",
+    email: "aarav.sharma@gbu.ac.in",
     phone: "+91 9876543210",
     address: "Greater Noida, UP, India",
     about: "Computer Science student passionate about AI/ML and software development. Active in coding competitions and technical projects.",
@@ -45,6 +45,16 @@ const ProfileModule = ({ user }) => {
       "Best Project Award - Software Engineering"
     ]
   });
+
+  const user = {
+    name: "Aarav Sharma",
+    email: "aarav.sharma@gbu.ac.in",
+    programme: "B.Tech",
+    branch: "Computer Science & Engineering",
+    semester: "6th",
+    studentId: "2021BCS001",
+    photo: null
+  };
 
   const handleSave = () => {
     setIsEditing(false);
@@ -81,7 +91,7 @@ const ProfileModule = ({ user }) => {
           </Button>
           <Button
             onClick={() => setIsEditing(!isEditing)}
-            className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800"
+            className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white"
           >
             <Edit className="mr-2 h-4 w-4" />
             {isEditing ? "Cancel" : "Edit Profile"}
@@ -160,18 +170,18 @@ const ProfileModule = ({ user }) => {
       {/* Profile Info Tab */}
       {(activeTab === "profile") && (
         <div className="space-y-6">
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card>
             <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
-              <CardDescription>Your basic profile information</CardDescription>
+              <CardTitle className="text-xl font-semibold">Personal Information</CardTitle>
+              <CardDescription className="text-gray-600">Your basic profile information</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
                 <div className="flex flex-col items-center space-y-4 w-full sm:w-auto">
-                  <Avatar className="h-24 w-24 sm:h-32 sm:w-32">
+                  <Avatar className="h-24 w-24 sm:h-32 sm:w-32 bg-blue-100">
                     <AvatarImage src={user?.photo} />
-                    <AvatarFallback className="text-xl sm:text-2xl bg-blue-100 text-blue-900">
-                      {user?.name?.charAt(0)}
+                    <AvatarFallback className="text-2xl sm:text-3xl text-blue-600 font-semibold">
+                      A
                     </AvatarFallback>
                   </Avatar>
                   {isEditing && (
@@ -184,50 +194,50 @@ const ProfileModule = ({ user }) => {
                 <div className="flex-1 w-full space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs sm:text-sm font-medium text-gray-700">Full Name</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
                       <Input
                         value={profileData.name}
                         onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
                         disabled={!isEditing}
-                        className="mt-1 text-xs sm:text-sm"
+                        className="bg-white border-gray-300"
                       />
                     </div>
                     <div>
-                      <label className="text-xs sm:text-sm font-medium text-gray-700">Email</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                       <Input
                         value={profileData.email}
                         disabled
-                        className="mt-1 bg-gray-50 text-xs sm:text-sm"
+                        className="bg-gray-50 border-gray-300"
                       />
                     </div>
                     <div>
-                      <label className="text-xs sm:text-sm font-medium text-gray-700">Phone</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                       <Input
                         value={profileData.phone}
                         onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
                         disabled={!isEditing}
-                        className="mt-1 text-xs sm:text-sm"
+                        className="bg-white border-gray-300"
                       />
                     </div>
                     <div>
-                      <label className="text-xs sm:text-sm font-medium text-gray-700">Address</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
                       <Input
                         value={profileData.address}
                         onChange={(e) => setProfileData(prev => ({ ...prev, address: e.target.value }))}
                         disabled={!isEditing}
-                        className="mt-1 text-xs sm:text-sm"
+                        className="bg-white border-gray-300"
                       />
                     </div>
                   </div>
                   
                   <div>
-                    <label className="text-xs sm:text-sm font-medium text-gray-700">About Me</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">About Me</label>
                     <Textarea
                       value={profileData.about}
                       onChange={(e) => setProfileData(prev => ({ ...prev, about: e.target.value }))}
                       disabled={!isEditing}
-                      className="mt-1 text-xs sm:text-sm"
-                      rows={3}
+                      className="bg-white border-gray-300 min-h-[100px]"
+                      rows={4}
                     />
                   </div>
                 </div>
@@ -247,12 +257,12 @@ const ProfileModule = ({ user }) => {
           </Card>
 
           {/* Skills Section */}
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card>
             <CardHeader>
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div>
-                  <CardTitle>Skills</CardTitle>
-                  <CardDescription>Your technical and soft skills</CardDescription>
+                  <CardTitle className="text-xl font-semibold">Skills</CardTitle>
+                  <CardDescription className="text-gray-600">Your technical and soft skills</CardDescription>
                 </div>
                 {isEditing && (
                   <Button variant="outline" size="sm" onClick={addSkill} className="w-full sm:w-auto">
@@ -265,11 +275,11 @@ const ProfileModule = ({ user }) => {
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {profileData.skills.map((skill, index) => (
-                  <Badge key={index} variant="secondary" className="px-2 py-0.5 sm:px-3 sm:py-1 text-xs sm:text-sm">
+                  <Badge key={index} variant="secondary" className="px-3 py-1 text-sm bg-gray-100 text-gray-700 hover:bg-gray-200">
                     {skill}
                     {isEditing && (
                       <button
-                        className="ml-1 sm:ml-2 text-red-500 hover:text-red-700"
+                        className="ml-2 text-red-500 hover:text-red-700"
                         onClick={() => {
                           setProfileData(prev => ({
                             ...prev,
@@ -291,49 +301,55 @@ const ProfileModule = ({ user }) => {
       {/* Academic Details Tab */}
       {(activeTab === "academic") && (
         <div className="space-y-6">
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card>
             <CardHeader>
-              <CardTitle>Academic Information</CardTitle>
-              <CardDescription>Your current academic details</CardDescription>
+              <CardTitle className="text-xl font-semibold">Academic Information</CardTitle>
+              <CardDescription className="text-gray-600">Your current academic details</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <div className="space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
                   <div className="flex items-center space-x-3">
-                    <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <GraduationCap className="h-5 w-5 text-blue-600" />
+                    </div>
                     <div>
-                      <p className="font-medium text-sm sm:text-base">{user?.programme}</p>
-                      <p className="text-xs sm:text-sm text-gray-600">{user?.branch}</p>
+                      <p className="font-semibold text-gray-900">{user?.programme}</p>
+                      <p className="text-sm text-gray-600">{user?.branch}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <Calendar className="h-5 w-5 text-green-600" />
+                    </div>
                     <div>
-                      <p className="font-medium text-sm sm:text-base">Semester {user?.semester}</p>
-                      <p className="text-xs sm:text-sm text-gray-600">Current</p>
+                      <p className="font-semibold text-gray-900">Semester {user?.semester}</p>
+                      <p className="text-sm text-gray-600">Current</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <User className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500" />
+                    <div className="p-2 bg-purple-100 rounded-lg">
+                      <User className="h-5 w-5 text-purple-600" />
+                    </div>
                     <div>
-                      <p className="font-medium text-sm sm:text-base">{user?.studentId}</p>
-                      <p className="text-xs sm:text-sm text-gray-600">Student ID</p>
+                      <p className="font-semibold text-gray-900">{user?.studentId}</p>
+                      <p className="text-sm text-gray-600">Student ID</p>
                     </div>
                   </div>
                 </div>
                 
-                <div className="space-y-3 sm:space-y-4">
+                <div className="space-y-4">
                   <div>
-                    <p className="text-xs sm:text-sm font-medium text-gray-700">CGPA</p>
-                    <p className="text-xl sm:text-2xl font-bold text-green-600">8.5/10.0</p>
+                    <p className="text-sm font-medium text-gray-700 mb-1">CGPA</p>
+                    <p className="text-3xl font-bold text-green-600">8.5/10.0</p>
                   </div>
                   <div>
-                    <p className="text-xs sm:text-sm font-medium text-gray-700">Credits Completed</p>
-                    <p className="text-xl sm:text-2xl font-bold text-blue-600">142/160</p>
+                    <p className="text-sm font-medium text-gray-700 mb-1">Credits Completed</p>
+                    <p className="text-3xl font-bold text-blue-600">142/160</p>
                   </div>
                   <div>
-                    <p className="text-xs sm:text-sm font-medium text-gray-700">Academic Year</p>
-                    <p className="text-base sm:text-lg font-medium">2021-2025</p>
+                    <p className="text-sm font-medium text-gray-700 mb-1">Academic Year</p>
+                    <p className="text-lg font-semibold text-gray-900">2021-2025</p>
                   </div>
                 </div>
               </div>
@@ -341,38 +357,40 @@ const ProfileModule = ({ user }) => {
           </Card>
 
           {/* Certifications */}
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card>
             <CardHeader>
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div>
-                  <CardTitle>Certifications</CardTitle>
-                  <CardDescription>Your professional certifications</CardDescription>
+                  <CardTitle className="text-xl font-semibold">Certifications</CardTitle>
+                  <CardDescription className="text-gray-600">Your professional certifications</CardDescription>
                 </div>
                 <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                  <Plus className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                  <Plus className="mr-2 h-4 w-4" />
                   Add Certification
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3 sm:space-y-4">
+              <div className="space-y-4">
                 {profileData.certifications.map((cert, index) => (
-                  <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 border rounded-lg gap-2">
+                  <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border rounded-lg bg-white gap-3">
                     <div className="flex items-center space-x-3">
-                      <Award className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500" />
+                      <div className="p-2 bg-yellow-100 rounded-lg">
+                        <Award className="h-5 w-5 text-yellow-600" />
+                      </div>
                       <div>
-                        <p className="font-medium text-sm sm:text-base">{cert.name}</p>
-                        <p className="text-xs sm:text-sm text-gray-600">{cert.provider} • {cert.date}</p>
+                        <p className="font-semibold text-gray-900">{cert.name}</p>
+                        <p className="text-sm text-gray-600">{cert.provider} • {cert.date}</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2 self-end sm:self-auto">
+                    <div className="flex items-center space-x-3 self-end sm:self-auto">
                       {cert.verified && (
-                        <Badge variant="secondary" className="text-xs sm:text-sm text-green-600">
+                        <Badge className="bg-green-100 text-green-700 hover:bg-green-200">
                           <Verified className="mr-1 h-3 w-3" />
                           Verified
                         </Badge>
                       )}
-                      <Button variant="ghost" size="sm" className="text-xs sm:text-sm">
+                      <Button variant="ghost" size="sm" className="text-sm">
                         View
                       </Button>
                     </div>
@@ -387,42 +405,42 @@ const ProfileModule = ({ user }) => {
       {/* Resume Builder Tab */}
       {(activeTab === "resume") && (
         <div className="space-y-6">
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card>
             <CardHeader>
-              <CardTitle>Resume Builder</CardTitle>
-              <CardDescription>Auto-generated academic resume based on your profile</CardDescription>
+              <CardTitle className="text-xl font-semibold">Resume Builder</CardTitle>
+              <CardDescription className="text-gray-600">Auto-generated academic resume based on your profile</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="bg-white border rounded-lg p-4 sm:p-6 lg:p-8 shadow-lg max-w-2xl mx-auto">
+              <div className="bg-white border rounded-lg p-6 lg:p-8 shadow-sm max-w-3xl mx-auto">
                 {/* Resume Preview */}
-                <div className="text-center mb-4 sm:mb-6">
-                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{profileData.name}</h2>
-                  <p className="text-sm sm:text-base text-gray-600">{user?.programme} - {user?.branch}</p>
-                  <p className="text-xs sm:text-sm text-gray-500">{profileData.email} • {profileData.phone}</p>
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">{profileData.name}</h2>
+                  <p className="text-base lg:text-lg text-gray-600 mb-1">{user?.programme} - {user?.branch}</p>
+                  <p className="text-sm text-gray-500">{profileData.email} • {profileData.phone}</p>
                 </div>
                 
-                <Separator className="my-4 sm:my-6" />
+                <Separator className="my-6" />
                 
-                <div className="space-y-4 sm:space-y-6">
+                <div className="space-y-6">
                   <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">About</h3>
-                    <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">{profileData.about}</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">About</h3>
+                    <p className="text-sm text-gray-700 leading-relaxed">{profileData.about}</p>
                   </div>
                   
                   <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">Education</h3>
-                    <div className="space-y-1 sm:space-y-2">
-                      <p className="font-medium text-sm sm:text-base">{user?.programme} in {user?.branch}</p>
-                      <p className="text-xs sm:text-sm text-gray-600">Gautam Buddha University • CGPA: 8.5/10.0</p>
-                      <p className="text-xs sm:text-sm text-gray-600">Expected Graduation: 2025</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Education</h3>
+                    <div className="space-y-2">
+                      <p className="font-semibold text-base">{user?.programme} in {user?.branch}</p>
+                      <p className="text-sm text-gray-600">Gautam Buddha University • CGPA: 8.5/10.0</p>
+                      <p className="text-sm text-gray-600">Expected Graduation: 2025</p>
                     </div>
                   </div>
                   
                   <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">Skills</h3>
-                    <div className="flex flex-wrap gap-1 sm:gap-2">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Skills</h3>
+                    <div className="flex flex-wrap gap-2">
                       {profileData.skills.map((skill, index) => (
-                        <span key={index} className="px-2 py-0.5 sm:px-2 sm:py-1 bg-gray-100 text-gray-700 text-xs sm:text-sm rounded">
+                        <span key={index} className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-md border border-blue-200">
                           {skill}
                         </span>
                       ))}
@@ -430,22 +448,25 @@ const ProfileModule = ({ user }) => {
                   </div>
                   
                   <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">Achievements</h3>
-                    <ul className="space-y-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Achievements</h3>
+                    <ul className="space-y-2">
                       {profileData.achievements.map((achievement, index) => (
-                        <li key={index} className="text-xs sm:text-sm text-gray-700">• {achievement}</li>
+                        <li key={index} className="text-sm text-gray-700 flex items-start">
+                          <span className="mr-2">•</span>
+                          <span>{achievement}</span>
+                        </li>
                       ))}
                     </ul>
                   </div>
                 </div>
               </div>
               
-              <div className="mt-6 flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
+              <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
                 <Button variant="outline" className="w-full sm:w-auto">
                   <Edit className="mr-2 h-4 w-4" />
                   Customize Template
                 </Button>
-                <Button className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800">
+                <Button className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white">
                   <Download className="mr-2 h-4 w-4" />
                   Download PDF
                 </Button>

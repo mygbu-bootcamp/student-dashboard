@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
-import { Input } from "../../components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Input } from "../components/ui/input";
 import { 
   FileText, 
   Download, 
@@ -253,7 +253,7 @@ const DocumentVaultModule = ({ user }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-2">Document Type</label>
-              <select className="w-full p-2 border rounded-lg">
+              <select className="w-full p-2 border border-gray-200 rounded-lg">
                 <option>Select document type</option>
                 <option>Transcript</option>
                 <option>Character Certificate</option>
@@ -264,7 +264,7 @@ const DocumentVaultModule = ({ user }) => {
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Priority</label>
-              <select className="w-full p-2 border rounded-lg">
+              <select className="w-full p-2 border border-gray-200 rounded-lg">
                 <option>Normal</option>
                 <option>High</option>
                 <option>Urgent</option>
@@ -273,7 +273,7 @@ const DocumentVaultModule = ({ user }) => {
             <div className="md:col-span-2">
               <label className="block text-sm font-medium mb-2">Additional Notes</label>
               <textarea 
-                className="w-full p-2 border rounded-lg" 
+                className="w-full p-2 border border-gray-200 rounded-lg" 
                 rows={3}
                 placeholder="Provide any additional information about the document request..."
               />
