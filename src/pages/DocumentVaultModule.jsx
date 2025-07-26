@@ -55,7 +55,7 @@ const Button = ({
     "inline-flex items-center justify-center rounded-md text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 
   const variantClasses = {
-    default: "bg-black text-white active:bg-blue-800 hover:scale-105 hover:shadow-lg",
+    default: "bg-blue-500 text-white active:bg-blue-800 hover:scale-105 hover:shadow-lg",
     destructive: "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 hover:scale-105 hover:shadow-lg",
     outline: "border border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 hover:scale-105 hover:shadow-lg",
     secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-300 hover:scale-105 hover:shadow-lg",
@@ -230,7 +230,7 @@ const DocumentVaultModule = ({ user }) => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-700 rounded-lg p-6 text-white">
+      <div className="bg-gradient-to-r from-gray-700 to-gray-300 rounded-lg p-6 text-white">
         <h1 className="text-2xl font-bold mb-2">Document Vault</h1>
         <p className="text-gray-100">Securely store and manage all your academic documents</p>
       </div>
@@ -261,13 +261,13 @@ const DocumentVaultModule = ({ user }) => {
       </Card>
 
       {/* Document Categories */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 ">
         {documentTypes.map((type, index) => (
           <Button
             key={index}
             variant={activeDocumentType === type ? "default" : "outline"}
             className={`h-auto p-4 ${
-              activeDocumentType === type ? "hover:bg-black active:bg-black" : ""
+              activeDocumentType === type ? "hover:bg-blue active:bg-blue-500" : ""
             }`}
             onClick={() => setActiveDocumentType(type)}
           >
@@ -277,8 +277,8 @@ const DocumentVaultModule = ({ user }) => {
                   activeDocumentType === type ? "text-white" : "text-blue-500"
                 }`}
               />
-              <p className="text-sm font-medium">{type}</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-sm text-v font-medium">{type}</p>
+              <p className="text-xs text-white">
                 {type === "All" ? documents.length : documents.filter((d) => d.type === type).length}{" "}
                 docs
               </p>

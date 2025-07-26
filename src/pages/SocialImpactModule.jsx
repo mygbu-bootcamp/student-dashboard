@@ -345,7 +345,7 @@ const SocialImpactModule = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-1">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-900 to-blue-700 rounded-lg p-4 sm:p-6 text-white shadow-lg">

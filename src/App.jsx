@@ -1,30 +1,17 @@
 import { useState } from "react";
-import { Toaster } from "../src/components/toaster";
-import { Toaster as Sonner } from "../src/components/sonner";
-import { TooltipProvider } from "../src/components/tooltip";
+import { Toaster } from "./components/toaster"; // Assuming this path is correct
+import { Toaster as Sonner } from "./components/sonner"; // Assuming this path is correct
+import { TooltipProvider } from "./components/tooltip"; // Assuming this path is correct
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-// Auth
 import { AuthProvider } from "./hooks/AuthContext";
 import ProtectedRoute from "./hooks/ProtectedRoute";
-
-// Pages
 import LoginScreen from "./components/LoginScreen";
 import MainDashboard from "./components/MainDashboard";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import UnderDevLogin from "./components/underdevelopmentLogin";
-
-// Quick Access Pages
-import Attendance from "./pages/AttendanceModule";
-import Skills from "./pages/SkillsModule";
-import Wellness from "./pages/WellnessModule";
-import Store from "./pages/GBUStoreModule";
-import Documents from "./pages/DocumentVaultModule";
-import Goals from "./pages/GoalTrackerModule";
-import Hostel from "./pages/HostelMessModule";
-import Placement from "./pages/PlacementModule";
+import ComingSoon from "./pages/Comingsoon"; // Import the ComingSoon component
 
 const queryClient = new QueryClient();
 
@@ -47,82 +34,22 @@ const App = () => {
             ) : (
               <Routes>
                 {/* Public Routes */}
-                <Route path="*" element={<LoginScreen />} />
-                <Route path="*" element={<Index />} />
+                {/* Assign specific paths to avoid conflicts with multiple path="*" */}
+                <Route path="/login" element={<LoginScreen />} />
+                <Route path="/" element={<Index />} />
+                <Route path="/coming-soon" element={<ComingSoon />} /> {/* New route for ComingSoon */}
 
                 {/* Protected Routes */}
-                <Route path="/dashboard"element={
+                <Route
+                  path="/dashboard"
+                  element={
                     <ProtectedRoute>
                       <MainDashboard />
                     </ProtectedRoute>
                   }
                 />
-                <Route
-                  path="/attendance"
-                  element={
-                    <ProtectedRoute>
-                      <Attendance />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/skills"
-                  element={
-                    <ProtectedRoute>
-                      <Skills />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/wellness"
-                  element={
-                    <ProtectedRoute>
-                      <Wellness />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/store"
-                  element={
-                    <ProtectedRoute>
-                      <Store />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/documents"
-                  element={
-                    <ProtectedRoute>
-                      <Documents />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/goals"
-                  element={
-                    <ProtectedRoute>
-                      <Goals />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/hostel"
-                  element={
-                    <ProtectedRoute>
-                      <Hostel />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/placement"
-                  element={
-                    <ProtectedRoute>
-                      <Placement />
-                    </ProtectedRoute>
-                  }
-                />
 
-                {/* Catch-all */}
+                {/* Catch-all for any unmatched routes - should be the last route */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             )}

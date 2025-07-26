@@ -327,7 +327,7 @@ const GBUStoreModule = ({ user }) => {
   };
 
   return (
-    <div className="space-y-6 p-4 bg-gray-50 min-h-screen">
+    <div className="space-y-6 p-1 bg-gray-50 min-h-screen">
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-900 to-blue-700 rounded-lg p-6 text-white">
         <div className="flex items-center justify-between">

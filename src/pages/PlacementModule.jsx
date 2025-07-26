@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react"; // Import useEffect
+import { useState, useEffect, useRef } from "react"; // Import useRef
+import { useNavigate } from "react-router-dom";
 import {
     Briefcase,
     Upload,
@@ -9,12 +10,10 @@ import {
     Bell,
     CheckCircle,
     Clock,
-    X // Import X icon for close button
+    X
 } from "lucide-react";
-// Keeping Lucide icons for visual elements
-
 import * as React from "react";
-import StatsCard from '../components/Statscard'; 
+import StatsCard from '../components/Statscard';
 
 const TabsContext = React.createContext();
 
@@ -55,32 +54,31 @@ const TabsList = React.forwardRef(({ className = "", children, ...props }, ref) 
 TabsList.displayName = "TabsList";
 
 const TabsTrigger = React.forwardRef(
-  ({ className = "", value, parentProps, children, ...props }, ref) => {
-    const { value: contextValue, onValueChange } = React.useContext(TabsContext);
-    const isActive = value === contextValue;
+    ({ className = "", value, parentProps, children, ...props }, ref) => {
+        const { value: contextValue, onValueChange } = React.useContext(TabsContext);
+        const isActive = value === contextValue;
 
-    // Define handleClick here
-    const handleClick = () => {
-      onValueChange(value);
-    };
+        const handleClick = () => {
+            onValueChange(value);
+        };
 
-    return (
-      <button
-        ref={ref}
-        role="tab"
-        aria-selected={isActive}
-        onClick={handleClick} // This will now correctly call the defined handleClick
-        className={`flex-1 h-8px inline-flex cursor-pointer items-center justify-center rounded-md bg-muted p-1 text-muted-foreground focus:outline-none ${
-          isActive
-            ? "bg-white text-black border border-gray-200"
-            : "text-muted-foreground hover:text-foreground"
-        } ${className}`}
-        {...props}
-      >
-        {children}
-      </button>
-    );
-  }
+        return (
+            <button
+                ref={ref}
+                role="tab"
+                aria-selected={isActive}
+                onClick={handleClick}
+                className={`flex-1 h-8px inline-flex cursor-pointer items-center justify-center rounded-md bg-muted p-1 text-muted-foreground focus:outline-none ${
+                    isActive
+                        ? "bg-white text-black border border-gray-200"
+                        : "text-muted-foreground hover:text-foreground"
+                } ${className}`}
+                {...props}
+            >
+                {children}
+            </button>
+        );
+    }
 );
 TabsTrigger.displayName = "TabsTrigger";
 
@@ -103,9 +101,8 @@ const TabsContent = React.forwardRef(
 );
 TabsContent.displayName = "TabsContent";
 
-// Toast Component
 const Toast = ({ title, description, onClose }) => {
-    const toastRef = React.useRef(null);
+    const toastRef = useRef(null); // Use useRef
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -114,7 +111,7 @@ const Toast = ({ title, description, onClose }) => {
             }
         };
 
-        if (title || description) { 
+        if (title || description) {
             document.addEventListener("mousedown", handleClickOutside);
         }
 
@@ -123,7 +120,7 @@ const Toast = ({ title, description, onClose }) => {
         };
     }, [title, description, onClose]);
 
-    if (!title && !description) return null; // Don't render if no content
+    if (!title && !description) return null;
 
     return (
         <div ref={toastRef} className="fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-md z-50">
@@ -138,11 +135,12 @@ const Toast = ({ title, description, onClose }) => {
     );
 };
 
-
 const PlacementModule = ({ user }) => {
     const [activeTab, setActiveTab] = useState("dashboard");
     const [searchTerm, setSearchTerm] = useState("");
     const [toast, setToast] = useState({ title: "", description: "" });
+    const navigate = useNavigate();
+    const fileInputRef = useRef(null); // Ref for the hidden file input
 
     // Mock data (unchanged)
     const jobApplications = [
@@ -243,9 +241,10 @@ const PlacementModule = ({ user }) => {
             rating: 4.7
         }
     ];
+
     const showToast = (title, description) => {
         setToast({ title, description });
-   
+
         setTimeout(() => {
             setToast({ title: "", description: "" });
         }, 3000);
@@ -256,11 +255,16 @@ const PlacementModule = ({ user }) => {
     };
 
     const handleResumeUpload = () => {
+        // In a real application, you'd handle the file upload here
         showToast("Resume Updated", "Your resume has been uploaded and updated successfully!");
     };
 
     const handleMentorConnect = (mentorName) => {
         showToast("Mentor Request Sent", `Your mentorship request has been sent to ${mentorName}!`);
+    };
+
+    const navigateToComingSoon = () => {
+        navigate('/coming-soon');
     };
 
     const getStatusBadgeClass = (status) => {
@@ -280,16 +284,29 @@ const PlacementModule = ({ user }) => {
         return type === "Internship" ? "bg-purple-500 text-white" : "bg-teal-500 text-white";
     };
 
-    // Filtered jobs based on search term
     const filteredJobs = availableJobs.filter(job =>
         job.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
         job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
         job.requirements.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
+    // Function to trigger the hidden file input click
+    const handleChooseFileClick = () => {
+        fileInputRef.current.click();
+    };
+
+    // Function to handle file selection (you would integrate your upload logic here)
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            console.log("Selected file:", file.name);
+            // Here you would typically send the file to a server or process it further
+            showToast("File Selected", `"${file.name}" is ready for upload.`);
+        }
+    };
 
     return (
-        <div className="p-6 space-y-6 max-w-7xl mx-auto">
+        <div className="p-1 space-y-6 w-full max-w-full mx-auto xl:px-2 lg:px-16 md:px-8"> {/* Adjusted max-w-7xl to max-w-full and added responsive padding */}
             {/* Toast Notification */}
             <Toast title={toast.title} description={toast.description} onClose={() => setToast({ title: "", description: "" })} />
 
@@ -382,11 +399,17 @@ const PlacementModule = ({ user }) => {
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                 </div>
-                                <button className="flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                                <button
+                                    onClick={navigateToComingSoon}
+                                    className="flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                                >
                                     <Filter className="mr-2 h-4 w-4" />
                                     Filter
                                 </button>
-                                <button className="flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                                <button
+                                    onClick={navigateToComingSoon}
+                                    className="flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                                >
                                     <Bell className="mr-2 h-4 w-4" />
                                     Job Alerts
                                 </button>
@@ -444,10 +467,16 @@ const PlacementModule = ({ user }) => {
                                             >
                                                 Apply Now
                                             </button>
-                                            <button className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                                            <button
+                                                onClick={navigateToComingSoon}
+                                                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                                            >
                                                 View Details
                                             </button>
-                                            <button className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                                            <button
+                                                onClick={navigateToComingSoon}
+                                                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                                            >
                                                 Save
                                             </button>
                                         </div>
@@ -472,7 +501,17 @@ const PlacementModule = ({ user }) => {
                                 <div className="border-dashed border-2 border-gray-300 rounded-lg p-6 text-center">
                                     <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                                     <p className="text-gray-600 mb-2">Upload your resume (PDF, DOC)</p>
-                                    <button className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                                      {/* Hidden file input */}
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handleFileChange}
+                                        className="hidden"
+                                        accept=".pdf,.doc,.docx" // Ensure this line is exactly as written
+                                    />
+                                    <button
+                                        onClick={handleChooseFileClick}
+                                        className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200">
                                         Choose File
                                     </button>
                                 </div>

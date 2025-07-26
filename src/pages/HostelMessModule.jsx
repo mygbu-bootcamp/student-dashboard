@@ -324,7 +324,7 @@ const HostelMessModule = ({ user }) => {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6 lg:p-8 font-sans">
+    <div className="space-y-6 p-4 md:p-6 lg:p-0 font-sans">
       {/* Header */}
       <div className="bg-gradient-to-r from-orange-900 to-red-700 rounded-lg p-6 text-white">
         <div className="flex items-center justify-between">

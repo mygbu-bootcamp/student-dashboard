@@ -1,4 +1,4 @@
-import React,{ useState } from "react";
+import React, { useState } from "react";
 import {
   User,
   Phone,
@@ -15,8 +15,17 @@ import {
   ChevronUp,
   CreditCard,
   Clock,
-  CircleDollarSign
+  CircleDollarSign,
+  FileText,
+  Briefcase,
+  Languages,
+  Github,
+  Linkedin,
+  Twitter,
+  Globe,
+  X // Added X icon for close button
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const TabsContext = React.createContext();
 
@@ -104,14 +113,26 @@ const TabsContent = React.forwardRef(
 TabsContent.displayName = "TabsContent";
 
 const ProfileModule = () => {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
+  const [showTemplatesModal, setShowTemplatesModal] = useState(false); // Changed from showTemplates to showTemplatesModal
+  const [selectedTemplate, setSelectedTemplate] = useState("default");
+  const [showAddCertificationModal, setShowAddCertificationModal] = useState(false); // State for Add Certification Modal
+
   const [profileData, setProfileData] = useState({
     name: "Aarav Sharma",
     email: "aarav.sharma@gbu.ac.in",
     phone: "+91 9876543210",
     address: "Greater Noida, UP, India",
+    dob: "2000-05-15",
+    gender: "Male",
+    languages: ["Hindi", "English"],
+    github: "github.com/aaravsharma",
+    linkedin: "linkedin.com/in/aaravsharma",
+    website: "aaravsharma.me",
+    twitter: "twitter.com/aaravsharma", // Added twitter for consistency
     about: "Computer Science student passionate about AI/ML and software development. Active in coding competitions and technical projects.",
     skills: ["Python", "Java", "React", "Machine Learning", "Data Structures"],
     certifications: [
@@ -123,6 +144,28 @@ const ProfileModule = () => {
       "Dean's List - Semester 5",
       "Winner - CodeFest 2023",
       "Best Project Award - Software Engineering"
+    ],
+    projects: [
+      {
+        title: "AI-Based Student Performance Predictor",
+        description: "Developed a machine learning model to predict student performance based on learning patterns",
+        technologies: ["Python", "Scikit-learn", "Pandas"],
+        duration: "Jan 2023 - May 2023"
+      },
+      {
+        title: "Campus Navigation App",
+        description: "Mobile application for navigating university campus with AR features",
+        technologies: ["React Native", "ARCore", "Firebase"],
+        duration: "Aug 2022 - Dec 2022"
+      }
+    ],
+    workExperience: [
+      {
+        position: "Summer Research Intern",
+        company: "Tech Innovations Lab",
+        duration: "May 2023 - July 2023",
+        description: "Worked on NLP research project developing sentiment analysis tools"
+      }
     ]
   });
 
@@ -135,6 +178,13 @@ const ProfileModule = () => {
     studentId: "2021BCS001",
     photo:"A"
   };
+
+  const templates = [
+    { id: "default", name: "Modern Blue", preview: "Clean layout with blue accents", style: "bg-gradient-to-br from-blue-50 to-blue-100 text-blue-800 border-blue-200" },
+    { id: "classic", name: "Classic Black", preview: "Traditional resume with black/white theme", style: "bg-white text-gray-800 border-gray-300" },
+    { id: "creative", name: "Creative", preview: "Colorful design for creative fields", style: "bg-gradient-to-br from-purple-50 to-pink-50 text-purple-800 border-purple-200" },
+    { id: "minimal", name: "Minimalist", preview: "Simple and elegant design", style: "bg-gray-50 text-gray-700 border-gray-200" }
+  ];
 
   const handleSave = () => {
     setIsEditing(false);
@@ -155,6 +205,24 @@ const ProfileModule = () => {
     setShowMobileMenu(!showMobileMenu);
   };
 
+  const handleComingSoon = () => {
+    navigate('/comingsoon');
+  };
+
+  const handleTemplateSelect = (templateId) => {
+    setSelectedTemplate(templateId);
+    setShowTemplatesModal(false); // Close modal after selection
+    console.log(`Selected template: ${templateId}`);
+  };
+
+  const handleAddCertification = (newCert) => {
+    setProfileData(prev => ({
+      ...prev,
+      certifications: [...prev.certifications, newCert]
+    }));
+    setShowAddCertificationModal(false);
+  };
+
   return (
     <div className="space-y-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header Section */}
@@ -164,7 +232,10 @@ const ProfileModule = () => {
           <p className="text-sm sm:text-base text-gray-600">Manage your profile and build your academic resume</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full sm:w-auto cursor-pointer hover:scale-[1.02] hover:shadow-md">
+          <button
+            onClick={handleComingSoon}
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full sm:w-auto cursor-pointer hover:scale-[1.02] hover:shadow-md"
+          >
             <Download className="mr-2 h-4 w-4" />
             <span className="hidden sm:inline">Download Resume</span>
             <span className="sm:hidden">Resume</span>
@@ -261,7 +332,10 @@ const ProfileModule = () => {
                     </div>
 
                     {isEditing && (
-                      <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 w-full sm:w-auto transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02] hover:shadow-sm">
+                      <button
+                        onClick={handleComingSoon}
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 w-full sm:w-auto transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02] hover:shadow-sm"
+                      >
                         Change Photo
                       </button>
                     )}
@@ -294,6 +368,30 @@ const ProfileModule = () => {
                           disabled={!isEditing}
                           className="flex h-10 w-full rounded-md border border-gray-200 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-white border-gray-300"
                         />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                        <input
+                          type="date"
+                          value={profileData.dob}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, dob: e.target.value }))}
+                          disabled={!isEditing}
+                          className="flex h-10 w-full rounded-md border border-gray-200 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-white border-gray-300"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                        <select
+                          value={profileData.gender}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, gender: e.target.value }))}
+                          disabled={!isEditing}
+                          className="flex h-10 w-full rounded-md border border-gray-200 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-white border-gray-300"
+                        >
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                          <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
@@ -335,6 +433,120 @@ const ProfileModule = () => {
                     </button>
                   </div>
                 )}
+              </div>
+            </div>
+
+            {/* Social Links Section */}
+            <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
+              <div className="flex flex-col space-y-1.5 p-6">
+                <h3 className="text-xl font-semibold leading-none tracking-tight">Social Links</h3>
+                <p className="text-sm text-muted-foreground">Your professional online presence</p>
+              </div>
+              <div className="p-6 pt-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gray-100 rounded-lg">
+                      <Github className="h-5 w-5" />
+                    </div>
+                    <input
+                      value={profileData.github}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, github: e.target.value }))}
+                      disabled={!isEditing}
+                      className="flex h-10 w-full rounded-md border border-gray-200 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-white border-gray-300"
+                      placeholder="github.com/username"
+                    />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <Linkedin className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <input
+                      value={profileData.linkedin}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, linkedin: e.target.value }))}
+                      disabled={!isEditing}
+                      className="flex h-10 w-full rounded-md border border-gray-200 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-white border-gray-300"
+                      placeholder="linkedin.com/in/username"
+                    />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <Twitter className="h-5 w-5 text-blue-400" />
+                    </div>
+                    <input
+                      value={profileData.twitter}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, twitter: e.target.value }))}
+                      disabled={!isEditing}
+                      className="flex h-10 w-full rounded-md border border-gray-200 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-white border-gray-300"
+                      placeholder="twitter.com/username"
+                    />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-100 rounded-lg">
+                      <Globe className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <input
+                      value={profileData.website}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, website: e.target.value }))}
+                      disabled={!isEditing}
+                      className="flex h-10 w-full rounded-md border border-gray-200 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-white border-gray-300"
+                      placeholder="yourwebsite.com"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Languages Section */}
+            <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
+              <div className="flex flex-col space-y-1.5 p-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-xl font-semibold leading-none tracking-tight">Languages</h3>
+                    <p className="text-sm text-muted-foreground">Languages you're proficient in</p>
+                  </div>
+                  {isEditing && (
+                    <button
+                      onClick={() => {
+                        const lang = prompt("Enter a language you know:");
+                        if (lang) {
+                          setProfileData(prev => ({
+                            ...prev,
+                            languages: [...prev.languages, lang]
+                          }));
+                        }
+                      }}
+                      className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 w-full sm:w-auto transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02] hover:shadow-sm"
+                    >
+                      <Plus className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                      Add Language
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="p-6 pt-0">
+                <div className="flex flex-wrap gap-2">
+                  {profileData.languages.map((language, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 px-3 py-1 text-sm bg-gray-100 text-gray-700"
+                    >
+                      {language}
+                      {isEditing && (
+                        <button
+                          className="ml-2 text-red-500 hover:text-red-700 transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.1]"
+                          onClick={() => {
+                            setProfileData(prev => ({
+                              ...prev,
+                              languages: prev.languages.filter((_, i) => i !== index)
+                            }));
+                          }}
+                        >
+                          ×
+                        </button>
+                      )}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -383,6 +595,95 @@ const ProfileModule = () => {
                 </div>
               </div>
             </div>
+
+            {/* Projects Section */}
+            <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
+              <div className="flex flex-col space-y-1.5 p-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-xl font-semibold leading-none tracking-tight">Projects</h3>
+                    <p className="text-sm text-muted-foreground">Your academic and personal projects</p>
+                  </div>
+                  {isEditing && (
+                    <button
+                      onClick={handleComingSoon}
+                      className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 w-full sm:w-auto transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02] hover:shadow-sm"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Project
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="p-6 pt-0">
+                <div className="space-y-4">
+                  {profileData.projects.map((project, index) => (
+                    <div key={index} className="p-4 border border-gray-200 rounded-lg bg-white">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{project.title}</h4>
+                          <p className="text-sm text-gray-600">{project.duration}</p>
+                        </div>
+                        {isEditing && (
+                          <button onClick={handleComingSoon} className="text-red-500 hover:text-red-700"> {/* Linked to comingsoon */}
+                            ×
+                          </button>
+                        )}
+                      </div>
+                      <p className="mt-2 text-sm text-gray-700">{project.description}</p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {project.technologies.map((tech, techIndex) => (
+                          <span key={techIndex} className="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-md">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Work Experience Section */}
+            <div className="rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm">
+              <div className="flex flex-col space-y-1.5 p-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-xl font-semibold leading-none tracking-tight">Work Experience</h3>
+                    <p className="text-sm text-muted-foreground">Your professional work history</p>
+                  </div>
+                  {isEditing && (
+                    <button
+                      onClick={handleComingSoon}
+                      className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 w-full sm:w-auto transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02] hover:shadow-sm"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Experience
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="p-6 pt-0">
+                <div className="space-y-4">
+                  {profileData.workExperience.map((exp, index) => (
+                    <div key={index} className="p-4 border border-gray-200 rounded-lg bg-white">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{exp.position}</h4>
+                          <p className="text-sm text-gray-600">{exp.company} • {exp.duration}</p>
+                        </div>
+                        {isEditing && (
+                          <button onClick={handleComingSoon} className="text-red-500 hover:text-red-700"> {/* Linked to comingsoon */}
+                            ×
+                          </button>
+                        )}
+                      </div>
+                      <p className="mt-2 text-sm text-gray-700">{exp.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </TabsContent>
 
@@ -405,7 +706,6 @@ const ProfileModule = () => {
                       <p className="text-sm text-gray-600">{user?.branch}</p>
                     </div>
                   </div>
-                  {/* Semester with Calendar icon */}
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
                       <Calendar className="h-5 w-5 text-green-600" />
@@ -424,7 +724,6 @@ const ProfileModule = () => {
                       <p className="text-sm text-gray-600">Student ID</p>
                     </div>
                   </div>
-                  {/* Academic Year with Clock icon */}
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
                       <Clock className="h-5 w-5 text-blue-600" />
@@ -434,8 +733,6 @@ const ProfileModule = () => {
                       <p className="text-lg font-semibold text-gray-900">2021-2025</p>
                     </div>
                   </div>
-                 
-                  {/* Credits Completed with CreditCard icon */}
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
                       <CreditCard className="h-5 w-5 text-yellow-600" />
@@ -445,7 +742,6 @@ const ProfileModule = () => {
                       <p className="text-3xl font-bold text-blue-600">142/160</p>
                     </div>
                   </div>
-                   {/* CGPA with a new icon - CircleDollarSign (can be changed) */}
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
                       <CircleDollarSign className="h-5 w-5 text-red-600" />
@@ -455,7 +751,6 @@ const ProfileModule = () => {
                       <p className="text-3xl font-bold text-green-600">8.5/10.0</p>
                     </div>
                   </div>
-                  
                 </div>
               </div>
             </div>
@@ -468,7 +763,10 @@ const ProfileModule = () => {
                     <h3 className="text-xl font-semibold leading-none tracking-tight">Certifications</h3>
                     <p className="text-sm text-muted-foreground">Your professional certifications</p>
                   </div>
-                  <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 w-full sm:w-auto transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02] hover:shadow-sm">
+                  <button
+                    onClick={() => setShowAddCertificationModal(true)} // Open modal on click
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 w-full sm:w-auto transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02] hover:shadow-sm"
+                  >
                     <Plus className="mr-2 h-4 w-4" />
                     Add Certification
                   </button>
@@ -477,7 +775,7 @@ const ProfileModule = () => {
               <div className="p-6 pt-0">
                 <div className="space-y-4">
                   {profileData.certifications.map((cert, index) => (
-                    <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-gray-200 rounded-lg bg-white gap-3">
+                    <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-gray-200 rounded-lg bg-white gap-3 hover:bg-gray-50 transition-colors">
                       <div className="flex items-center space-x-3">
                         <div className="p-2 bg-yellow-100 rounded-lg">
                           <Award className="h-5 w-5 text-yellow-600" />
@@ -494,7 +792,10 @@ const ProfileModule = () => {
                             Verified
                           </span>
                         )}
-                        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02]">
+                        <button
+                          onClick={handleComingSoon}
+                          className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02] border border-gray-200"
+                        >
                           View
                         </button>
                       </div>
@@ -515,7 +816,7 @@ const ProfileModule = () => {
                 <p className="text-sm text-muted-foreground">Auto-generated academic resume based on your profile</p>
               </div>
               <div className="p-6 pt-0">
-                <div className="bg-white border border-gray-200 rounded-lg p-6 lg:p-8 shadow-sm max-w-3xl mx-auto">
+                <div className={`bg-white border border-gray-200 rounded-lg p-6 lg:p-8 shadow-sm max-w-3xl mx-auto ${templates.find(t => t.id === selectedTemplate)?.style}`}>
                   {/* Resume Preview */}
                   <div className="text-center mb-6">
                     <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">{profileData.name}</h2>
@@ -552,6 +853,39 @@ const ProfileModule = () => {
                     </div>
 
                     <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">Projects</h3>
+                      <ul className="space-y-4">
+                        {profileData.projects.map((project, index) => (
+                          <li key={index}>
+                            <h4 className="font-medium text-gray-800">{project.title}</h4>
+                            <p className="text-sm text-gray-600 mb-1">{project.duration}</p>
+                            <p className="text-sm text-gray-700">{project.description}</p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {project.technologies.map((tech, techIndex) => (
+                                <span key={techIndex} className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-md">
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">Work Experience</h3>
+                      <ul className="space-y-4">
+                        {profileData.workExperience.map((exp, index) => (
+                          <li key={index}>
+                            <h4 className="font-medium text-gray-800">{exp.position}</h4>
+                            <p className="text-sm text-gray-600 mb-1">{exp.company} • {exp.duration}</p>
+                            <p className="text-sm text-gray-700">{exp.description}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-3">Achievements</h3>
                       <ul className="space-y-2">
                         {profileData.achievements.map((achievement, index) => (
@@ -562,15 +896,33 @@ const ProfileModule = () => {
                         ))}
                       </ul>
                     </div>
+
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">Certifications</h3>
+                      <ul className="space-y-2">
+                        {profileData.certifications.map((cert, index) => (
+                          <li key={index} className="text-sm text-gray-700 flex items-start">
+                            <span className="mr-2">•</span>
+                            <span>{cert.name} ({cert.provider})</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
 
                 <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
-                  <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full sm:w-auto transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02] hover:shadow-md">
-                    <Edit className="mr-2 h-4 w-4" />
-                    Customize Template
+                  <button
+                    onClick={() => setShowTemplatesModal(true)} // Open modal for template selection
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full sm:w-auto transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02] hover:shadow-md"
+                  >
+                    <FileText className="mr-2 h-4 w-4" />
+                    Change Template
                   </button>
-                  <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-900 hover:bg-blue-800 text-white h-10 px-4 py-2 w-full sm:w-auto transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02] hover:shadow-md">
+                  <button
+                    onClick={handleComingSoon}
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-900 hover:bg-blue-800 text-white h-10 px-4 py-2 w-full sm:w-auto transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.02] hover:shadow-md"
+                  >
                     <Download className="mr-2 h-4 w-4" />
                     Download PDF
                   </button>
@@ -580,7 +932,183 @@ const ProfileModule = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Template Selection Modal */}
+      {showTemplatesModal && (
+        <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-4xl relative">
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowTemplatesModal(false)}
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <h2 className="text-2xl font-bold mb-6 text-center">Select Your Resume Template</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {templates.map((template) => (
+                <div
+                  key={template.id}
+                  className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-200 ease-in-out
+                    ${selectedTemplate === template.id ? 'border-blue-500 ring-4 ring-blue-200' : 'border-gray-200 hover:shadow-lg'}
+                    ${template.style}`}
+                  onClick={() => handleTemplateSelect(template.id)}
+                >
+                  <h4 className="font-semibold text-lg mb-2">{template.name}</h4>
+                  <p className="text-sm mb-4">{template.preview}</p>
+                  {/* Basic visual representation of the template */}
+                  <div className={`h-24 rounded-md flex items-center justify-center text-xs font-semibold
+                    ${template.id === 'default' ? 'bg-blue-200 text-blue-900' : ''}
+                    ${template.id === 'classic' ? 'bg-gray-200 text-gray-900' : ''}
+                    ${template.id === 'creative' ? 'bg-purple-200 text-purple-900' : ''}
+                    ${template.id === 'minimal' ? 'bg-gray-300 text-gray-900' : ''}
+                  `}>
+                    Preview Layout
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Certification Modal */}
+      {showAddCertificationModal && (
+        <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md relative">
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowAddCertificationModal(false)}
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <h2 className="text-2xl font-bold mb-6 text-center">Add New Certification</h2>
+            <AddCertificationForm onAdd={handleAddCertification} onCancel={() => setShowAddCertificationModal(false)} />
+          </div>
+        </div>
+      )}
     </div>
+  );
+};
+
+// New Component for Add Certification Form
+const AddCertificationForm = ({ onAdd, onCancel }) => {
+  const [name, setName] = useState('');
+  const [provider, setProvider] = useState('');
+  const [date, setDate] = useState('');
+  const [verified, setVerified] = useState(false);
+  const [certificateFile, setCertificateFile] = useState(null); // New state for the file
+
+  const handleFileChange = (e) => {
+    setCertificateFile(e.target.files[0]);
+  };
+
+  const handleUploadClick = () => {
+    document.getElementById('certificateFileUpload').click();
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!name || !provider || !date) {
+      alert("Please fill in all required fields (Certification Name, Provider, Date).");
+      return;
+    }
+    // In a real application, you would handle the file upload to a server here.
+    // For this example, we'll just pass the file object along.
+    onAdd({ name, provider, date, verified, certificateFile: certificateFile ? certificateFile.name : null });
+    setName('');
+    setProvider('');
+    setDate('');
+    setVerified(false);
+    setCertificateFile(null); // Reset file input
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label htmlFor="certName" className="block text-sm font-medium text-gray-700 mb-1">Certification Name</label>
+        <input
+          type="text"
+          id="certName"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor="certProvider" className="block text-sm font-medium text-gray-700 mb-1">Provider</label>
+        <input
+          type="text"
+          id="certProvider"
+          value={provider}
+          onChange={(e) => setProvider(e.target.value)}
+          className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor="certDate" className="block text-sm font-medium text-gray-700 mb-1">Date (Year)</label>
+        <input
+          type="text"
+          id="certDate"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="e.g., 2023"
+          required
+        />
+      </div>
+      {/* Upload Certificate Section */}
+      <div>
+        <label htmlFor="certificateFileUpload" className="block text-sm font-medium text-gray-700 mb-1">Upload Certificate (Optional)</label>
+        <input
+          type="file"
+          id="certificateFileUpload"
+          className="hidden" // Hide the default file input
+          onChange={handleFileChange}
+          accept=".pdf,.jpg,.jpeg,.png" // Specify accepted file types
+        />
+        <button
+          type="button"
+          onClick={handleUploadClick}
+          className="inline-flex bg-black text-white items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full transition-all duration-200 ease-in-out cursor-pointer hover:scale-[1.01] hover:shadow-sm"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 20v-8M8 16l4 4 4-4M19 10V4a2 2 0 00-2-2H7a2 2 0 00-2 2v6a2 2 0 00-2 2v10h18V12a2 2 0 00-2-2z" />
+          </svg>
+          {certificateFile ? certificateFile.name : "Choose File"}
+        </button>
+        {certificateFile && (
+          <p className="mt-2 text-sm text-gray-500">Selected file: {certificateFile.name}</p>
+        )}
+      </div>
+
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          id="certVerified"
+          checked={verified}
+          onChange={(e) => setVerified(e.target.checked)}
+          className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        <label htmlFor="certVerified" className="ml-2 block text-sm text-gray-900">Verified</label>
+      </div>
+      <div className="flex justify-end gap-2 mt-6">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 transition-all duration-200 ease-in-out"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-blue-900 hover:bg-blue-800 text-white h-10 px-4 py-2 transition-all duration-200 ease-in-out"
+        >
+          Add Certification
+        </button>
+      </div>
+    </form>
   );
 };
 
