@@ -1,14 +1,7 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
-import { Input } from "../components/ui/input";
-import { Textarea } from "../components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { 
-  Heart, 
-  Users, 
-  Award, 
+import React,{ useState } from "react";
+import {
+  Heart,
+  Award,
   Clock,
   MapPin,
   Plus,
@@ -19,18 +12,109 @@ import {
   Upload,
   Eye,
   Menu,
-  X
+  X,
+  Users,
+  Leaf,
+  Hospital,
+  BookOpen
 } from "lucide-react";
 
-const SocialImpactModule = ({ user }) => {
+
+const TabsContext = React.createContext();
+
+const Tabs = ({ defaultValue, value: propValue, onValueChange, children, ...props }) => {
+  const [localValue, setLocalValue] = React.useState(defaultValue);
+  const isControlled = propValue !== undefined;
+  const value = isControlled ? propValue : localValue;
+
+  const handleValueChange = (newValue) => {
+    if (!isControlled) setLocalValue(newValue);
+    if (onValueChange) onValueChange(newValue);
+  };
+
+  return (
+    <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
+      <div className="w-full" {...props}>{children}</div>
+    </TabsContext.Provider>
+  );
+};
+
+const TabsList = React.forwardRef(({ className = "", children, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={`w-full flex h-[48px] items-center justify-between rounded-xl bg-[#f1f5f9] p-1 ${className}`}
+      role="tablist"
+      {...props}
+    >
+      {React.Children.map(children, (child) => {
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child, { parentProps: props });
+        }
+        return child;
+      })}
+    </div>
+  );
+});
+TabsList.displayName = "TabsList";
+
+const TabsTrigger = React.forwardRef(
+  ({ className = "", value, parentProps, children, ...props }, ref) => {
+    const { value: contextValue, onValueChange } = React.useContext(TabsContext);
+    const isActive = value === contextValue;
+
+    const handleClick = () => {
+      onValueChange(value);
+    };
+
+    return (
+      <button
+        ref={ref}
+        role="tab"
+        aria-selected={isActive}
+        onClick={handleClick}
+        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
+          isActive
+            ? "bg-white text-black shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        } ${className}`}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+TabsTrigger.displayName = "TabsTrigger";
+
+const TabsContent = React.forwardRef(
+  ({ className = "", value, children, ...props }, ref) => {
+    const { value: contextValue } = React.useContext(TabsContext);
+    const isActive = value === contextValue;
+
+    return isActive ? (
+      <div
+        ref={ref}
+        role="tabpanel"
+        className={`mt-4 px-4 sm:px-8 ${className}`}
+        {...props}
+      >
+        {children}
+      </div>
+    ) : null;
+  }
+);
+TabsContent.displayName = "TabsContent";
+
+const SocialImpactModule = () => {
   const [activeTab, setActiveTab] = useState("overview");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuMenuOpen] = useState(false);
   const [newActivity, setNewActivity] = useState({
     title: "",
     description: "",
     hours: "",
     location: "",
-    date: ""
+    date: "",
   });
 
   // Mock data
@@ -39,7 +123,7 @@ const SocialImpactModule = ({ user }) => {
     activitiesCompleted: 23,
     rank: 12,
     badgesEarned: 8,
-    impactScore: 890
+    impactScore: 890,
   };
 
   const activities = [
@@ -54,7 +138,7 @@ const SocialImpactModule = ({ user }) => {
       role: "Volunteer",
       officer: "Dr. Priya Sharma",
       certificate: true,
-      impact: "Environmental Conservation"
+      impact: "Environmental Conservation",
     },
     {
       id: 2,
@@ -67,7 +151,7 @@ const SocialImpactModule = ({ user }) => {
       role: "Team Lead",
       officer: "Dr. Rajesh Kumar",
       certificate: true,
-      impact: "Health & Wellness"
+      impact: "Health & Wellness",
     },
     {
       id: 3,
@@ -80,8 +164,8 @@ const SocialImpactModule = ({ user }) => {
       role: "Volunteer",
       officer: "Prof. Anita Singh",
       certificate: false,
-      impact: "Education & Skill Development"
-    }
+      impact: "Education & Skill Development",
+    },
   ];
 
   const leaderboard = [
@@ -90,16 +174,23 @@ const SocialImpactModule = ({ user }) => {
     { rank: 3, name: "Rohit Kumar", hours: 198, activities: 28, score: 1050 },
     { rank: 4, name: "Sneha Gupta", hours: 187, activities: 26, score: 980 },
     { rank: 5, name: "Amit Singh", hours: 172, activities: 24, score: 920 },
-    { rank: 12, name: "You", hours: userStats.totalHours, activities: userStats.activitiesCompleted, score: userStats.impactScore }
+    {
+      rank: 12,
+      name: "You",
+      hours: userStats.totalHours,
+      activities: userStats.activitiesCompleted,
+      score: userStats.impactScore,
+    },
   ];
 
-  const badges = [
-    { id: 1, name: "Environmental Champion", description: "50+ hours in environmental activities", earned: true, icon: "🌱" },
-    { id: 2, name: "Health Advocate", description: "30+ hours in health initiatives", earned: true, icon: "🏥" },
-    { id: 3, name: "Education Pioneer", description: "40+ hours in education programs", earned: true, icon: "📚" },
-    { id: 4, name: "Community Leader", description: "Led 5+ community projects", earned: false, icon: "👥" },
-    { id: 5, name: "Impact Maker", description: "1000+ impact score", earned: false, icon: "⭐" }
-  ];
+ const badges = [
+  { id: 1, name: "Environmental Champion", description: "50+ hours in environmental activities", earned: true, icon: <Leaf className="w-6 h-6 text-green-600" /> },
+  { id: 2, name: "Health Advocate", description: "30+ hours in health initiatives", earned: true, icon: <Hospital className="w-6 h-6 text-red-600" /> },
+  { id: 3, name: "Education Pioneer", description: "40+ hours in education programs", earned: true, icon: <BookOpen className="w-6 h-6 text-blue-600" /> },
+  { id: 4, name: "Community Leader", description: "Led 5+ community projects", earned: false, icon: <Users className="w-6 h-6 text-gray-500" /> },
+  { id: 5, name: "Impact Maker", description: "1000+ impact score", earned: false, icon: <Star className="w-6 h-6 text-yellow-500" /> },
+];
+
 
   const programs = [
     {
@@ -109,7 +200,7 @@ const SocialImpactModule = ({ user }) => {
       enrolled: true,
       officer: "Dr. Priya Sharma",
       coordinator: "Arjun Patel",
-      members: 45
+      members: 45,
     },
     {
       id: 2,
@@ -118,8 +209,8 @@ const SocialImpactModule = ({ user }) => {
       enrolled: false,
       officer: "Major Rajesh Singh",
       coordinator: "Rohit Kumar",
-      members: 38
-    }
+      members: 38,
+    },
   ];
 
   const handleSubmitActivity = () => {
@@ -129,11 +220,11 @@ const SocialImpactModule = ({ user }) => {
       description: "",
       hours: "",
       location: "",
-      date: ""
+      date: "",
     });
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColorClasses = (status) => {
     switch (status) {
       case "Approved": return "text-green-600 bg-green-100";
       case "Pending": return "text-yellow-600 bg-yellow-100";
@@ -150,6 +241,109 @@ const SocialImpactModule = ({ user }) => {
     { value: "badges", label: "Badges" }
   ];
 
+  const Card = ({ children, className = "" }) => (
+    <div className={`rounded-lg border border-gray-200 bg-card text-card-foreground shadow-sm ${className}`}>
+      {children}
+    </div>
+  );
+
+  const CardHeader = ({ children, className = "" }) => (
+    <div className={`flex flex-col space-y-1.5 p-6 ${className}`}>
+      {children}
+    </div>
+  );
+
+  const CardTitle = ({ children, className = "" }) => (
+    <h3 className={`text-2xl font-semibold leading-none tracking-tight ${className}`}>
+      {children}
+    </h3>
+  );
+
+  const CardDescription = ({ children, className = "" }) => (
+    <p className={`text-sm text-muted-foreground ${className}`}>
+      {children}
+    </p>
+  );
+
+  const CardContent = ({ children, className = "" }) => (
+    <div className={`p-6 pt-0 ${className}`}>
+      {children}
+    </div>
+  );
+
+  const Button = ({ children, onClick, variant = "default", size = "default", className = "" }) => {
+    let baseClasses = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
+    let variantClasses = "";
+    let sizeClasses = "";
+
+    switch (variant) {
+      case "default":
+        variantClasses = "bg-black text-white shadow hover:bg-primary/90";
+        break;
+      case "outline":
+        variantClasses = "border border-gray-200 bg-background hover:bg-accent hover:text-accent-foreground";
+        break;
+      case "ghost":
+        variantClasses = "hover:bg-accent hover:text-accent-foreground";
+        break;
+    }
+
+    switch (size) {
+      case "default":
+        sizeClasses = "h-9 px-4 py-2";
+        break;
+      case "sm":
+        sizeClasses = "h-8 px-3 text-xs";
+        break;
+    }
+
+    return (
+      <button onClick={onClick} className={`${baseClasses} ${variantClasses} ${sizeClasses} ${className}`}>
+        {children}
+      </button>
+    );
+  };
+
+  const Badge = ({ children, variant = "default", className = "" }) => {
+    let baseClasses = "inline-flex items-center rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
+    let variantClasses = "";
+
+    switch (variant) {
+      case "default":
+        variantClasses = "border-transparent bg-primary text-primary-foreground hover:bg-primary/80";
+        break;
+      case "outline":
+        variantClasses = "text-foreground";
+        break;
+    }
+
+    return (
+      <span className={`${baseClasses} ${variantClasses} ${className}`}>
+        {children}
+      </span>
+    );
+  };
+
+  const Input = ({ value, onChange, placeholder, type = "text", className = "" }) => (
+    <input
+      type={type}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      className={`flex h-9 w-full rounded-md border border-gray-200 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+    />
+  );
+
+  const Textarea = ({ value, onChange, placeholder, rows = 3, className = "" }) => (
+    <textarea
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      rows={rows}
+      className={`flex w-full rounded-md border border-gray-200 bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+    ></textarea>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
@@ -158,11 +352,14 @@ const SocialImpactModule = ({ user }) => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex-1">
               <h1 className="text-xl sm:text-2xl font-bold mb-2">Social Impact & Community Service</h1>
-              <p className="text-green-100 text-sm sm:text-base">Track your NSS/NCC activities and community contributions</p>
+              <p className="text-green-100 text-sm sm:text-base">
+                Track your NSS/NCC activities and community contributions
+              </p>
             </div>
-            <div className="flex sm:flex-col items-center sm:text-center gap-2 sm:gap-0">
-              <Heart className="h-8 w-8 sm:h-12 sm:w-12 text-white" />
-              <div className="bg-white/20 rounded-lg p-2 sm:p-3">
+
+            <div className="flex sm:flex-col items-center sm:items-center sm:text-center gap-2 sm:gap-0">
+              <div className="bg-white/20 rounded-lg p-2 sm:p-3 flex flex-col items-center text-center">
+                <Heart className="h-8 w-8 sm:h-8 sm:w-8 text-white mb-1" />
                 <div className="text-xs sm:text-sm text-green-100">Impact Score</div>
                 <div className="text-lg sm:text-xl font-bold">{userStats.impactScore}</div>
               </div>
@@ -209,11 +406,15 @@ const SocialImpactModule = ({ user }) => {
           </Card>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
+        <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
           {/* Desktop Tab Navigation */}
-          <TabsList className="hidden sm:grid w-full grid-cols-2 lg:grid-cols-5 h-auto">
+          <TabsList className="hidden sm:flex">
             {tabs.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value} className="text-xs sm:text-sm py-2 px-2 sm:px-4">
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className="text-xs sm:text-sm"
+              >
                 {tab.label}
               </TabsTrigger>
             ))}
@@ -228,7 +429,7 @@ const SocialImpactModule = ({ user }) => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={() => setIsMobileMenuMenuOpen(!isMobileMenuOpen)}
               >
                 {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
               </Button>
@@ -246,7 +447,7 @@ const SocialImpactModule = ({ user }) => {
                         className="w-full justify-start text-xs"
                         onClick={() => {
                           setActiveTab(tab.value);
-                          setIsMobileMenuOpen(false);
+                          setIsMobileMenuMenuOpen(false);
                         }}
                       >
                         {tab.label}
@@ -258,7 +459,7 @@ const SocialImpactModule = ({ user }) => {
             )}
           </div>
 
-          <TabsContent value="overview" className="space-y-4 sm:space-y-6">
+          <TabsContent value="overview">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Recent Activities */}
               <Card>
@@ -274,7 +475,7 @@ const SocialImpactModule = ({ user }) => {
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-sm sm:text-base truncate">{activity.title}</h4>
                           <p className="text-xs sm:text-sm text-gray-600">{activity.hours} hours • {activity.date}</p>
-                          <Badge className={`mt-1 text-xs ${getStatusColor(activity.status)}`} variant="outline">
+                          <Badge className={`mt-1 text-xs ${getStatusColorClasses(activity.status)}`} variant="outline">
                             {activity.status}
                           </Badge>
                         </div>
@@ -307,7 +508,7 @@ const SocialImpactModule = ({ user }) => {
                               <span className="sm:ml-1">{program.coordinator}</span>
                             </div>
                           </div>
-                          <Badge className="text-xs">{program.members} members</Badge>
+                          <Badge className="text-xs"><Users className="h-3 w-3 sm:h-4 sm:w-4 mr-1"/>{program.members} members</Badge>
                         </div>
                       </div>
                     ))}
@@ -317,7 +518,7 @@ const SocialImpactModule = ({ user }) => {
             </div>
           </TabsContent>
 
-          <TabsContent value="activities" className="space-y-4 sm:space-y-6">
+          <TabsContent value="activities">
             {/* Add New Activity */}
             <Card>
               <CardHeader>
@@ -414,7 +615,7 @@ const SocialImpactModule = ({ user }) => {
                             </div>
                           </div>
                           <div className="flex sm:flex-col sm:text-right gap-2 sm:gap-0">
-                            <Badge className={`text-xs ${getStatusColor(activity.status)}`} variant="outline">
+                            <Badge className={`text-xs ${getStatusColorClasses(activity.status)}`} variant="outline">
                               {activity.status}
                             </Badge>
                             <div className="text-xs sm:text-sm text-gray-500 sm:mt-2">
@@ -455,7 +656,7 @@ const SocialImpactModule = ({ user }) => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="programs" className="space-y-4 sm:space-y-6">
+          <TabsContent value="programs">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {programs.map((program) => (
                 <Card key={program.id}>
@@ -475,7 +676,7 @@ const SocialImpactModule = ({ user }) => {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="font-medium text-sm">Active Members:</span>
-                        <Badge className="text-xs">{program.members}</Badge>
+                        <Badge className="text-xs"><Users className="h-3 w-3 sm:h-4 sm:w-4 mr-1"/>{program.members}</Badge>
                       </div>
                       <div className="pt-3">
                         {program.enrolled ? (
@@ -494,7 +695,7 @@ const SocialImpactModule = ({ user }) => {
             </div>
           </TabsContent>
 
-          <TabsContent value="leaderboard" className="space-y-4 sm:space-y-6">
+          <TabsContent value="leaderboard">
             <Card>
               <CardHeader>
                 <CardTitle className="text-base sm:text-lg">Community Impact Leaderboard</CardTitle>
@@ -535,7 +736,7 @@ const SocialImpactModule = ({ user }) => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="badges" className="space-y-4 sm:space-y-6">
+          <TabsContent value="badges">
             <Card>
               <CardHeader>
                 <CardTitle className="text-base sm:text-lg">Achievement Badges</CardTitle>
@@ -546,7 +747,7 @@ const SocialImpactModule = ({ user }) => {
                   {badges.map((badge) => (
                     <Card key={badge.id} className={`${badge.earned ? "bg-yellow-50 border-yellow-200" : "bg-gray-50"}`}>
                       <CardContent className="p-4 sm:p-6 text-center">
-                        <div className="text-2xl sm:text-4xl mb-2 sm:mb-3">{badge.icon}</div>
+                       <div className="mb-2 sm:mb-3 flex justify-center">{badge.icon}</div>
                         <h4 className={`font-medium mb-2 text-sm sm:text-base ${badge.earned ? "text-yellow-800" : "text-gray-500"}`}>
                           {badge.name}
                         </h4>

@@ -1,10 +1,5 @@
+import * as React from "react";
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Badge } from "../components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Progress } from "../components/ui/progress";
 import {
   BookOpen,
   Calendar,
@@ -16,6 +11,198 @@ import {
   ChevronDown,
   ChevronUp
 } from "lucide-react";
+
+// Custom UI Components
+const Card = ({ children, className = "", ...props }) => (
+  <div className={`bg-white rounded-lg border border-gray-200 shadow-sm ${className}`} {...props}>
+    {children}
+  </div>
+);
+
+const CardHeader = ({ children, className = "" }) => (
+  <div className={`px-6 py-4 border-b border-gray-200 ${className}`}>
+    {children}
+  </div>
+);
+
+const CardTitle = ({ children, className = "" }) => (
+  <h3 className={`text-lg font-semibold text-gray-900 ${className}`}>
+    {children}
+  </h3>
+);
+
+const CardDescription = ({ children, className = "" }) => (
+  <p className={`text-sm text-gray-600 mt-1 ${className}`}>
+    {children}
+  </p>
+);
+
+const CardContent = ({ children, className = "" }) => (
+  <div className={`px-6 py-4 ${className}`}>
+    {children}
+  </div>
+);
+
+const Button = ({
+  children,
+  variant = "default",
+  size = "default",
+  className = "",
+  disabled = false,
+  ...props
+}) => {
+  const baseStyles = "inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"; // Added transition-all duration-200
+
+  const variants = {
+    default: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 active:scale-95", // Added active:scale-95
+    outline: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500 active:scale-95", // Added active:scale-95
+    secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 active:scale-95", // Added active:scale-95
+    ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500 active:scale-95" // Added active:scale-95
+  };
+
+  const sizes = {
+    default: "px-4 py-2 text-sm",
+    sm: "px-3 py-1.5 text-xs"
+  };
+
+  return (
+    <button
+      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+const Input = ({ className = "", disabled = false, ...props }) => (
+  <input
+    className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${disabled ? 'bg-gray-50 text-gray-500' : ''} ${className}`}
+    disabled={disabled}
+    {...props}
+  />
+);
+
+// Added Select component
+const Select = ({ children, className = "", ...props }) => (
+  <select
+    className={`w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${className}`} // Added border and transition
+    {...props}
+  >
+    {children}
+  </select>
+);
+
+const Badge = ({ children, variant = "default", className = "" }) => {
+  const variants = {
+    default: "bg-blue-100 text-blue-800",
+    secondary: "bg-gray-100 text-gray-800",
+    outline: "bg-transparent border border-gray-300 text-gray-700"
+  };
+
+  return (
+    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${variants[variant]} ${className}`}>
+      {children}
+    </span>
+  );
+};
+
+const Progress = ({ value = 0, className = "" }) => (
+  <div className={`w-full bg-gray-200 rounded-full overflow-hidden ${className}`}>
+    <div
+      className="h-full bg-black transition-all duration-300 ease-in-out"
+      style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
+    />
+  </div>
+);
+
+// Improved Tabs Implementation
+const TabsContext = React.createContext();
+
+const Tabs = ({ defaultValue, value: propValue, onValueChange, children, ...props }) => {
+  const [localValue, setLocalValue] = React.useState(defaultValue);
+  const isControlled = propValue !== undefined;
+  const value = isControlled ? propValue : localValue;
+
+  const handleValueChange = (newValue) => {
+    if (!isControlled) setLocalValue(newValue);
+    if (onValueChange) onValueChange(newValue);
+  };
+
+  return (
+    <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
+      <div className="w-full" {...props}>{children}</div>
+    </TabsContext.Provider>
+  );
+};
+
+const TabsList = React.forwardRef(({ className = "", children, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={`w-full flex h-[48px] items-center justify-between rounded-xl bg-[#f1f5f9] p-1 ${className}`}
+      role="tablist"
+      {...props}
+    >
+      {React.Children.map(children, (child) => {
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child, { parentProps: props });
+        }
+        return child;
+      })}
+    </div>
+  );
+});
+TabsList.displayName = "TabsList";
+
+const TabsTrigger = React.forwardRef(
+  ({ className = "", value, parentProps, children, ...props }, ref) => {
+    const { value: contextValue, onValueChange } = React.useContext(TabsContext);
+    const isActive = value === contextValue;
+
+    const handleClick = () => {
+      onValueChange(value);
+    };
+
+    return (
+      <button
+        ref={ref}
+        role="tab"
+        aria-selected={isActive}
+        onClick={handleClick}
+        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none transition-all duration-200 ${ // Added transition
+          isActive
+            ? "bg-white text-black shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        } ${className}`}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+TabsTrigger.displayName = "TabsTrigger";
+
+const TabsContent = React.forwardRef(
+  ({ className = "", value, children, ...props }, ref) => {
+    const { value: contextValue } = React.useContext(TabsContext);
+    const isActive = value === contextValue;
+
+    return isActive ? (
+      <div
+        ref={ref}
+        role="tabpanel"
+        className={`mt-4 px-4 sm:px-8 ${className}`}
+        {...props}
+      >
+        {children}
+      </div>
+    ) : null;
+  }
+);
+TabsContent.displayName = "TabsContent";
 
 const AcademicModule = ({ user = {
   studentId: "2021BCS001",
@@ -83,8 +270,8 @@ const AcademicModule = ({ user = {
 
       {/* Mobile Tab Selector */}
       <div className="sm:hidden">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="w-full flex items-center justify-between"
           onClick={toggleMobileMenu}
         >
@@ -100,11 +287,11 @@ const AcademicModule = ({ user = {
             <ChevronDown className="ml-2 h-4 w-4" />
           )}
         </Button>
-        
+
         {showMobileMenu && (
           <div className="mt-2 space-y-1">
-            <Button 
-              variant={activeTab === "registration" ? "secondary" : "ghost"} 
+            <Button
+              variant={activeTab === "registration" ? "secondary" : "ghost"}
               className="w-full justify-start"
               onClick={() => {
                 setActiveTab("registration");
@@ -113,8 +300,8 @@ const AcademicModule = ({ user = {
             >
               Registration
             </Button>
-            <Button 
-              variant={activeTab === "courses" ? "secondary" : "ghost"} 
+            <Button
+              variant={activeTab === "courses" ? "secondary" : "ghost"}
               className="w-full justify-start"
               onClick={() => {
                 setActiveTab("courses");
@@ -123,8 +310,8 @@ const AcademicModule = ({ user = {
             >
               Courses
             </Button>
-            <Button 
-              variant={activeTab === "timetable" ? "secondary" : "ghost"} 
+            <Button
+              variant={activeTab === "timetable" ? "secondary" : "ghost"}
               className="w-full justify-start"
               onClick={() => {
                 setActiveTab("timetable");
@@ -133,8 +320,8 @@ const AcademicModule = ({ user = {
             >
               Timetable
             </Button>
-            <Button 
-              variant={activeTab === "progress" ? "secondary" : "ghost"} 
+            <Button
+              variant={activeTab === "progress" ? "secondary" : "ghost"}
               className="w-full justify-start"
               onClick={() => {
                 setActiveTab("progress");
@@ -148,24 +335,22 @@ const AcademicModule = ({ user = {
       </div>
 
       {/* Main Tabs */}
-      <Tabs 
-        value={activeTab} 
-        onValueChange={setActiveTab} 
-        className="hidden sm:block"
-      >
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="registration">Registration</TabsTrigger>
-          <TabsTrigger value="courses">Courses</TabsTrigger>
-          <TabsTrigger value="timetable">Timetable</TabsTrigger>
-          <TabsTrigger value="progress">Progress</TabsTrigger>
-        </TabsList>
-      </Tabs>
+      <div className="hidden sm:block">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid grid-cols-4">
+            <TabsTrigger value="registration">Registration</TabsTrigger>
+            <TabsTrigger value="courses">Courses</TabsTrigger>
+            <TabsTrigger value="timetable">Timetable</TabsTrigger>
+            <TabsTrigger value="progress">Progress</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
 
       {/* Registration Tab */}
-      {(activeTab === "registration") && (
+      {activeTab === "registration" && (
         <div className="space-y-6">
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardHeader className="pb-4">
+          <Card className="">
+            <CardHeader className="pb-4 border-b border-transparent">
               <CardTitle className="flex items-center text-xl">
                 <FileText className="mr-2 h-5 w-5 text-blue-500" />
                 Semester Registration - Spring 2024
@@ -250,11 +435,11 @@ const AcademicModule = ({ user = {
       )}
 
       {/* Courses Tab */}
-      {(activeTab === "courses") && (
+      {activeTab === "courses" && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
+            <Card>
+              <CardHeader className="border-b border-transparent">
                 <CardTitle>Current Subjects - Semester {user?.semester}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -281,11 +466,18 @@ const AcademicModule = ({ user = {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
+            <Card>
+              <CardHeader className="border-b border-transparent">
                 <CardTitle>Available Electives</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
+                {/* Replaced <select> with custom Select component */}
+                <Select>
+                  <option value="">Filter by prerequisite</option>
+                  <option value="cgpa8">CGPA &gt; 8.0</option>
+                  <option value="cgpa7.5">CGPA &gt; 7.5</option>
+                  <option value="cgpa7">CGPA &gt; 7.0</option>
+                </Select>
                 {electiveOptions.map(elective => (
                   <div key={elective.code} className="p-3 border border-gray-200 rounded-lg space-y-1">
                     <div className="flex justify-between">
@@ -308,10 +500,10 @@ const AcademicModule = ({ user = {
       )}
 
       {/* Timetable Tab */}
-      {(activeTab === "timetable") && (
+      {activeTab === "timetable" && (
         <div className="space-y-6">
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardHeader>
+          <Card>
+            <CardHeader className="border-b border-transparent">
               <CardTitle className="flex items-center">
                 <Calendar className="mr-2 h-5 w-5 text-blue-500" />
                 Weekly Timetable
@@ -324,7 +516,7 @@ const AcademicModule = ({ user = {
                     <h3 className="font-semibold text-lg mb-4">{day.day}</h3>
                     <div className="space-y-2">
                       {day.slots.map((slot, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg ">
                           <div className="flex items-center space-x-4">
                             <Clock className="h-4 w-4 text-gray-500" />
                             <span className="text-sm font-medium">{slot.time}</span>
@@ -348,11 +540,11 @@ const AcademicModule = ({ user = {
       )}
 
       {/* Progress Tab */}
-      {(activeTab === "progress") && (
+      {activeTab === "progress" && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
+            <Card>
+              <CardHeader className="border-b border-transparent">
                 <CardTitle className="flex items-center">
                   <TrendingUp className="mr-2 h-5 w-5 text-green-500" />
                   Academic Progress
@@ -377,8 +569,8 @@ const AcademicModule = ({ user = {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
+            <Card>
+              <CardHeader className="border-b border-transparent">
                 <CardTitle className="flex items-center">
                   <BookOpen className="mr-2 h-5 w-5 text-blue-500" />
                   Credit Progress

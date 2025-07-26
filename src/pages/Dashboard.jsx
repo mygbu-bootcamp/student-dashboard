@@ -1,8 +1,5 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
-import NewsSection from "../pages/NewsSection";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Calendar,
   CheckCircle,
@@ -20,8 +17,10 @@ import {
   Lightbulb,
   Star
 } from "lucide-react";
+import NewsSection from "../pages/NewsSection";
 
 const DashboardHome = ({ user }) => {
+  const navigate = useNavigate();
   const [currentThought] = useState(() => {
     const thoughts = [
       "Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill",
@@ -71,8 +70,71 @@ const DashboardHome = ({ user }) => {
     { title: "Placement Portal", icon: Trophy, color: "text-red-500", action: "placement" }
   ];
 
+  // Custom Card component
+  const Card = ({ children, className = "", ...props }) => (
+    <div className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden ${className}`} {...props}>
+      {children}
+    </div>
+  );
+
+  const CardHeader = ({ children, className = "" }) => (
+    <div className={`border-b border-gray-200 px-6 py-4 ${className}`}>
+      {children}
+    </div>
+  );
+
+  const CardTitle = ({ children, className = "" }) => (
+    <h3 className={`text-lg font-semibold text-gray-900 ${className}`}>{children}</h3>
+  );
+
+  const CardDescription = ({ children, className = "" }) => (
+    <p className={`text-sm text-gray-500 mt-1 ${className}`}>{children}</p>
+  );
+
+  const CardContent = ({ children, className = "" }) => (
+    <div className={`p-6 ${className}`}>{children}</div>
+  );
+
+  // Custom Badge component
+  const Badge = ({ children, variant = "default", className = "", ...props }) => {
+    const variants = {
+      default: "bg-gray-100 text-gray-800",
+      destructive: "bg-red-100 text-red-800",
+      secondary: "bg-blue-100 text-blue-800",
+      outline: "border border-gray-200 bg-transparent text-gray-800"
+    };
+    
+    return (
+      <span 
+        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${variants[variant]} ${className}`}
+        {...props}
+      >
+        {children}
+      </span>
+    );
+  };
+
+  // Custom Button component
+  const Button = ({ children, variant = "default", className = "", ...props }) => {
+    const variants = {
+      default: "bg-gray-900 text-white hover:bg-gray-800",
+      outline: "border border-gray-200 bg-white text-gray-700 ",
+      secondary: "bg-blue-600 text-white hover:bg-blue-700",
+      destructive: "bg-red-600 text-white hover:bg-red-700"
+    };
+    
+    return (
+      <button
+        className={`inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:opacity-50 ${variants[variant]} ${className}`}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans"> {/* Added font-sans for consistent font */}
       {/* Welcome Header */}
       <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 rounded-xl p-6 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
@@ -103,7 +165,7 @@ const DashboardHome = ({ user }) => {
         {quickStats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <Card key={index} className="hover:shadow-md transition-shadow">
+            <Card key={index} className="">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -123,7 +185,7 @@ const DashboardHome = ({ user }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Skills & Achievements */}
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b border-transparent">
             <CardTitle className="flex items-center">
               <Award className="mr-2 h-5 w-5 text-yellow-500" />
               Skills & Innovation Labs
@@ -136,7 +198,12 @@ const DashboardHome = ({ user }) => {
                 <div key={index} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <h4 className="font-medium text-sm">{skill.title}</h4>
-                    <Badge className={`${skill.color} text-white`}>{skill.badge}</Badge>
+                    {/* Updated Badge to dynamically match progress bar color for 'Advanced' */}
+                    <Badge 
+                      className={`${skill.badge === "Advanced" ? skill.color : "bg-gray-100 text-gray-800"} text-white`}
+                    >
+                      {skill.badge}
+                    </Badge>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
@@ -153,7 +220,7 @@ const DashboardHome = ({ user }) => {
 
         {/* Club Participation */}
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b border-transparent">
             <CardTitle className="flex items-center">
               <Users className="mr-2 h-5 w-5 text-purple-500" />
               Club Participation & Social Impact
@@ -179,7 +246,7 @@ const DashboardHome = ({ user }) => {
 
         {/* Upcoming Events */}
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b border-transparent">
             <CardTitle className="flex items-center">
               <Calendar className="mr-2 h-5 w-5 text-blue-500" />
               Upcoming Deadlines
@@ -208,7 +275,7 @@ const DashboardHome = ({ user }) => {
 
         {/* Placement Updates */}
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b border-transparent">
             <CardTitle className="flex items-center">
               <Trophy className="mr-2 h-5 w-5 text-orange-500" />
               Placement & Career Updates
@@ -236,11 +303,11 @@ const DashboardHome = ({ user }) => {
 
       {/* Quick Access */}
       <Card>
-        <CardHeader>
+        <CardHeader className="border-b border-transparent">
           <CardTitle>Quick Access Hub</CardTitle>
           <CardDescription>Access your most-used services and tools</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {quickActions.map((action, index) => {
               const Icon = action.icon;
@@ -248,7 +315,9 @@ const DashboardHome = ({ user }) => {
                 <Button 
                   key={index}
                   variant="outline" 
-                  className="h-auto p-4 flex flex-col hover:shadow-md transition-all duration-200 hover:scale-105"
+                  className="h-auto p-4 flex flex-col items-center justify-center 
+                             transform transition-transform duration-200 hover:scale-105 cursor-pointer" // Added animation and cursor
+                  onClick={() => navigate(`/${action.action}`)}
                 >
                   <Icon className={`h-6 w-6 mb-2 ${action.color}`} />
                   <span className="text-sm text-center">{action.title}</span>
@@ -258,9 +327,7 @@ const DashboardHome = ({ user }) => {
           </div>
         </CardContent>
       </Card>
-
-      {/* News Section */}
-      <NewsSection />
+     <NewsSection /> 
     </div>
   );
 };

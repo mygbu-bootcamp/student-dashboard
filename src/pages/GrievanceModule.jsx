@@ -1,14 +1,4 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Textarea } from "../components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { Checkbox } from "../components/ui/checkbox";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import React,{ useState } from "react";
 import { useToast } from "../hooks/use-toast";
 import { 
   MessageSquare, 
@@ -24,9 +14,94 @@ import {
   Send
 } from "lucide-react";
 
+const TabsContext = React.createContext();
+
+const Tabs = ({ defaultValue, value: propValue, onValueChange, children, ...props }) => {
+  const [localValue, setLocalValue] = React.useState(defaultValue);
+  const isControlled = propValue !== undefined;
+  const value = isControlled ? propValue : localValue;
+
+  const handleValueChange = (newValue) => {
+    if (!isControlled) setLocalValue(newValue);
+    if (onValueChange) onValueChange(newValue);
+  };
+
+  return (
+    <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
+      <div className="w-full" {...props}>{children}</div>
+    </TabsContext.Provider>
+  );
+};
+
+const TabsList = React.forwardRef(({ className = "", children, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={`w-full flex h-[48px] items-center justify-between rounded-xl bg-[#f1f5f9] p-1 ${className}`}
+      role="tablist"
+      {...props}
+    >
+      {React.Children.map(children, (child) => {
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child, { parentProps: props });
+        }
+        return child;
+      })}
+    </div>
+  );
+});
+TabsList.displayName = "TabsList";
+
+const TabsTrigger = React.forwardRef(
+  ({ className = "", value, parentProps, children, ...props }, ref) => {
+    const { value: contextValue, onValueChange } = React.useContext(TabsContext);
+    const isActive = value === contextValue;
+
+    const handleClick = () => {
+      onValueChange(value);
+    };
+
+    return (
+      <button
+        ref={ref}
+        role="tab"
+        aria-selected={isActive}
+        onClick={handleClick}
+        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
+          isActive
+            ? "bg-white text-black shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        } ${className}`}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+TabsTrigger.displayName = "TabsTrigger";
+
+const TabsContent = React.forwardRef(
+  ({ className = "", value, children, ...props }, ref) => {
+    const { value: contextValue } = React.useContext(TabsContext);
+    const isActive = value === contextValue;
+
+    return isActive ? (
+      <div
+        ref={ref}
+        role="tabpanel"
+        className={`mt-4 px-4 sm:px-8 ${className}`}
+        {...props}
+      >
+        {children}
+      </div>
+    ) : null;
+  }
+);
+TabsContent.displayName = "TabsContent";
+
 const GrievanceModule = ({ user }) => {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("new");
   const [selectedGrievance, setSelectedGrievance] = useState(null);
   
   // Form state for new grievance
@@ -107,14 +182,18 @@ const GrievanceModule = ({ user }) => {
   };
 
   const getStatusBadge = (status) => {
-    const variants = {
-      'Submitted': 'secondary',
-      'Under Review': 'default',
-      'Resolved': 'outline',
-      'Reopened': 'destructive'
+    const variantClasses = {
+      'Submitted': 'bg-gray-100 text-gray-800',
+      'Under Review': 'bg-blue-100 text-blue-800',
+      'Resolved': 'border border-green-200 text-green-800',
+      'Reopened': 'bg-red-100 text-red-800'
     };
     
-    return <Badge variant={variants[status]}>{status}</Badge>;
+    return (
+      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${variantClasses[status]}`}>
+        {status}
+      </span>
+    );
   };
 
   const handleSubmitGrievance = () => {
@@ -144,8 +223,6 @@ const GrievanceModule = ({ user }) => {
       title: "Grievance Submitted Successfully",
       description: `Your grievance has been submitted with ID: ${newGrievance.id}`,
     });
-    
-    setActiveTab("history");
   };
 
   const activeGrievancesCount = grievances.filter(g => g.status !== 'Resolved').length;
@@ -165,328 +242,348 @@ const GrievanceModule = ({ user }) => {
       </div>
 
       {/* Main Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="new" className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4" />
-            New Grievance
-          </TabsTrigger>
-          <TabsTrigger value="history" className="flex items-center gap-2">
-            <FileText className="h-4 w-4" />
-            History & Status
-          </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center gap-2">
-            <Bell className="h-4 w-4" />
-            Notifications
-          </TabsTrigger>
-        </TabsList>
+      <div className="space-y-6">
+        <Tabs defaultValue="new">
+          <TabsList>
+            <TabsTrigger value="new">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="h-4 w-4" />
+                New Grievance
+              </div>
+            </TabsTrigger>
+            <TabsTrigger value="history">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                History & Status
+              </div>
+            </TabsTrigger>
+            <TabsTrigger value="notifications">
+              <div className="flex items-center gap-2">
+                <Bell className="h-4 w-4" />
+                Notifications
+              </div>
+            </TabsTrigger>
+          </TabsList>
 
-        {/* New Grievance Submission */}
-        <TabsContent value="new">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5 text-blue-600" />
-                Submit New Grievance
-              </CardTitle>
-              <CardDescription>
-                Please provide detailed information about your concern for faster resolution
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Category Selection */}
-              <div className="space-y-2">
-                <Label htmlFor="category">Grievance Category *</Label>
-                <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
+          {/* New Grievance Submission */}
+          <TabsContent value="new">
+            <div className="bg-white rounded-lg ">
+              <div className="p-6 border-b border-transparent">
+                <h2 className="flex items-center gap-2 text-lg font-semibold">
+                  <MessageSquare className="h-5 w-5 text-blue-600" />
+                  Submit New Grievance
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Please provide detailed information about your concern for faster resolution
+                </p>
+              </div>
+              <div className="p-6 space-y-6">
+                {/* Category Selection */}
+                <div className="space-y-2">
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-700">Grievance Category *</label>
+                  <select
+                    id="category"
+                    value={formData.category}
+                    onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                  >
+                    <option value="">Select a category</option>
                     {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
+                      <option key={category} value={category}>{category}</option>
                     ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Description */}
-              <div className="space-y-2">
-                <Label htmlFor="description">Description * (Minimum 100 words)</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Please describe your grievance in detail..."
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  className="min-h-[120px]"
-                />
-                <div className="text-sm text-gray-500">
-                  {formData.description.split(' ').filter(word => word.length > 0).length} words
+                  </select>
                 </div>
-              </div>
 
-              {/* File Upload */}
-              <div className="space-y-2">
-                <Label htmlFor="attachments">Attachments (Optional)</Label>
-                <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center">
-                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                  <div className="mt-2">
-                    <Input
-                      id="attachments"
-                      type="file"
-                      multiple
-                      accept=".pdf,.png,.jpg,.jpeg"
-                      className="hidden"
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files || []);
-                        setFormData(prev => ({ ...prev, attachments: files }));
-                      }}
-                    />
-                    <Button 
-                      variant="outline" 
-                      onClick={() => document.getElementById('attachments')?.click()}
-                    >
-                      Choose Files
-                    </Button>
-                    <p className="text-sm text-gray-500 mt-1">
-                      Max 3 files: PDF, PNG, JPG (5MB each)
-                    </p>
+                {/* Description */}
+                <div className="space-y-2">
+                  <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description * (Minimum 100 words)</label>
+                  <textarea
+                    id="description"
+                    placeholder="Please describe your grievance in detail..."
+                    value={formData.description}
+                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                    className="min-h-[120px] mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  />
+                  <div className="text-sm text-gray-500">
+                    {formData.description.split(' ').filter(word => word.length > 0).length} words
                   </div>
                 </div>
-                {formData.attachments.length > 0 && (
-                  <div className="space-y-2">
-                    {formData.attachments.map((file, index) => (
-                      <div key={index} className="flex items-center gap-2 text-sm text-gray-600">
-                        <FileText className="h-4 w-4" />
-                        {file.name}
-                      </div>
-                    ))}
+
+                {/* File Upload */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Attachments (Optional)</label>
+                  <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center">
+                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                    <div className="mt-2">
+                      <input
+                        id="attachments"
+                        type="file"
+                        multiple
+                        accept=".pdf,.png,.jpg,.jpeg"
+                        className="hidden"
+                        onChange={(e) => {
+                          const files = Array.from(e.target.files || []);
+                          setFormData(prev => ({ ...prev, attachments: files }));
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => document.getElementById('attachments')?.click()}
+                        className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      >
+                        Choose Files
+                      </button>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Max 3 files: PDF, PNG, JPG (5MB each)
+                      </p>
+                    </div>
                   </div>
-                )}
-              </div>
-
-              {/* Anonymous Checkbox */}
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="anonymous"
-                  checked={formData.isAnonymous}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isAnonymous: checked }))}
-                />
-                <Label htmlFor="anonymous" className="text-sm">
-                  Submit anonymously (Your identity will be hidden from the handler)
-                </Label>
-              </div>
-
-              {/* Submit Button */}
-              <Button onClick={handleSubmitGrievance} className="w-full">
-                <Send className="mr-2 h-4 w-4" />
-                Submit Grievance
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Grievance History */}
-        <TabsContent value="history">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-600" />
-                Grievance History & Status
-              </CardTitle>
-              <CardDescription>
-                Track the status and progress of your submitted grievances
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Grievance ID</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Date Submitted</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Assigned Authority</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {grievances.map((grievance) => (
-                    <TableRow key={grievance.id}>
-                      <TableCell className="font-medium">{grievance.id}</TableCell>
-                      <TableCell>{grievance.category}</TableCell>
-                      <TableCell>{grievance.dateSubmitted}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(grievance.status)}
-                          {getStatusBadge(grievance.status)}
-                        </div>
-                      </TableCell>
-                      <TableCell>{grievance.assignedAuthority || 'Pending Assignment'}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedGrievance(grievance)}
-                          >
-                            <Eye className="h-4 w-4 mr-1" />
-                            View
-                          </Button>
-                          {grievance.status === 'Resolved' && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                const updated = grievances.map(g => 
-                                  g.id === grievance.id ? { ...g, status: 'Reopened' } : g
-                                );
-                                setGrievances(updated);
-                                toast({
-                                  title: "Grievance Reopened",
-                                  description: "Your grievance has been reopened for review.",
-                                });
-                              }}
-                            >
-                              <RotateCcw className="h-4 w-4 mr-1" />
-                              Reopen
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-
-          {/* Grievance Details Modal */}
-          {selectedGrievance && (
-            <Card className="mt-6">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>Grievance Details - {selectedGrievance.id}</CardTitle>
-                  <Button variant="outline" onClick={() => setSelectedGrievance(null)}>
-                    Close
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label className="font-semibold">Category:</Label>
-                  <p>{selectedGrievance.category}</p>
-                </div>
-                <div>
-                  <Label className="font-semibold">Description:</Label>
-                  <p className="text-gray-700">{selectedGrievance.description}</p>
-                </div>
-                <div>
-                  <Label className="font-semibold">Status:</Label>
-                  <div className="flex items-center gap-2 mt-1">
-                    {getStatusIcon(selectedGrievance.status)}
-                    {getStatusBadge(selectedGrievance.status)}
-                  </div>
-                </div>
-                
-                {/* Responses Thread */}
-                {selectedGrievance.responses.length > 0 && (
-                  <div>
-                    <Label className="font-semibold">Responses & Updates:</Label>
-                    <div className="space-y-3 mt-2">
-                      {selectedGrievance.responses.map((response) => (
-                        <div key={response.id} className={`p-3 rounded-lg ${response.isAdmin ? 'bg-blue-50 border-l-4 border-blue-500' : 'bg-gray-50'}`}>
-                          <div className="flex justify-between items-start">
-                            <div className="font-medium text-sm">{response.from}</div>
-                            <div className="text-xs text-gray-500">{response.timestamp}</div>
-                          </div>
-                          <p className="text-sm mt-1">{response.message}</p>
+                  {formData.attachments.length > 0 && (
+                    <div className="space-y-2">
+                      {formData.attachments.map((file, index) => (
+                        <div key={index} className="flex items-center gap-2 text-sm text-gray-600">
+                          <FileText className="h-4 w-4" />
+                          {file.name}
                         </div>
                       ))}
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
-                {/* Resolution and Feedback */}
-                {selectedGrievance.status === 'Resolved' && selectedGrievance.resolution && (
-                  <div>
-                    <Label className="font-semibold">Resolution:</Label>
-                    <p className="text-green-700 bg-green-50 p-3 rounded-lg mt-1">{selectedGrievance.resolution}</p>
+                {/* Anonymous Checkbox */}
+                <div className="flex items-center">
+                  <input
+                    id="anonymous"
+                    type="checkbox"
+                    checked={formData.isAnonymous}
+                    onChange={(e) => setFormData(prev => ({ ...prev, isAnonymous: e.target.checked }))}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="anonymous" className="ml-2 block text-sm text-gray-700">
+                    Submit anonymously (Your identity will be hidden from the handler)
+                  </label>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="button"
+                  onClick={handleSubmitGrievance}
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                >
+                  <Send className="mr-2 h-4 w-4" />
+                  Submit Grievance
+                </button>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Grievance History */}
+          <TabsContent value="history">
+            <div className="bg-white rounded-lg shadow">
+              <div className="p-6 border-b border-transparent">
+                <h2 className="flex items-center gap-2 text-lg font-semibold">
+                  <FileText className="h-5 w-5 text-blue-600" />
+                  Grievance History & Status
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Track the status and progress of your submitted grievances
+                </p>
+              </div>
+              <div className="p-6">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grievance ID</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Submitted</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned Authority</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {grievances.map((grievance) => (
+                        <tr key={grievance.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{grievance.id}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{grievance.category}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{grievance.dateSubmitted}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <div className="flex items-center gap-2">
+                              {getStatusIcon(grievance.status)}
+                              {getStatusBadge(grievance.status)}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{grievance.assignedAuthority || 'Pending Assignment'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedGrievance(grievance)}
+                                className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                View
+                              </button>
+                              {grievance.status === 'Resolved' && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updated = grievances.map(g => 
+                                      g.id === grievance.id ? { ...g, status: 'Reopened' } : g
+                                    );
+                                    setGrievances(updated);
+                                    toast({
+                                      title: "Grievance Reopened",
+                                      description: "Your grievance has been reopened for review.",
+                                    });
+                                  }}
+                                  className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                >
+                                  <RotateCcw className="h-4 w-4 mr-1" />
+                                  Reopen
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Grievance Details Modal */}
+              {selectedGrievance && (
+                <div className="mt-6 bg-white rounded-lg shadow">
+                  <div className="p-6 border-b border-transparent">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-lg font-semibold">Grievance Details - {selectedGrievance.id}</h2>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedGrievance(null)}
+                        className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                  <div className="p-6 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 font-semibold">Category:</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedGrievance.category}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 font-semibold">Description:</label>
+                      <p className="mt-1 text-sm text-gray-700">{selectedGrievance.description}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 font-semibold">Status:</label>
+                      <div className="flex items-center gap-2 mt-1">
+                        {getStatusIcon(selectedGrievance.status)}
+                        {getStatusBadge(selectedGrievance.status)}
+                      </div>
+                    </div>
                     
-                    {selectedGrievance.rating && (
-                      <div className="mt-3">
-                        <Label className="font-semibold">Your Rating:</Label>
-                        <div className="flex items-center gap-1 mt-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className={`h-4 w-4 ${star <= selectedGrievance.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                            />
+                    {/* Responses Thread */}
+                    {selectedGrievance.responses.length > 0 && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 font-semibold">Responses & Updates:</label>
+                        <div className="space-y-3 mt-2">
+                          {selectedGrievance.responses.map((response) => (
+                            <div key={response.id} className={`p-3 rounded-lg ${response.isAdmin ? 'bg-blue-50 border-l-4 border-blue-500' : 'bg-gray-50'}`}>
+                              <div className="flex justify-between items-start">
+                                <div className="font-medium text-sm">{response.from}</div>
+                                <div className="text-xs text-gray-500">{response.timestamp}</div>
+                              </div>
+                              <p className="text-sm mt-1">{response.message}</p>
+                            </div>
                           ))}
-                          <span className="ml-2 text-sm text-gray-600">({selectedGrievance.rating}/5)</span>
                         </div>
-                        {selectedGrievance.feedback && (
-                          <p className="text-sm text-gray-600 mt-1">{selectedGrievance.feedback}</p>
+                      </div>
+                    )}
+
+                    {/* Resolution and Feedback */}
+                    {selectedGrievance.status === 'Resolved' && selectedGrievance.resolution && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 font-semibold">Resolution:</label>
+                        <p className="text-green-700 bg-green-50 p-3 rounded-lg mt-1">{selectedGrievance.resolution}</p>
+                        
+                        {selectedGrievance.rating && (
+                          <div className="mt-3">
+                            <label className="block text-sm font-medium text-gray-700 font-semibold">Your Rating:</label>
+                            <div className="flex items-center gap-1 mt-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <Star
+                                  key={star}
+                                  className={`h-4 w-4 ${star <= selectedGrievance.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                                />
+                              ))}
+                              <span className="ml-2 text-sm text-gray-600">({selectedGrievance.rating}/5)</span>
+                            </div>
+                            {selectedGrievance.feedback && (
+                              <p className="text-sm text-gray-600 mt-1">{selectedGrievance.feedback}</p>
+                            )}
+                          </div>
                         )}
                       </div>
                     )}
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
+                </div>
+              )}
+            </div>
+          </TabsContent>
 
-        {/* Notifications */}
-        <TabsContent value="notifications">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bell className="h-5 w-5 text-blue-600" />
-                Notifications & Responses
-              </CardTitle>
-              <CardDescription>
-                Recent updates and notifications for your grievances
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {grievances.map((grievance) => (
-                  <div key={grievance.id} className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="font-medium">{grievance.id}</div>
-                      <div className="text-sm text-gray-500">{grievance.dateSubmitted}</div>
-                    </div>
-                    <div className="flex items-center gap-2 mb-2">
-                      {getStatusIcon(grievance.status)}
-                      <span className="text-sm">Status updated to: {grievance.status}</span>
-                    </div>
-                    {grievance.responses.length > 0 && (
-                      <div className="text-sm text-gray-600">
-                        Latest response from {grievance.responses[grievance.responses.length - 1].from}
-                      </div>
-                    )}
-                    {grievance.status !== 'Resolved' && (
-                      <div className="text-xs text-orange-600 mt-2">
-                        🕒 SLA: 3 days remaining for resolution
-                      </div>
-                    )}
-                  </div>
-                ))}
-                
-                {grievances.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    <Bell className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-                    <p>No notifications yet</p>
-                    <p className="text-sm">Notifications will appear here when there are updates to your grievances</p>
-                  </div>
-                )}
+          {/* Notifications */}
+          <TabsContent value="notifications">
+            <div className="bg-white rounded-lg shadow">
+              <div className="p-6 border-b border-transparent">
+                <h2 className="flex items-center gap-2 text-lg font-semibold">
+                  <Bell className="h-5 w-5 text-blue-600" />
+                  Notifications & Responses
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Recent updates and notifications for your grievances
+                </p>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              <div className="p-6">
+                <div className="space-y-4">
+                  {grievances.map((grievance) => (
+                    <div key={grievance.id} className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="font-medium">{grievance.id}</div>
+                        <div className="text-sm text-gray-500">{grievance.dateSubmitted}</div>
+                      </div>
+                      <div className="flex items-center gap-2 mb-2">
+                        {getStatusIcon(grievance.status)}
+                        <span className="text-sm">Status updated to: {grievance.status}</span>
+                      </div>
+                      {grievance.responses.length > 0 && (
+                        <div className="text-sm text-gray-600">
+                          Latest response from {grievance.responses[grievance.responses.length - 1].from}
+                        </div>
+                      )}
+                      {grievance.status !== 'Resolved' && (
+                        <div className="text-xs text-orange-600 mt-2">
+                          🕒 SLA: 3 days remaining for resolution
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  
+                  {grievances.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <Bell className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+                      <p>No notifications yet</p>
+                      <p className="text-sm">Notifications will appear here when there are updates to your grievances</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };

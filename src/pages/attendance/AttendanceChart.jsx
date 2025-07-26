@@ -1,4 +1,3 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const AttendanceChart = ({ attendanceData }) => {
@@ -9,13 +8,16 @@ const AttendanceChart = ({ attendanceData }) => {
   }));
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Attendance Visualization</CardTitle>
-        <CardDescription>Graphical representation of your attendance</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
+    <div className="bg-white border border-gray-200 rounded-lg p-6">
+      {/* Header */}
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold text-gray-800">Attendance Visualization</h2>
+        <p className="text-sm text-gray-500">Graphical representation of your attendance</p>
+      </div>
+
+      {/* Chart */}
+      <div className="w-full h-[300px]">
+        <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="subject" angle={-45} textAnchor="end" height={80} />
@@ -28,22 +30,24 @@ const AttendanceChart = ({ attendanceData }) => {
             />
           </BarChart>
         </ResponsiveContainer>
-        <div className="mt-4 flex items-center justify-center space-x-4 text-sm">
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
-            <span>Safe (≥85%)</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-yellow-500 rounded mr-2"></div>
-            <span>Warning (75-85%)</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
-            <span>Critical (&lt;75%)</span>
-          </div>
+      </div>
+
+      {/* Legend */}
+      <div className="mt-4 flex items-center justify-center space-x-4 text-sm">
+        <div className="flex items-center">
+          <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
+          <span>Safe (≥85%)</span>
         </div>
-      </CardContent>
-    </Card>
+        <div className="flex items-center">
+          <div className="w-3 h-3 bg-yellow-500 rounded mr-2"></div>
+          <span>Warning (75-85%)</span>
+        </div>
+        <div className="flex items-center">
+          <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
+          <span>Critical (&lt;75%)</span>
+        </div>
+      </div>
+    </div>
   );
 };
 

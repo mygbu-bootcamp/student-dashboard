@@ -1,5 +1,16 @@
-import { Card, CardContent } from "../../components/ui/card";
 import { BarChart3, Calendar, CheckCircle, AlertTriangle } from "lucide-react";
+
+const Card = ({ children, className = "" }) => (
+  <div className={`bg-white rounded-lg border border-gray-200 overflow-hidden ${className}`}>
+    {children}
+  </div>
+);
+
+const CardContent = ({ children, className = "" }) => (
+  <div className={`p-6 ${className}`}>
+    {children}
+  </div>
+);
 
 const AttendanceStatsCards = ({ 
   overallAttendance, 
@@ -8,9 +19,9 @@ const AttendanceStatsCards = ({
   criticalSubjects 
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <Card>
-        <CardContent className="p-4">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
+      <Card className="border border-gray-200">
+        <CardContent className=" p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Overall Attendance</p>
@@ -21,7 +32,7 @@ const AttendanceStatsCards = ({
         </CardContent>
       </Card>
       
-      <Card>
+      <Card >
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>

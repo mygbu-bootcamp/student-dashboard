@@ -1,22 +1,117 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
-import { Input } from "../components/ui/input";
-import { 
-  FileText, 
-  Download, 
-  Eye, 
-  Calendar, 
-  AlertTriangle, 
+import {
+  FileText,
+  Download,
+  Eye,
+  Calendar,
+  AlertTriangle,
   CheckCircle,
   Upload,
   Search,
-  Filter
+  Filter,
 } from "lucide-react";
 
+// Custom Card Component
+const Card = ({ children, className = "", ...props }) => {
+  return (
+    <div
+      className={`bg-white rounded-lg border border-gray-200 overflow-hidden ${className}`}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+const CardHeader = ({ children, className = "" }) => {
+  return <div className={`p-6 ${className}`}>{children}</div>;
+};
+
+const CardTitle = ({ children, className = "" }) => {
+  return (
+    <h3 className={`text-lg font-semibold leading-none tracking-tight ${className}`}>
+      {children}
+    </h3>
+  );
+};
+
+const CardDescription = ({ children, className = "" }) => {
+  return <p className={`text-sm text-gray-500 ${className}`}>{children}</p>;
+};
+
+const CardContent = ({ children, className = "" }) => {
+  return <div className={`p-6 pt-0 ${className}`}>{children}</div>;
+};
+
+// Custom Button Component
+const Button = ({
+  children,
+  variant = "default",
+  size = "default",
+  className = "",
+  ...props
+}) => {
+  const baseClasses =
+    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+
+  const variantClasses = {
+    default: "bg-black text-white active:bg-blue-800",
+    destructive: "bg-red-600 text-white hover:bg-red-700 active:bg-red-800",
+    outline: "border border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200",
+    secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-300",
+    ghost: "hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200",
+    link: "text-blue-600 underline-offset-4 hover:underline active:text-blue-800",
+  };
+
+  const sizeClasses = {
+    default: "h-10 py-2 px-4",
+    sm: "h-9 px-3 rounded-md",
+    lg: "h-11 px-8 rounded-md",
+  };
+
+  return (
+    <button
+      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+// Custom Badge Component
+const Badge = ({ children, variant = "default", className = "", ...props }) => {
+  const baseClasses =
+    "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2";
+
+  const variantClasses = {
+    default: "border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200",
+    destructive: "border-transparent bg-red-100 text-red-800 hover:bg-red-200",
+    outline: "text-gray-800 border-gray-200",
+    secondary: "border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200",
+  };
+
+  return (
+    <span className={`${baseClasses} ${variantClasses[variant]} ${className}`} {...props}>
+      {children}
+    </span>
+  );
+};
+
+// Custom Input Component
+const Input = ({ className = "", ...props }) => {
+  return (
+    <input
+      className={`flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      {...props}
+    />
+  );
+};
+
+// DocumentVaultModule Component
 const DocumentVaultModule = ({ user }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeDocumentType, setActiveDocumentType] = useState("All");
 
   // Mock document data
   const documents = [
@@ -30,7 +125,7 @@ const DocumentVaultModule = ({ user }) => {
       fileSize: "2.3 MB",
       format: "PDF",
       verified: true,
-      downloadable: true
+      downloadable: true,
     },
     {
       id: 2,
@@ -42,7 +137,7 @@ const DocumentVaultModule = ({ user }) => {
       fileSize: "1.8 MB",
       format: "PDF",
       verified: true,
-      downloadable: true
+      downloadable: true,
     },
     {
       id: 3,
@@ -54,7 +149,7 @@ const DocumentVaultModule = ({ user }) => {
       fileSize: "1.2 MB",
       format: "PDF",
       verified: true,
-      downloadable: true
+      downloadable: true,
     },
     {
       id: 4,
@@ -66,7 +161,7 @@ const DocumentVaultModule = ({ user }) => {
       fileSize: "956 KB",
       format: "PDF",
       verified: true,
-      downloadable: true
+      downloadable: true,
     },
     {
       id: 5,
@@ -78,7 +173,7 @@ const DocumentVaultModule = ({ user }) => {
       fileSize: "1.5 MB",
       format: "PDF",
       verified: true,
-      downloadable: true
+      downloadable: true,
     },
     {
       id: 6,
@@ -90,33 +185,40 @@ const DocumentVaultModule = ({ user }) => {
       fileSize: "800 KB",
       format: "PDF",
       verified: true,
-      downloadable: true
-    }
+      downloadable: true,
+    },
   ];
 
   const documentTypes = ["All", "Identity", "Academic", "Examination", "Financial", "Services"];
 
-  const filteredDocuments = documents.filter(doc =>
-    doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doc.type.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredDocuments = documents.filter((doc) => {
+    const matchesSearchTerm =
+      doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.type.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesDocumentType = activeDocumentType === "All" || doc.type === activeDocumentType;
+    return matchesSearchTerm && matchesDocumentType;
+  });
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Active": return "default";
-      case "Expiring Soon": return "secondary";
-      case "Expired": return "destructive";
-      default: return "outline";
+      case "Active":
+        return "default";
+      case "Expiring Soon":
+        return "secondary";
+      case "Expired":
+        return "destructive";
+      default:
+        return "outline";
     }
   };
 
   const getExpiryWarning = (expiryDate) => {
     if (!expiryDate) return null;
-    
+
     const expiry = new Date(expiryDate);
     const today = new Date();
     const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 3600 * 24));
-    
+
     if (daysUntilExpiry <= 30 && daysUntilExpiry > 0) {
       return `Expires in ${daysUntilExpiry} days`;
     } else if (daysUntilExpiry <= 0) {
@@ -135,21 +237,25 @@ const DocumentVaultModule = ({ user }) => {
 
       {/* Search and Filter */}
       <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search documents..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+        <CardContent className="p-4 h-18">
+          <div className="p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-3 h- w-3 sm:h-4 sm:w-4 text-gray-400" />
+                <Input
+                  placeholder="Search documents..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-8 sm:pl-10 text-xs sm:text-sm w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-black  focus:border-black"
+                />
+              </div>
+              <div className="flex gap-1 sm:gap-2">
+                <Button variant="outline">
+                  <Filter className="mr-2 h-4 w-4" />
+                  Filter
+                </Button>
+              </div>
             </div>
-            <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
-            </Button>
           </div>
         </CardContent>
       </Card>
@@ -157,12 +263,24 @@ const DocumentVaultModule = ({ user }) => {
       {/* Document Categories */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {documentTypes.map((type, index) => (
-          <Button key={index} variant="outline" className="h-auto p-4">
+          <Button
+            key={index}
+            variant={activeDocumentType === type ? "default" : "outline"}
+            className={`h-auto p-4 ${
+              activeDocumentType === type ? "hover:bg-black active:bg-black" : ""
+            }`}
+            onClick={() => setActiveDocumentType(type)}
+          >
             <div className="text-center">
-              <FileText className="h-6 w-6 mx-auto mb-2 text-blue-500" />
+              <FileText
+                className={`h-6 w-6 mx-auto mb-2 ${
+                  activeDocumentType === type ? "text-white" : "text-blue-500"
+                }`}
+              />
               <p className="text-sm font-medium">{type}</p>
               <p className="text-xs text-gray-500">
-                {type === "All" ? documents.length : documents.filter(d => d.type === type).length} docs
+                {type === "All" ? documents.length : documents.filter((d) => d.type === type).length}{" "}
+                docs
               </p>
             </div>
           </Button>
@@ -173,15 +291,22 @@ const DocumentVaultModule = ({ user }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredDocuments.map((doc) => {
           const expiryWarning = getExpiryWarning(doc.expiryDate);
-          
+
           return (
-            <Card key={doc.id} className={`${expiryWarning === "Expired" ? 'border-red-200 bg-red-50' : expiryWarning ? 'border-yellow-200 bg-yellow-50' : ''}`}>
+            <Card
+              key={doc.id}
+              className={`${
+                expiryWarning === "Expired"
+                  ? "border-red-200 bg-red-50"
+                  : expiryWarning
+                  ? "border-yellow-200 bg-yellow-50"
+                  : ""
+              }`}
+            >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <FileText className="h-8 w-8 text-blue-500" />
-                  <Badge variant={getStatusColor(doc.status)}>
-                    {doc.status}
-                  </Badge>
+                  <Badge variant={getStatusColor(doc.status)}>{doc.status}</Badge>
                 </div>
                 <CardTitle className="text-lg">{doc.name}</CardTitle>
                 <CardDescription>{doc.type}</CardDescription>
@@ -214,11 +339,13 @@ const DocumentVaultModule = ({ user }) => {
                 </div>
 
                 {expiryWarning && (
-                  <div className={`p-2 rounded-lg flex items-center ${
-                    expiryWarning === "Expired" 
-                      ? "bg-red-100 text-red-800" 
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}>
+                  <div
+                    className={`p-2 rounded-lg flex items-center ${
+                      expiryWarning === "Expired"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
                     <AlertTriangle className="h-4 w-4 mr-2" />
                     <span className="text-sm font-medium">{expiryWarning}</span>
                   </div>
@@ -252,8 +379,15 @@ const DocumentVaultModule = ({ user }) => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Document Type</label>
-              <select className="w-full p-2 border border-gray-200 rounded-lg">
+              <label htmlFor="document-type" className="block text-sm font-medium mb-2">
+                Document Type
+              </label>
+              <select
+                id="document-type"
+                className="block w-full p-2 border border-gray-200 rounded-lg"
+              >
+                {" "}
+                {/* Added 'block' and ensured full border */}
                 <option>Select document type</option>
                 <option>Transcript</option>
                 <option>Character Certificate</option>
@@ -263,17 +397,27 @@ const DocumentVaultModule = ({ user }) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Priority</label>
-              <select className="w-full p-2 border border-gray-200 rounded-lg">
-                <option>Normal</option>
+              <label htmlFor="priority" className="block text-sm font-medium mb-2">
+                Priority
+              </label>
+              <select
+                id="priority"
+                className="block w-full p-2 border border-gray-200 rounded-lg"
+              >
+                {" "}
+                {/* Added 'block' and ensured full border */}
+                <option >Normal</option>
                 <option>High</option>
                 <option>Urgent</option>
               </select>
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-2">Additional Notes</label>
-              <textarea 
-                className="w-full p-2 border border-gray-200 rounded-lg" 
+              <label htmlFor="additional-notes" className="block text-sm font-medium mb-2">
+                Additional Notes
+              </label>
+              <textarea
+                id="additional-notes"
+                className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 rows={3}
                 placeholder="Provide any additional information about the document request..."
               />
