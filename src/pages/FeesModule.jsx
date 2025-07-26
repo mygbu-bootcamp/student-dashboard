@@ -2,6 +2,7 @@ import {
   CreditCard, Download, CheckCircle, Clock,
   AlertTriangle, Receipt, DollarSign
 } from "lucide-react";
+import StatsCard from "../components/Statscard";
 
 const FeesModule = ({ user }) => {
   const currentFees = [
@@ -49,35 +50,47 @@ const FeesModule = ({ user }) => {
           <h1 className="text-3xl font-bold text-gray-900">Fee Management</h1>
           <p className="text-gray-600">Manage your payments and track fee status</p>
         </div>
-        <button className="flex items-center px-4 py-2 border border-gray-200 rounded-md hover:bg-gray-100 transition-all duration-200 ease-in-out cursor-pointer">
+        <button className="flex items-center px-4 py-2 border border-gray-200 rounded-md hover:bg-gray-100 transition-all duration-200 ease-in-out hover:shadow-md hover:scale-[1.02] cursor-pointer">
           <Download className="mr-2 h-4 w-4" />
           Download Statement
         </button>
       </div>
 
-      {/* Fee Summary */}
+      {/* Fee Summary - Updated with StatsCard */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[
-          { label: "Total Fee", amount: totalAmount, color: "text-blue-600", icon: <DollarSign className="h-8 w-8 text-blue-500" /> },
-          { label: "Amount Paid", amount: totalPaid, color: "text-green-600", icon: <CheckCircle className="h-8 w-8 text-green-500" /> },
-          { label: "Pending Amount", amount: pendingAmount, color: "text-red-600", icon: <Clock className="h-8 w-8 text-red-500" /> },
-          { label: "Payment Progress", amount: Math.round((totalPaid / totalAmount) * 100) + "%", color: "text-purple-600", icon: <CreditCard className="h-8 w-8 text-purple-500" /> }
-        ].map(({ label, amount, color, icon }, i) => (
-          <div key={i} className="bg-white border border-gray-200 rounded-md p-4 transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">{label}</p>
-                <p className={`text-2xl font-bold ${color}`}>{typeof amount === 'number' ? `₹${amount.toLocaleString()}` : amount}</p>
-              </div>
-              {icon}
-            </div>
-          </div>
-        ))}
+        <StatsCard 
+          title="Total Fee" 
+          value={`₹${totalAmount.toLocaleString()}`} 
+          icon={DollarSign} 
+          color="text-blue-600" 
+          bgColor="bg-blue-100" 
+        />
+        <StatsCard 
+          title="Amount Paid" 
+          value={`₹${totalPaid.toLocaleString()}`} 
+          icon={CheckCircle} 
+          color="text-green-600" 
+          bgColor="bg-green-100" 
+        />
+        <StatsCard 
+          title="Pending Amount" 
+          value={`₹${pendingAmount.toLocaleString()}`} 
+          icon={Clock} 
+          color="text-red-600" 
+          bgColor="bg-red-100" 
+        />
+        <StatsCard 
+          title="Payment Progress" 
+          value={`${Math.round((totalPaid / totalAmount) * 100)}%`} 
+          icon={CreditCard} 
+          color="text-purple-600" 
+          bgColor="bg-purple-100" 
+        />
       </div>
 
       {/* Alert */}
       {pendingAmount > 0 && (
-        <div className="flex items-start p-4 border border-orange-200 bg-orange-50 rounded-md transition-all duration-200 ease-in-out hover:shadow-md">
+        <div className="flex items-start p-4 border border-orange-200 bg-orange-50 rounded-md transition-all duration-200 ease-in-out hover:shadow-md hover:scale-[1.005]">
           <AlertTriangle className="h-5 w-5 text-orange-600 mt-1 mr-3" />
           <p className="text-sm text-orange-800">
             <strong>Payment Due:</strong> You have ₹{pendingAmount.toLocaleString()} pending.
@@ -87,14 +100,14 @@ const FeesModule = ({ user }) => {
       )}
 
       {/* Fee Structure */}
-      <div className="bg-white border border-gray-200 rounded-md">
+      <div className="bg-white border border-gray-200 rounded-md hover:shadow-md transition-all duration-200 ease-in-out">
         <div className="border-b border-transparent p-4">
           <h2 className="text-lg font-semibold">Fee Structure - Semester 7</h2>
           <p className="text-sm text-gray-500">Detailed breakdown of semester charges</p>
         </div>
         <div className="p-4 space-y-3">
           {feeStructure.map((item, index) => (
-            <div key={index} className="flex justify-between items-start border border-gray-200 rounded-lg p-3 transition-all duration-200 ease-in-out hover:shadow-sm cursor-default">
+            <div key={index} className="flex justify-between items-start border border-gray-200 rounded-lg p-3 transition-all duration-200 ease-in-out hover:shadow-sm hover:scale-[1.005] cursor-default">
               <div>
                 <p className="font-medium">{item.item}</p>
                 <p className="text-sm text-gray-600">{item.description}</p>
@@ -113,7 +126,7 @@ const FeesModule = ({ user }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Current Semester Fees */}
-        <div className="bg-white border border-gray-200 rounded-md">
+        <div className="bg-white border border-gray-200 rounded-md hover:shadow-md transition-all duration-200 ease-in-out">
           <div className="border-b border-transparent p-4">
             <h2 className="text-lg font-semibold flex items-center">
               <Receipt className="h-5 w-5 text-blue-500 mr-2" />
@@ -123,7 +136,7 @@ const FeesModule = ({ user }) => {
           </div>
           <div className="p-4 space-y-4">
             {currentFees.map((fee, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg p-4 transition-all duration-200 ease-in-out hover:shadow-sm">
+              <div key={index} className="border border-gray-200 rounded-lg p-4 transition-all duration-200 ease-in-out hover:shadow-sm hover:scale-[1.005]">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-medium">{fee.category}</h3>
                   <span className={`text-xs px-2 py-1 rounded-full font-medium ${getStatusColor(fee.status)}`}>
@@ -143,7 +156,9 @@ const FeesModule = ({ user }) => {
                 <div className="flex justify-between items-center text-xs text-gray-500">
                   <span>Due: {fee.dueDate}</span>
                   {fee.status !== "Paid" && (
-                    <button className="ml-2 px-2 py-1 text-sm border border-gray-200 rounded-md bg-black text-white hover:bg-gray-700 transition-all duration-200 ease-in-out cursor-pointer">Pay Now</button>
+                    <button className="ml-2 px-2 py-1 text-sm border border-gray-200 rounded-md bg-black text-white hover:bg-black/70 hover:shadow-md hover:scale-[1.03] transition-all duration-200 ease-in-out cursor-pointer">
+                      Pay Now
+                    </button>
                   )}
                 </div>
               </div>
@@ -152,7 +167,7 @@ const FeesModule = ({ user }) => {
         </div>
 
         {/* Payment History */}
-        <div className="bg-white border border-gray-200 rounded-md">
+        <div className="bg-white border border-gray-200 rounded-md hover:shadow-md transition-all duration-200 ease-in-out">
           <div className="border-b border-transparent p-4">
             <h2 className="text-lg font-semibold flex items-center">
               <Clock className="h-5 w-5 text-green-500 mr-2" />
@@ -162,14 +177,14 @@ const FeesModule = ({ user }) => {
           </div>
           <div className="p-4 space-y-3">
             {paymentHistory.map((p, index) => (
-              <div key={index} className="flex items-center justify-between border border-gray-200 p-3 rounded-lg transition-all duration-200 ease-in-out hover:shadow-sm">
+              <div key={index} className="flex items-center justify-between border border-gray-200 p-3 rounded-lg transition-all duration-200 ease-in-out hover:shadow-sm hover:scale-[1.005]">
                 <div>
                   <p className="text-sm font-medium">{p.description}</p>
                   <p className="text-xs text-gray-500">{p.date} • {p.method}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-green-600 text-sm">₹{p.amount.toLocaleString()}</p>
-                  <button className="text-xs text-blue-600 flex items-center hover:underline mt-1 cursor-pointer">
+                  <button className="text-xs text-blue-600 flex items-center hover:underline mt-1 cursor-pointer hover:scale-[1.02] transition-transform duration-200">
                     <Download className="h-3 w-3 mr-1" /> {p.receipt}
                   </button>
                 </div>
@@ -180,18 +195,21 @@ const FeesModule = ({ user }) => {
       </div>
 
       {/* Payment Options */}
-      <div className="bg-white border border-gray-200 rounded-md">
+      <div className="bg-white border border-gray-200 rounded-md hover:shadow-md transition-all duration-200 ease-in-out">
         <div className="border-b border-transparent p-4">
           <h2 className="text-lg font-semibold">Payment Options</h2>
           <p className="text-sm text-gray-500">Choose your preferred payment method</p>
         </div>
         <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { icon: <CreditCard className="h-6 w-6 mx-auto mb-2 text-blue-500" />, title: "UPI Payment", desc: "Pay via UPI apps" },
-            { icon: <DollarSign className="h-6 w-6 mx-auto mb-2 text-green-500" />, title: "Net Banking", desc: "Direct bank transfer" },
-            { icon: <Receipt className="h-6 w-6 mx-auto mb-2 text-purple-500" />, title: "Offline Payment", desc: "Pay at university counter" }
+            { icon: <CreditCard className="h-6 w-6 mx-auto mb-2 text-blue-500" />, title: "UPI Payment", desc: "Pay via UPI apps", borderColor: "hover:border-blue-500" },
+            { icon: <DollarSign className="h-6 w-6 mx-auto mb-2 text-green-500" />, title: "Net Banking", desc: "Direct bank transfer", borderColor: "hover:border-green-500" },
+            { icon: <Receipt className="h-6 w-6 mx-auto mb-2 text-purple-500" />, title: "Offline Payment", desc: "Pay at university counter", borderColor: "hover:border-purple-500" }
           ].map((option, index) => (
-            <button key={index} className="w-full border border-gray-200 rounded-md p-4 text-center hover:shadow transition-all duration-200 ease-in-out hover:scale-[1.02] cursor-pointer">
+            <button 
+              key={index} 
+              className={`w-full border border-gray-200 rounded-md p-4 text-center transition-all duration-200 ease-in-out cursor-pointer hover:shadow-md hover:scale-[1.02] ${option.borderColor}`}
+            >
               {option.icon}
               <p className="font-medium">{option.title}</p>
               <p className="text-sm text-gray-600">{option.desc}</p>

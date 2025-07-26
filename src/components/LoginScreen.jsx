@@ -12,33 +12,33 @@ import {
 } from "lucide-react";
 
 // Inline Button component
-const Button = ({ 
-  children, 
-  variant = "default", 
-  size = "default", 
-  onClick, 
-  className = "", 
-  ...props 
+const Button = ({
+  children,
+  variant = "default",
+  size = "default",
+  onClick,
+  className = "",
+  ...props
 }) => {
-  const baseStyles = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background";
-  
+  const baseStyles = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:opacity-50 disabled:pointer-events-none ring-offset-background";
+
   const variants = {
     default: "bg-blue-600 text-white hover:bg-blue-700",
     outline: "border border-gray-300 bg-white text-gray-900 hover:bg-gray-50",
     ghost: "hover:bg-gray-100 hover:text-gray-900",
     secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200"
   };
-  
+
   const sizes = {
     default: "h-10 py-2 px-4",
     sm: "h-8 px-3 text-sm",
     lg: "h-11 px-8",
     icon: "h-10 w-10"
   };
-  
+
   const variantStyles = variants[variant] || variants.default;
   const sizeStyles = sizes[size] || sizes.default;
-  
+
   return (
     <button
       className={`${baseStyles} ${variantStyles} ${sizeStyles} ${className}`}
@@ -51,13 +51,13 @@ const Button = ({
 };
 
 // Inline Input component
-const Input = ({ 
-  type = "text", 
-  placeholder = "", 
-  value, 
-  onChange, 
-  className = "", 
-  ...props 
+const Input = ({
+  type = "text",
+  placeholder = "",
+  value,
+  onChange,
+  className = "",
+  ...props
 }) => {
   return (
     <input
@@ -65,7 +65,7 @@ const Input = ({
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      className={`flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       {...props}
     />
   );
@@ -112,10 +112,10 @@ const CardContent = ({ children, className = "" }) => {
   );
 };
 
-// Inline Tabs components
+// Inline Tabs components (kept as is for this update's scope)
 const Tabs = ({ children, defaultValue, className = "" }) => {
   const [activeTab, setActiveTab] = useState(defaultValue);
-  
+
   return (
     <div className={`${className}`} data-active-tab={activeTab}>
       <div className="tabs-context" data-set-active={(value) => setActiveTab(value)}>
@@ -155,25 +155,26 @@ const TabsTrigger = ({ children, value, className = "" }) => {
 
 const TabsContent = ({ children, value, className = "" }) => {
   const [activeTab, setActiveTab] = useState("email");
-  
+
   // Listen for tab changes
   useState(() => {
     const handleTabChange = (event) => {
       setActiveTab(event.detail.value);
     };
-    
+
     document.addEventListener('tabChange', handleTabChange);
     return () => document.removeEventListener('tabChange', handleTabChange);
   }, []);
-  
+
   if (activeTab !== value) return null;
-  
+
   return (
     <div className={`mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${className}`}>
       {children}
     </div>
   );
 };
+
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -320,8 +321,8 @@ const LoginScreen = () => {
                   <div className="inline-flex h-10 items-center justify-center rounded-md bg-blue-50 p-1 text-gray-500 grid w-full grid-cols-2">
                     <button
                       className={`inline-flex w-200 items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                        activeTab === "email" 
-                          ? "bg-blue-900 text-white shadow-sm" 
+                        activeTab === "email"
+                          ? "bg-blue-900 text-white shadow-sm"
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                       onClick={() => setActiveTab("email")}
@@ -330,8 +331,8 @@ const LoginScreen = () => {
                     </button>
                     <button
                       className={`inline-flex w-200 items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                        activeTab === "student-id" 
-                          ? "bg-blue-900 text-white shadow-sm" 
+                        activeTab === "student-id"
+                          ? "bg-blue-900 text-white shadow-sm"
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                       onClick={() => setActiveTab("student-id")}
@@ -439,20 +440,31 @@ const LoginScreen = () => {
                     </div>
                   </div>
 
+                  {/* Google and Microsoft Buttons with Logos and Animations */}
                   <div className="grid grid-cols-2 gap-3">
                     <Button
                       variant="outline"
                       onClick={() => handleOAuthLogin("Google")}
-                      className="h-11"
+                      className="h-11 flex items-center justify-center space-x-2 transition-transform duration-200 hover:scale-105"
                     >
-                      Google
+                      <img
+                        src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png" // Google logo URL
+                        alt="Google Logo"
+                        className="h-5 w-5"
+                      />
+                      <span>Google</span>
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => handleOAuthLogin("Microsoft")}
-                      className="h-11"
+                      className="h-11 flex items-center justify-center space-x-2 transition-transform duration-200 hover:scale-105"
                     >
-                      Microsoft
+                      <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1280px-Microsoft_logo.svg.png" // Microsoft logo URL
+                        alt="Microsoft Logo"
+                        className="h-4 w-4"
+                      />
+                      <span>Microsoft</span>
                     </Button>
                   </div>
                 </div>

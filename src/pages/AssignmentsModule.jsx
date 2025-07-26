@@ -12,7 +12,7 @@ import {
   Star,
   MessageSquare
 } from "lucide-react";
-
+import StatsCard from '../components/Statscard'; 
 // Card Components
 const Card = ({ children, className = "" }) => (
   <div className={`bg-white rounded-lg border border-gray-200 shadow-sm ${className}`}>
@@ -53,7 +53,7 @@ const Button = ({
   onClick,
   ...props
 }) => {
-  const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  const baseClasses = "inline-flex items-center justify-center rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"; // Removed transition-all duration-200 ease-in-out
 
   const variants = {
     default: "bg-blue-900 text-white hover:bg-blue-800 hover:scale-[1.02] hover:shadow-md", // Added hover effects
@@ -175,7 +175,7 @@ const TabsTrigger = ({
       role="tab"
       aria-selected={isActive}
       onClick={handleClick}
-      className={`flex-1 inline-flex items-center justify-center rounded-lg h-10 text-sm font-medium transition-colors focus:outline-none ${
+      className={`flex-1 inline-flex items-center cursor-pointer justify-center rounded-lg h-10 text-sm font-medium transition-colors focus:outline-none ${
         isActive
           ? "bg-white text-gray-900 shadow-sm"
           : "text-gray-500 hover:text-gray-700"
@@ -224,7 +224,7 @@ const AssignmentsModule = ({ user }) => {
       id: 2,
       title: "Database Design Project",
       subject: "Database Management",
-  	  dueDate: "2024-01-30",
+      dueDate: "2024-01-30",
       submittedDate: "2024-01-20",
       status: "Submitted",
       priority: "Medium",
@@ -316,6 +316,8 @@ const AssignmentsModule = ({ user }) => {
 
   const pendingAssignments = assignments.filter(a => a.status === "Pending").length;
   const completedAssignments = assignments.filter(a => a.status === "Graded").length;
+  const averageScore = (assignments.filter(a => a.obtainedMarks !== null).reduce((sum, a) => sum + (a.obtainedMarks / a.maxMarks) * 100, 0) / completedAssignments).toFixed(0);
+
 
   return (
     <div className="space-y-6">
@@ -324,66 +326,38 @@ const AssignmentsModule = ({ user }) => {
           <h1 className="text-3xl font-bold text-gray-900">Assignments & Projects</h1>
           <p className="text-gray-600">Track your assignments, submissions, and project progress</p>
         </div>
-        <Button
-          className="bg-blue-900 text-white"
-          onClick={() => setActiveTab("submissions")} // Link to submissions tab
-        >
-          <Upload className="mr-2 h-4 w-4" />
-          Submit Assignment
-        </Button>
       </div>
 
-      {/* Quick Stats */}
+      {/* Quick Stats using StatsCard */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            {/* Added pt-4 to provide padding from the top */}
-            <div className="flex flex-col items-center justify-center text-center pt-4">
-              <AlertTriangle className="h-8 w-8 text-red-500 mb-2" />
-              <p className="text-sm text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-red-600">{pendingAssignments}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            {/* Added pt-4 to provide padding from the top */}
-            <div className="flex flex-col items-center justify-center text-center pt-4">
-              <CheckCircle className="h-8 w-8 text-green-500 mb-2" />
-              <div>
-                <p className="text-sm text-gray-600">Completed</p>
-                <p className="text-2xl font-bold text-green-600">{completedAssignments}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            {/* Added pt-4 to provide padding from the top */}
-            <div className="flex flex-col items-center justify-center text-center pt-4">
-              <Star className="h-8 w-8 text-blue-500 mb-2" />
-              <div>
-                <p className="text-sm text-gray-600">Average Score</p>
-                <p className="text-2xl font-bold text-blue-600">84%</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            {/* Added pt-4 to provide padding from the top */}
-            <div className="flex flex-col items-center justify-center text-center pt-4">
-              <ClipboardList className="h-8 w-8 text-purple-500 mb-2" />
-              <div>
-                <p className="text-sm text-gray-600">Projects</p>
-                <p className="text-2xl font-bold text-purple-600">{projects.length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <StatsCard
+          title="Pending"
+          value={pendingAssignments}
+          icon={AlertTriangle}
+          color="text-red-600"
+          bgColor="bg-red-100"
+        />
+        <StatsCard
+          title="Completed"
+          value={completedAssignments}
+          icon={CheckCircle}
+          color="text-green-600"
+          bgColor="bg-green-100"
+        />
+        <StatsCard
+          title="Average Score"
+          value={`${averageScore}%`}
+          icon={Star}
+          color="text-blue-600"
+          bgColor="bg-blue-100"
+        />
+        <StatsCard
+          title="Projects"
+          value={projects.length}
+          icon={ClipboardList}
+          color="text-purple-600"
+          bgColor="bg-purple-100"
+        />
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

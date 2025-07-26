@@ -14,8 +14,11 @@ import {
   Eye,
   ChevronDown,
   ChevronUp,
+  Heart, 
+  Bell,
 } from "lucide-react";
 import * as React from "react";
+import StatsCard from "../components/Statscard";
 
 // Custom UI Components
 const Card = ({ children, className = "" }) => (
@@ -56,8 +59,8 @@ const Button = ({
   onClick,
   ...props
 }) => {
-  // Added transition-all for animation
-  const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+  // Added transition-all, cursor-pointer, hover:scale-105, hover:shadow-lg for animation
+  const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer hover:scale-105 hover:shadow-lg";
 
   const variants = {
     default: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
@@ -159,7 +162,7 @@ const TabsTrigger = React.forwardRef(
         role="tab"
         aria-selected={isActive}
         onClick={handleClick}
-        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
+        className={`flex-1 h-8px inline-flex cursor-pointer items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
           isActive
             ? "bg-white text-black"
             : "text-muted-foreground hover:text-foreground"
@@ -642,27 +645,27 @@ const ClubsModule = ({ user }) => {
         <TabsContent value="participation">
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
-              <Card>
-                <CardContent className="p-3 sm:p-4 text-center">
-                  <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500 mx-auto mb-1 sm:mb-2" />
-                  <div className="text-xl sm:text-2xl font-bold text-yellow-600">12</div>
-                  <div className="text-xs sm:text-sm text-gray-600">Events Participated</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-3 sm:p-4 text-center">
-                  <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 mx-auto mb-1 sm:mb-2" />
-                  <div className="text-xl sm:text-2xl font-bold text-blue-600">80</div>
-                  <div className="text-xs sm:text-sm text-gray-600">Total Hours</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-3 sm:p-4 text-center">
-                  <Star className="h-6 w-6 sm:h-8 sm:w-8 text-purple-500 mx-auto mb-1 sm:mb-2" />
-                  <div className="text-xl sm:text-2xl font-bold text-purple-600">8</div>
-                  <div className="text-xs sm:text-sm text-gray-600">Certificates Earned</div>
-                </CardContent>
-              </Card>
+              <StatsCard
+                title="Events Participated"
+                value={12}
+                icon={Trophy}
+                color="text-yellow-600"
+                bgColor="bg-yellow-100"
+              />
+              <StatsCard
+                title="Total Hours"
+                value={80}
+                icon={Clock}
+                color="text-blue-600"
+                bgColor="bg-blue-100"
+              />
+              <StatsCard
+                title="Certificates Earned"
+                value={8}
+                icon={Star}
+                color="text-purple-600"
+                bgColor="bg-purple-100"
+              />
             </div>
 
             <div className="space-y-3 sm:space-y-4">

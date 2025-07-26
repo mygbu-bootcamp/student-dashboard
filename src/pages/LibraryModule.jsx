@@ -10,10 +10,11 @@ import {
   User,
   XCircle // Added for clear search icon
 } from "lucide-react";
+import StatsCard from '../components/Statscard'; 
 
 // Custom Card Component
 const Card = ({ children, className }) => (
-  <div className={`bg-white rounded-xl border border-gray-200 transition-all duration-200 ease-in-out hover:shadow-md ${className}`}>
+  <div className={`bg-white rounded-xl border border-gray-200  hover:shadow-md ${className}`}>
     {children}
   </div>
 );
@@ -51,19 +52,20 @@ const Badge = ({ children, className }) => (
 
 // Custom Button Component
 const Button = ({ children, className, variant = 'default', size = 'default', ...props }) => {
-  const baseClasses = "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none transition-all duration-200 ease-in-out cursor-pointer";
+  // Added transition-all duration-200 ease-in-out for scale and shadow animation
+  const baseClasses = "inline-flex items-center justify-center rounded-lg text-sm font-medium  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none cursor-pointer";
   let variantClasses = "";
   let sizeClasses = "";
 
   switch (variant) {
     case 'outline':
-      variantClasses = "border border-gray-300 bg-white text-gray-700 hover:bg-gray-100";
+      variantClasses = "border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:scale-[1.02] hover:shadow-sm";
       break;
     case 'black': // Custom variant for black button
-      variantClasses = "bg-black text-white hover:bg-gray-800";
+      variantClasses = "bg-black text-white hover:bg-black/70 hover:scale-[1.02] hover:shadow-md";
       break;
     default:
-      variantClasses = "bg-blue-600 text-white hover:bg-blue-700";
+      variantClasses = "bg-blue-600 text-white hover:bg-blue-700 hover:scale-[1.02] hover:shadow-md";
       break;
   }
 
@@ -91,7 +93,7 @@ const Button = ({ children, className, variant = 'default', size = 'default', ..
 
 // Custom Alert Component
 const Alert = ({ children, className }) => (
-  <div className={`relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 transition-all duration-200 ease-in-out hover:shadow-md ${className}`}>
+  <div className={`relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 - hover:shadow-md ${className}`}>
     {children}
   </div>
 );
@@ -182,55 +184,36 @@ const LibraryModule = ({ user }) => {
         </div>
       </div>
 
-      {/* Library Summary */}
+      {/* Library Summary using StatsCard */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Books Issued</p>
-                <p className="text-2xl font-bold text-blue-600">{issuedBooks.length}</p>
-              </div>
-              <Book className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Books Reserved</p>
-                <p className="text-2xl font-bold text-purple-600">{reservedBooks.length}</p>
-              </div>
-              <Clock className="h-8 w-8 text-purple-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Overdue Books</p>
-                <p className="text-2xl font-bold text-red-600">{overdueBooks.length}</p>
-              </div>
-              <AlertTriangle className="h-8 w-8 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Fines</p>
-                <p className="text-2xl font-bold text-orange-600">₹{fines.reduce((sum, fine) => sum + fine.amount, 0)}</p>
-              </div>
-              <Calendar className="h-8 w-8 text-orange-500" />
-            </div>
-          </CardContent>
-        </Card>
+        <StatsCard
+          title="Books Issued"
+          value={issuedBooks.length}
+          icon={Book}
+          color="text-blue-600"
+          bgColor="bg-blue-100"
+        />
+        <StatsCard
+          title="Books Reserved"
+          value={reservedBooks.length}
+          icon={Clock}
+          color="text-purple-600"
+          bgColor="bg-purple-100"
+        />
+        <StatsCard
+          title="Overdue Books"
+          value={overdueBooks.length}
+          icon={AlertTriangle}
+          color="text-red-600"
+          bgColor="bg-red-100"
+        />
+        <StatsCard
+          title="Total Fines"
+          value={`₹${fines.reduce((sum, fine) => sum + fine.amount, 0)}`}
+          icon={Calendar}
+          color="text-orange-600"
+          bgColor="bg-orange-100"
+        />
       </div>
 
       {/* Overdue Alert */}
@@ -292,7 +275,7 @@ const LibraryModule = ({ user }) => {
             <div className="space-y-4">
               {filteredIssuedBooks.length > 0 ? (
                 filteredIssuedBooks.map((book, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg p-4 transition-all duration-200 ease-in-out hover:shadow-sm">
+                  <div key={index} className="border border-gray-200 rounded-lg p-4  hover:shadow-sm">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2">
                       <h3 className="font-medium text-sm">{book.title}</h3>
                       <Badge className={getStatusColor(book.status)}>
@@ -337,7 +320,7 @@ const LibraryModule = ({ user }) => {
             <div className="space-y-4">
               {filteredReservedBooks.length > 0 ? (
                 filteredReservedBooks.map((book, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg p-4 transition-all duration-200 ease-in-out hover:shadow-sm">
+                  <div key={index} className="border border-gray-200 rounded-lg p-4 hover:shadow-sm">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2">
                       <h3 className="font-medium text-sm">{book.title}</h3>
                       <Badge className="bg-purple-100 text-purple-800">
@@ -370,7 +353,7 @@ const LibraryModule = ({ user }) => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {digitalResources.map((resource, index) => (
-              <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-gray-200 rounded-lg transition-all duration-200 ease-in-out hover:shadow-sm">
+              <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-gray-200 rounded-lg  hover:shadow-sm">
                 <div className="flex-1 mb-2 sm:mb-0">
                   <p className="font-medium">{resource.title}</p>
                   <p className="text-sm text-gray-600">{resource.type}</p>
@@ -402,7 +385,7 @@ const LibraryModule = ({ user }) => {
           <CardContent>
             <div className="space-y-3">
               {fines.map((fine, index) => (
-                <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 border border-gray-200 rounded-lg transition-all duration-200 ease-in-out hover:shadow-sm">
+                <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 border border-gray-200 rounded-lg hover:shadow-sm">
                   <div className="flex-1 mb-2 sm:mb-0">
                     <p className="font-medium text-sm">{fine.book}</p>
                     <p className="text-xs text-gray-600">{fine.days} days overdue</p>
@@ -433,21 +416,21 @@ const LibraryModule = ({ user }) => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="outline" className="flex items-center justify-center p-4 h-auto hover:scale-[1.02]">
+            <Button variant="outline" className="flex items-center justify-center p-4 h-auto hover:scale-[1.02] hover:border-blue-500">
               <div className="text-center">
                 <Book className="h-6 w-6 mx-auto mb-2 text-blue-500" />
                 <p className="font-medium">Request New Book</p>
                 <p className="text-sm text-gray-600">Suggest books for library</p>
               </div>
             </Button>
-            <Button variant="outline" className="flex items-center justify-center p-4 h-auto hover:scale-[1.02]">
+            <Button variant="outline" className="flex items-center justify-center p-4 h-auto hover:scale-[1.02] hover:border-green-500">
               <div className="text-center">
                 <User className="h-6 w-6 mx-auto mb-2 text-green-500" />
                 <p className="font-medium">Inter-Library Loan</p>
                 <p className="text-sm text-gray-600">Borrow from other libraries</p>
               </div>
             </Button>
-            <Button variant="outline" className="flex items-center justify-center p-4 h-auto hover:scale-[1.02]">
+            <Button variant="outline" className="flex items-center justify-center p-4 h-auto hover:scale-[1.02] hover:border-purple-500">
               <div className="text-center">
                 <Calendar className="h-6 w-6 mx-auto mb-2 text-purple-500" />
                 <p className="font-medium">Study Room Booking</p>

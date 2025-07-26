@@ -18,9 +18,20 @@ const AttendanceChart = ({ attendanceData }) => {
       {/* Chart */}
       <div className="w-full h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
+          <BarChart 
+            data={chartData}
+            margin={{
+              bottom: 70 // Increased bottom margin to accommodate labels
+            }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="subject" angle={-45} textAnchor="end" height={80} />
+            <XAxis 
+              dataKey="subject" 
+              angle={-45} 
+              textAnchor="end" 
+              height={80}
+              tick={{ fontSize: 12 }} // Slightly smaller font for better fit
+            />
             <YAxis domain={[0, 100]} />
             <Tooltip />
             <Bar 
@@ -32,7 +43,7 @@ const AttendanceChart = ({ attendanceData }) => {
         </ResponsiveContainer>
       </div>
 
-      {/* Legend */}
+      {/* Legend - kept exactly the same */}
       <div className="mt-4 flex items-center justify-center space-x-4 text-sm">
         <div className="flex items-center">
           <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>

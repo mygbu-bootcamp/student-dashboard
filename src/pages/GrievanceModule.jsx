@@ -67,7 +67,7 @@ const TabsTrigger = React.forwardRef(
         role="tab"
         aria-selected={isActive}
         onClick={handleClick}
-        className={`flex-1 h-8px inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
+        className={`flex-1 h-8px inline-flex cursor-pointer items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-4 focus:outline-none ${
           isActive
             ? "bg-white text-black shadow-sm"
             : "text-muted-foreground hover:text-foreground"
@@ -329,7 +329,7 @@ const GrievanceModule = ({ user }) => {
                       <button
                         type="button"
                         onClick={() => document.getElementById('attachments')?.click()}
-                        className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        className="inline-flex items-center px-4 py-2 border cursor-pointer border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                       >
                         Choose Files
                       </button>
@@ -368,7 +368,7 @@ const GrievanceModule = ({ user }) => {
                 <button
                   type="button"
                   onClick={handleSubmitGrievance}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md cursor-pointer text-sm font-medium text-white bg-black hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                 >
                   <Send className="mr-2 h-4 w-4" />
                   Submit Grievance
@@ -420,7 +420,7 @@ const GrievanceModule = ({ user }) => {
                               <button
                                 type="button"
                                 onClick={() => setSelectedGrievance(grievance)}
-                                className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm cursor-pointer leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                               >
                                 <Eye className="h-4 w-4 mr-1" />
                                 View
@@ -438,7 +438,7 @@ const GrievanceModule = ({ user }) => {
                                       description: "Your grievance has been reopened for review.",
                                     });
                                   }}
-                                  className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                  className="inline-flex items-center cursor-pointer px-3 py-1 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                 >
                                   <RotateCcw className="h-4 w-4 mr-1" />
                                   Reopen
@@ -462,7 +462,7 @@ const GrievanceModule = ({ user }) => {
                       <button
                         type="button"
                         onClick={() => setSelectedGrievance(null)}
-                        className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        className="inline-flex items-center px-3 py-1 cursor-pointer border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                       >
                         Close
                       </button>
