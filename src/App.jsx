@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Toaster } from "../src/components/ui/toaster";
-import { Toaster as Sonner } from "../src/components/ui/sonner";
-import { TooltipProvider } from "../src/components/ui/tooltip";
+import { Toaster } from "../src/components/toaster";
+import { Toaster as Sonner } from "../src/components/sonner";
+import { TooltipProvider } from "../src/components/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 

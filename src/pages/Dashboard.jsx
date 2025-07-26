@@ -62,14 +62,14 @@ const DashboardHome = ({ user }) => {
   ];
 
   const quickActions = [
-    { title: "Check Attendance", icon: CheckCircle, color: "text-blue-500", borderColor: "border-blue-500", action: "attendance" },
-    { title: "Innovation Labs", icon: Lightbulb, color: "text-yellow-400", borderColor: "border-yellow-400", action: "skills" },
-    { title: "Wellness Check", icon: Heart, color: "text-red-500", borderColor: "border-red-500", action: "wellness" },
-    { title: "GBU Store", icon: Store, color: "text-purple-500", borderColor: "border-purple-500", action: "store" },
-    { title: "Document Vault", icon: BookOpen, color: "text-green-500", borderColor: "border-green-500", action: "documents" },
-    { title: "Task Manager", icon: Target, color: "text-indigo-500", borderColor: "border-indigo-500", action: "goals" },
-    { title: "Hostel Services", icon: Users, color: "text-orange-500", borderColor: "border-orange-500", action: "hostel" },
-    { title: "Placement Portal", icon: Trophy, color: "text-red-500", borderColor: "border-red-500", action: "placement" }
+    { title: "Check Attendance", icon: CheckCircle, color: "text-blue-500", borderColor: "#2196F3", action: "attendance" },
+    { title: "Innovation Labs", icon: Lightbulb, color: "text-yellow-400", borderColor: "#FFEE58", action: "skills" },
+    { title: "Wellness Check", icon: Heart, color: "text-red-500", borderColor: "#F44336", action: "wellness" },
+    { title: "GBU Store", icon: Store, color: "text-purple-500", borderColor: "#782CC3", action: "store" },
+    { title: "Document Vault", icon: BookOpen, color: "text-green-500", borderColor: "#48bb78", action: "documents" },
+    { title: "Task Manager", icon: Target, color: "text-indigo-500", borderColor: "#6366f1", action: "goals" },
+    { title: "Hostel Services", icon: Users, color: "text-orange-500", borderColor: "#FFA500", action: "hostel" },
+    { title: "Placement Portal", icon: Trophy, color: "text-yellow-600", borderColor: "#FDD835", action: "placement" }
   ];
 
   const Card = ({ children, className = "", ...props }) => (
@@ -303,16 +303,26 @@ const DashboardHome = ({ user }) => {
               const Icon = action.icon;
               return (
                 <Button
-                  key={index}
-                  variant="outline"
-                  className={`h-auto p-4 flex flex-col items-center justify-center
-                              transform transition-all duration-200 hover:scale-105 cursor-pointer
-                              hover:shadow-md hover:${action.borderColor} hover:border-2`}
-                  onClick={() => navigate(`/${action.action}`)}
-                >
-                  <Icon className={`h-6 w-6 mb-2 ${action.color}`} />
-                  <span className="text-sm text-center">{action.title}</span>
-                </Button>
+  key={index}
+  variant="outline"
+  className={`h-auto p-4 flex flex-col items-center justify-center
+              transform transition-all duration-200 hover:scale-105 cursor-pointer
+              hover:shadow-md border border-gray-200`}
+  style={{
+    '--hover-border-color': action.borderColor
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.borderColor = action.borderColor;
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.borderColor = ''; // reset to default
+  }}
+  onClick={() => navigate(`/${action.action}`)}
+>
+  <Icon className={`h-6 w-6 mb-2 ${action.color}`} />
+  <span className="text-sm text-center">{action.title}</span>
+</Button>
+
               );
             })}
           </div>
